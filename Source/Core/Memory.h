@@ -228,6 +228,112 @@ namespace Noble
 	 * and begins handing out that block. If an allocation is larger
 	 * than the block size, the alloc just fails and returns nullptr
 	 */
+	//class BlockAllocatorOld
+	//{
+	//public:
+	//	// Default block size is 16KB
+	//	static const Size DefaultBlockSize = (1 << 14);
+
+	//public:
+
+	//	/**
+	//	 * Creates a BlockAllocator with the default block size
+	//	 */
+	//	BlockAllocatorOld();
+
+	//	/**
+	//	 * Creates a BlockAllocator with a custom block size
+	//	 */
+	//	BlockAllocatorOld(Size blockSize);
+
+	//	/**
+	//	 * Attempts to allocate a piece of memory of size "allocSize" aligned to "align" bytes
+	//	 * Note that if allocSize is greater than the block size (minus some book-keeping data)
+	//	 * this will return nullptr.
+	//	 */
+	//	void* Allocate(Size allocSize, Size align);
+
+	//	/**
+	//	 * Attempts to free the memory from the allocator
+	//	 */
+	//	void Free(void* ptr);
+
+	//	/**
+	//	 * Returns the total size of all allocated blocks
+	//	 */
+	//	Size GetAllocatedSize() const;
+
+	//	/**
+	//	 * Returns true if this allocator has allocated any blocks
+	//	 */
+	//	bool HasAllocated() const { return m_Head != nullptr; }
+
+	//	/**
+	//	 * This function frees all except the first block
+	//	 * Useful for "resetting" the allocator
+	//	 */
+	//	void FreeExcessBlocks();
+
+	//	/**
+	//	 * Frees all of the blocks
+	//	 */
+	//	~BlockAllocatorOld();
+
+	//private:
+
+	//	// Struct for tracking alloc data
+	//	struct Alloc
+	//	{
+	//		// Size of the allocation
+	//		Size AllocSize;
+	//		// Pointer to the next allocation
+	//		Alloc* NextAlloc;
+	//		// Pointer to last allocation
+	//		Alloc* LastAlloc;
+	//		// Pointer to the actual allocated memory
+	//		U8* Data;
+	//	};
+	//	
+	//	// Struct for tracking block info
+	//	struct Block
+	//	{
+	//		// First alloc made
+	//		Alloc* HeadAlloc;
+	//		// Most recent alloc made
+	//		Alloc* TailAlloc;
+	//		// Pointer to the next block
+	//		Block* NextBlock;
+	//		//Pointer to the end of this block
+	//		void* EndOfBlock;
+	//	};
+
+
+	//private:
+
+	//	/**
+	//	 * Allocates a new block
+	//	 */
+	//	void AllocateNewBlock();
+
+	//	/**
+	//	 * Handles recursively freeing blocks to ensure no memory is left unfreed
+	//	 * Frees the given block and all blocks that were allocated after it
+	//	 */
+	//	void FreeBlock(Block* block);
+
+	//private:
+
+	//	static const Size BlockHeaderSize = sizeof(Block);
+	//	static const Size AllocHeaderSize = sizeof(Alloc);
+
+	//	// Block size
+	//	Size m_BlockSize;
+	//	// First block
+	//	Block* m_Head;
+	//	// Newest block
+	//	Block* m_Tail;
+	//};
+
 	class BlockAllocator
 	{
 	public:
@@ -281,32 +387,24 @@ namespace Noble
 
 	private:
 
-		// Struct for tracking alloc data
+		// Struct for tracking block info
+		struct Block
+		{
+			// Pointer to the next block
+			Block* NextBlock;
+			// Current pointer
+			U8* CurrentPointer;
+		};
+
 		struct Alloc
 		{
 			// Size of the allocation
 			Size AllocSize;
-			// Pointer to the next allocation
-			Alloc* NextAlloc;
-			// Pointer to last allocation
-			Alloc* LastAlloc;
-			// Pointer to the actual allocated memory
-			U8* Data;
+			// Pointer to alloc data
+			void* Data;
+			// Pointer to next alloc in list
+			Alloc* Next;
 		};
-		
-		// Struct for tracking block info
-		struct Block
-		{
-			// First alloc made
-			Alloc* HeadAlloc;
-			// Most recent alloc made
-			Alloc* TailAlloc;
-			// Pointer to the next block
-			Block* NextBlock;
-			//Pointer to the end of this block
-			void* EndOfBlock;
-		};
-
 
 	private:
 
@@ -332,5 +430,8 @@ namespace Noble
 		Block* m_Head;
 		// Newest block
 		Block* m_Tail;
+		// Free alloc list
+		Alloc* m_FreeAllocs;
+		Alloc* m_FreeAllocTail;
 	};
 }
