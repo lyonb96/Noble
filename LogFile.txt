@@ -1,0 +1,6 @@
+[Noble] INFO: Noble Engine Early Dev - Dec 29 2019
+[Noble] INFO: Loading configuration from file
+[Noble] DEBUG: Creating game window
+[Noble] DEBUG: After adjustment, size: 1296 x 759
+[Noble] INFO: Engine shutting down
+[Noble] INFO: Saving config to file

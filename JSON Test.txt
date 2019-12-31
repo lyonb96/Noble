@@ -1,0 +1,76 @@
+{
+    "Graphics": {
+        "RefreshDenom": 1000,
+        "RefreshNum": 60000,
+        "ResolutionHeight": 720,
+        "ResolutionWidth": 1280
+    },
+    "Input": {
+        "Action": {
+            "Fire": [
+                "MOUSE_LEFT_BUTTON"
+            ],
+            "Interact": [
+                "KEY_F"
+            ],
+            "Jump": [
+                "KEY_SPACE"
+            ],
+            "Reload": [
+                "KEY_R"
+            ]
+        },
+        "ActionCount": 4,
+        "Axis": {
+            "LookRight": [
+                {
+                    "Action": false,
+                    "Binding": "MOUSE_AXIS_X",
+                    "Scale": 1.0
+                }
+            ],
+            "LookUp": [
+                {
+                    "Action": false,
+                    "Binding": "MOUSE_AXIS_Y",
+                    "Scale": 1.0
+                }
+            ],
+            "MoveForward": [
+                {
+                    "Action": true,
+                    "Binding": "KEY_W",
+                    "Scale": 1.0
+                },
+                {
+                    "Action": true,
+                    "Binding": "KEY_S",
+                    "Scale": -1.0
+                },
+                {
+                    "Action": false,
+                    "Binding": "GAMEPAD_LEFT_STICK_AXIS_Y",
+                    "Scale": 1.0
+                }
+            ],
+            "MoveRight": [
+                {
+                    "Action": true,
+                    "Binding": "KEY_D",
+                    "Scale": 1.0
+                },
+                {
+                    "Action": true,
+                    "Binding": "KEY_A",
+                    "Scale": -1.0
+                },
+                {
+                    "Action": false,
+                    "Binding": "GAMEPAD_LEFT_STICK_AXIS_X",
+                    "Scale": 1.0
+                }
+            ]
+        },
+        "AxisCount": 4
+    }
+}
