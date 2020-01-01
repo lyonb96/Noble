@@ -314,8 +314,10 @@ namespace Noble
 
 		U8* addr = (U8*) AlignUp(m_Tail->CurrentPointer, align, AllocHeaderSize);
 		// addr now points to the data, and (addr - AllocHeaderSize) is the alloc header
+
+		U8* blockEnd = ((U8*)m_Tail) + m_BlockSize;
 		
-		if (addr + allocSize >= (U8*)m_Tail + 1)
+		if (addr + allocSize >= blockEnd)
 		{
 			// too large
 			// allocate a new block and try again
@@ -325,10 +327,13 @@ namespace Noble
 		else
 		{
 			// it will fit
-			Alloc* allocHeader = &((Alloc*)addr)[-1];
+			Alloc* allocHeader = /*&((Alloc*)addr)[-1]*/(Alloc*)(addr - AllocHeaderSize);
 			allocHeader->AllocSize = allocSize;
 			allocHeader->Data = addr;
 			allocHeader->Next = nullptr; // next member is used for the free alloc list
+
+			// advance the current pointer
+			m_Tail->CurrentPointer = addr + allocSize;
 
 			return addr;
 		}
@@ -340,7 +345,7 @@ namespace Noble
 
 		Alloc* alloc = &((Alloc*)ptr)[-1];
 
-		if (m_FreeAllocs)
+		if (!m_FreeAllocs)
 		{
 			m_FreeAllocs = m_FreeAllocTail = alloc;
 		}

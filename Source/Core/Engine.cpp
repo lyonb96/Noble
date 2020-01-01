@@ -20,6 +20,21 @@
 #define FIXED_STEP_RATE (1.0F / 60.0F)
 #endif
 
+struct TestStruct1
+{
+	char Data[128];
+};
+
+struct TestStruct2
+{
+	char Data[96];
+};
+
+struct TestStruct3
+{
+	char Data[144];
+};
+
 namespace Noble
 {
 	using json = nlohmann::json;
@@ -110,6 +125,21 @@ namespace Noble
 
 		// Testing stuff
 		StaticMeshComponent::TemporaryInit();
+
+		// More testing stuff
+		BlockAllocator allocator;
+		TestStruct1* t1 = (TestStruct1*) allocator.Allocate(sizeof(TestStruct1), alignof(TestStruct1));
+		TestStruct2* t2 = (TestStruct2*) allocator.Allocate(sizeof(TestStruct2), alignof(TestStruct2));
+		TestStruct3* t3 = (TestStruct3*) allocator.Allocate(sizeof(TestStruct3), alignof(TestStruct3));
+		TestStruct1* t4 = (TestStruct1*) allocator.Allocate(sizeof(TestStruct1), alignof(TestStruct1));
+		TestStruct2* t5 = (TestStruct2*) allocator.Allocate(sizeof(TestStruct2), alignof(TestStruct2));
+		TestStruct3* t6 = (TestStruct3*) allocator.Allocate(sizeof(TestStruct3), alignof(TestStruct3));
+		TestStruct1* t7 = (TestStruct1*) allocator.Allocate(sizeof(TestStruct1), alignof(TestStruct1));
+		TestStruct2* t8 = (TestStruct2*) allocator.Allocate(sizeof(TestStruct2), alignof(TestStruct2));
+
+		allocator.Free(t3);
+
+		TestStruct1* t9 = (TestStruct1*) allocator.Allocate(sizeof(TestStruct1), alignof(TestStruct1));
 
 		return true;
 	}

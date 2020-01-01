@@ -334,6 +334,12 @@ namespace Noble
 	//	Block* m_Tail;
 	//};
 
+	/**
+	 * This allocator allocates blocks of memory in a given size.
+	 * Once the block has been doled out, it allocates another block
+	 * and begins handing out that block. If an allocation is larger
+	 * than the block size, the alloc just fails and returns nullptr
+	 */
 	class BlockAllocator
 	{
 	public:
