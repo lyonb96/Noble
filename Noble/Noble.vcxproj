@@ -171,7 +171,6 @@
     <ClInclude Include="..\Source\Core\Input.h" />
     <ClInclude Include="..\Source\Core\Logger.h" />
     <ClInclude Include="..\Source\Core\MemoryOld.h" />
-    <ClInclude Include="..\Source\Core\MemUtils.h" />
     <ClInclude Include="..\Source\Core\String.h" />
     <ClInclude Include="..\Source\Core\Types.h" />
     <ClInclude Include="..\Source\Core\WindowsMinimal.h" />
@@ -193,6 +192,7 @@
     <ClCompile Include="..\Source\Core\Input.cpp" />
     <ClCompile Include="..\Source\Core\Logger.cpp" />
     <ClCompile Include="..\Source\Core\MemoryOld.cpp" />
+    <ClCompile Include="..\Source\Core\World.cpp" />
     <ClCompile Include="Test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

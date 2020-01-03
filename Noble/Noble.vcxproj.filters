@@ -48,9 +48,6 @@
     <ClInclude Include="..\Source\Core\Functional.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\MemUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -136,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Memory.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\World.cpp">
+      <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

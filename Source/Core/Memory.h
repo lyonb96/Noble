@@ -6,6 +6,7 @@
 // Just kidding...
 
 #include "Types.h"
+#include "Logger.h"
 
 namespace Noble
 {
@@ -61,11 +62,11 @@ namespace Noble
 		}
 
 		/**
-		 * Main memory realloc function
+		 * Main memory realloc function, should be compatible with Memory::Malloc
 		 */
-		FORCEINLINE static void* Realloc(void* ptr, Size size)
+		FORCEINLINE static void* Realloc(void* ptr, Size size, Size align)
 		{
-			return realloc(ptr, size);
+			return _aligned_realloc(ptr, size, align);
 		}
 
 		FORCEINLINE static void* Memset(void* dst, I32 val, Size size)
@@ -125,12 +126,20 @@ namespace Noble
 			CHECK(elementSize > 0 && newMax > m_ElemCount);
 
 			Size newAllocSize = elementSize * newMax;
-			void* newBuffer = Memory::Malloc(newAllocSize, NOBLE_DEFAULT_ALIGN);
-
-			// if the allocator has memory, copy it to the new buffer
+			void* newBuffer;
 			if (m_Data)
 			{
-				Memory::Memcpy(newBuffer, m_Data, m_ElemCount * elementSize);
+				newBuffer = Memory::Realloc(m_Data, newAllocSize, NOBLE_DEFAULT_ALIGN);
+#ifdef NOBLE_DEBUG
+				if (newBuffer != m_Data)
+				{
+					NE_LOG_DEBUG("Realloc moved memory in container");
+				}
+#endif
+			}
+			else
+			{
+				newBuffer = Memory::Malloc(newAllocSize, NOBLE_DEFAULT_ALIGN);
 			}
 
 			m_Data = newBuffer;

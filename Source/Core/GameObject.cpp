@@ -1,9 +1,13 @@
 #include "GameObject.h"
 
 #include "Component.h"
+#include "StaticMeshComponent.h"
+#include "World.h"
 
 namespace Noble
 {
+	World* GameObject::m_World = nullptr;
+
 	GameObject::GameObject()
 	{
 		m_TickEachFrame = false;
@@ -58,6 +62,11 @@ namespace Noble
 		m_Components.Initialize(components, componentCount);
 	}
 
+	bool GameObject::IsInitialized() const
+	{
+		return m_Components.GetSize() > 0;
+	}
+
 	// ...
 
 	GAME_OBJECT_DEF(TestGameObject);
@@ -66,16 +75,11 @@ namespace Noble
 		: GameObject()
 	{
 		// Sample
-		/*
 
 		StaticMeshComponent* meshComp = CreateChildComponent<StaticMeshComponent>();
-		MeshHandle mesh = ResourceHandler::GetMeshHandle("barrel"); // or whatever this will look like
-		meshComp->SetMesh(mesh);
-		MaterialHandle mat = ...;
-		meshComp->SetMaterial(mat);
-
 		m_RootComponent = meshComp;
-
+		/*
+		MeshHandle mesh = ResourceHandler::GetMeshHandle("barrel"); // or whatever this will look like
 
 		CameraComponent* cam = CreateChildComponent<CameraComponent>();
 		m_RootComponent->AttachChild(cam);

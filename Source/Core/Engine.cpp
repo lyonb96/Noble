@@ -126,21 +126,6 @@ namespace Noble
 		// Testing stuff
 		StaticMeshComponent::TemporaryInit();
 
-		// More testing stuff
-		BlockAllocator allocator;
-		TestStruct1* t1 = (TestStruct1*) allocator.Allocate(sizeof(TestStruct1), alignof(TestStruct1));
-		TestStruct2* t2 = (TestStruct2*) allocator.Allocate(sizeof(TestStruct2), alignof(TestStruct2));
-		TestStruct3* t3 = (TestStruct3*) allocator.Allocate(sizeof(TestStruct3), alignof(TestStruct3));
-		TestStruct1* t4 = (TestStruct1*) allocator.Allocate(sizeof(TestStruct1), alignof(TestStruct1));
-		TestStruct2* t5 = (TestStruct2*) allocator.Allocate(sizeof(TestStruct2), alignof(TestStruct2));
-		TestStruct3* t6 = (TestStruct3*) allocator.Allocate(sizeof(TestStruct3), alignof(TestStruct3));
-		TestStruct1* t7 = (TestStruct1*) allocator.Allocate(sizeof(TestStruct1), alignof(TestStruct1));
-		TestStruct2* t8 = (TestStruct2*) allocator.Allocate(sizeof(TestStruct2), alignof(TestStruct2));
-
-		allocator.Free(t3);
-
-		TestStruct1* t9 = (TestStruct1*) allocator.Allocate(sizeof(TestStruct1), alignof(TestStruct1));
-
 		return true;
 	}
 
@@ -254,9 +239,10 @@ namespace Noble
 		g_TestComponent.GetLocalTransform().Position = Vector3f(0, 0, 5);
 		g_TestComponent.TestDraw();
 		g_TestComponent.GetLocalTransform().Position = Vector3f(5, 0, 0);
+		g_TestComponent.SetScale(Vector3f(1.0F - sinTest));
 		g_TestComponent.TestDraw();
 		g_TestComponent.GetLocalTransform().Position = Vector3f(0, 0, 0);
-		g_TestComponent.GetLocalTransform().Scale = Vector3f(1.0F + sinTest);
+		g_TestComponent.SetScale(Vector3f(1.0F + sinTest));
 		g_TestComponent.TestDraw();
 		g_TestComponent.GetLocalTransform().Scale = Vector3f(1, 1, 1);
 	}

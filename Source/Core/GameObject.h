@@ -132,7 +132,13 @@ namespace Noble
 		/**
 		 * Returns a pointer to the World instance
 		 */
-		const World* GetWorld() { return m_World; }
+		World* GetWorld() { return m_World; }
+
+		template <class T>
+		T* CreateChildComponent()
+		{
+			return GetWorld()->CreateComponent<T>(this);
+		}
 
 		/**
 		 * Returns a pointer to the first component of the specified type
@@ -161,12 +167,15 @@ namespace Noble
 		 */
 		void PostInit(Component** components, Size componentCount);
 
+		bool IsInitialized() const;
+
 	protected:
+
+		// A pointer to the game's World instance
+		static World* m_World;
 
 		// If true, the object's Update function will be called each frame
 		bool m_TickEachFrame;
-		// A pointer to the game's World instance
-		World* m_World;
 		// Root Component
 		Component* m_RootComponent;
 

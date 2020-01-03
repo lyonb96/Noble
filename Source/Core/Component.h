@@ -16,6 +16,8 @@ namespace Noble
 	{
 	public:
 
+		friend class World;
+
 		Component();
 
 	public:
@@ -82,6 +84,13 @@ namespace Noble
 		 * Returns this component's scale - note that it returns a reference
 		 */
 		Vector3f& GetScale() { return m_Transform.Scale; }
+
+	private:
+
+		/**
+		 * Called automatically during creation
+		 */
+		void SetOwningObject(GameObject* owner) { m_Owner = owner; }
 
 	protected:
 

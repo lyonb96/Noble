@@ -238,6 +238,8 @@ namespace Noble
 		m_BlockSize = blockSize;
 		m_Head = nullptr;
 		m_Tail = nullptr;
+		m_FreeAllocs = nullptr;
+		m_FreeAllocTail = nullptr;
 
 		// Allocate the head
 		AllocateNewBlock();
@@ -245,7 +247,7 @@ namespace Noble
 
 	void BlockAllocator::AllocateNewBlock()
 	{
-		void* data = _aligned_malloc(m_BlockSize, 16);
+		void* data = Memory::Malloc(m_BlockSize, 16);
 
 #ifdef NOBLE_DEBUG
 		if (!data)
@@ -343,7 +345,7 @@ namespace Noble
 	{
 		CHECK(ptr != nullptr);
 
-		Alloc* alloc = &((Alloc*)ptr)[-1];
+		Alloc* alloc = (Alloc*)(((U8*)ptr) - AllocHeaderSize);
 
 		if (!m_FreeAllocs)
 		{
@@ -377,6 +379,7 @@ namespace Noble
 		if (block->NextBlock)
 		{
 			FreeBlock(block->NextBlock);
+			block->NextBlock = nullptr;
 		}
 
 		// Check the free list and remove any entries in this block
@@ -404,7 +407,7 @@ namespace Noble
 			}
 		}
 
-		_aligned_free(block);
+		Memory::Free(block);
 	}
 
 	void BlockAllocator::FreeExcessBlocks()
@@ -414,6 +417,7 @@ namespace Noble
 		if (m_Head->NextBlock)
 		{
 			FreeBlock(m_Head->NextBlock);
+			m_Head->NextBlock = nullptr;
 		}
 	}
 
