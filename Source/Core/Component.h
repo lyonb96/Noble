@@ -85,6 +85,11 @@ namespace Noble
 		 */
 		Vector3f& GetScale() { return m_Transform.Scale; }
 
+		/**
+		 * Attaches the given component to this one as a child
+		 */
+		void AttachChildComponent(Component* child);
+
 	private:
 
 		/**

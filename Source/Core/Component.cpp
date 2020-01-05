@@ -19,4 +19,11 @@ namespace Noble
 
 		return parent + m_Transform;
 	}
+
+	void Component::AttachChildComponent(Component* child)
+	{
+		CHECK(child);
+
+		child->m_ParentComponent = this;
+	}
 }

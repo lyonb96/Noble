@@ -162,6 +162,7 @@
     <ClInclude Include="..\Source\Core\Memory.h" />
     <ClInclude Include="..\Source\Core\Renderer.h" />
     <ClInclude Include="..\Source\Core\StaticMeshComponent.h" />
+    <ClInclude Include="..\Source\Core\TestGameObject.h" />
     <ClInclude Include="..\Source\Core\Time.h" />
     <ClInclude Include="..\Source\Core\Engine.h" />
     <ClInclude Include="..\Source\Core\FileIO.h" />
@@ -170,7 +171,6 @@
     <ClInclude Include="..\Source\Core\Globals.h" />
     <ClInclude Include="..\Source\Core\Input.h" />
     <ClInclude Include="..\Source\Core\Logger.h" />
-    <ClInclude Include="..\Source\Core\MemoryOld.h" />
     <ClInclude Include="..\Source\Core\String.h" />
     <ClInclude Include="..\Source\Core\Types.h" />
     <ClInclude Include="..\Source\Core\WindowsMinimal.h" />
@@ -184,6 +184,7 @@
     <ClCompile Include="..\Source\Core\Memory.cpp" />
     <ClCompile Include="..\Source\Core\Renderer.cpp" />
     <ClCompile Include="..\Source\Core\StaticMeshComponent.cpp" />
+    <ClCompile Include="..\Source\Core\TestGameObject.cpp" />
     <ClCompile Include="..\Source\Core\Time.cpp" />
     <ClCompile Include="..\Source\Core\Engine.cpp" />
     <ClCompile Include="..\Source\Core\FileIO.cpp" />
@@ -191,7 +192,6 @@
     <ClCompile Include="..\Source\Core\Globals.cpp" />
     <ClCompile Include="..\Source\Core\Input.cpp" />
     <ClCompile Include="..\Source\Core\Logger.cpp" />
-    <ClCompile Include="..\Source\Core\MemoryOld.cpp" />
     <ClCompile Include="..\Source\Core\World.cpp" />
     <ClCompile Include="Test.cpp" />
   </ItemGroup>

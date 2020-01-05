@@ -185,17 +185,4 @@ namespace Noble
 		SafeArray<Component*> m_Components;
 
 	};
-
-
-
-	class TestGameObject : public GameObject
-	{
-		GAME_OBJECT_BODY(TestGameObject)
-
-	public:
-		 
-		TestGameObject();
-
-		virtual void OnSpawn() override;
-	};
 }

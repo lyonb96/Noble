@@ -11,6 +11,8 @@
 
 // for testing
 #include "StaticMeshComponent.h"
+#include "World.h"
+#include "TestGameObject.h"
 
 #ifndef MAX_FIXED_STEPS_PER_FRAME
 #define MAX_FIXED_STEPS_PER_FRAME 5 // limit fixed steps per frame to avoid spiraling
@@ -50,7 +52,11 @@ namespace Noble
 
 	namespace
 	{
-		StaticMeshComponent g_TestComponent;
+		//StaticMeshComponent g_TestComponent;
+		World g_TestWorld;
+		TestGameObject* g_TestObject1;
+		TestGameObject* g_TestObject2;
+		TestGameObject* g_TestObject3;
 	}
 
 	int LaunchEngine()
@@ -125,6 +131,10 @@ namespace Noble
 
 		// Testing stuff
 		StaticMeshComponent::TemporaryInit();
+
+		g_TestObject1 = g_TestWorld.CreateGameObject<TestGameObject>();
+		g_TestObject2 = g_TestWorld.CreateGameObject<TestGameObject>();
+		g_TestObject3 = g_TestWorld.CreateGameObject<TestGameObject>();
 
 		return true;
 	}
@@ -232,19 +242,22 @@ namespace Noble
 			bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
 		}
 
-		g_TestComponent.SetPosition(Vector3f(5, 5, 5));
-		g_TestComponent.TestDraw();
-		g_TestComponent.GetLocalTransform().Position = Vector3f(5, 0, 5);
-		g_TestComponent.TestDraw();
-		g_TestComponent.GetLocalTransform().Position = Vector3f(0, 0, 5);
-		g_TestComponent.TestDraw();
-		g_TestComponent.GetLocalTransform().Position = Vector3f(5, 0, 0);
-		g_TestComponent.SetScale(Vector3f(1.0F - sinTest));
-		g_TestComponent.TestDraw();
-		g_TestComponent.GetLocalTransform().Position = Vector3f(0, 0, 0);
-		g_TestComponent.SetScale(Vector3f(1.0F + sinTest));
-		g_TestComponent.TestDraw();
-		g_TestComponent.GetLocalTransform().Scale = Vector3f(1, 1, 1);
+		g_TestObject1->SetPosition(Vector3f(5, 5, 5));
+		g_TestObject2->SetScale(Vector3f(2, 2, 2));
+		g_TestObject3->SetRotation(glm::angleAxis(x, Vector3f(1, 0, 0)));
+		g_TestObject3->SetPosition(Vector3f(5, y * 5.0F, 0));
+
+		StaticMeshComponent* sm1 = (StaticMeshComponent*)g_TestObject1->GetRootComponent();
+		StaticMeshComponent* sm2 = (StaticMeshComponent*)g_TestObject2->GetRootComponent();
+		StaticMeshComponent* sm3 = (StaticMeshComponent*)g_TestObject3->GetRootComponent();
+
+		sm1->TestDraw();
+		sm2->TestDraw();
+		sm3->TestDraw();
+
+		g_TestObject1->GetSecondMesh()->TestDraw();
+		g_TestObject2->GetSecondMesh()->TestDraw();
+		g_TestObject3->GetSecondMesh()->TestDraw();
 	}
 }
 

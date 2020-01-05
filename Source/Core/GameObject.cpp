@@ -11,7 +11,6 @@ namespace Noble
 	GameObject::GameObject()
 	{
 		m_TickEachFrame = false;
-		m_World = nullptr;
 		m_RootComponent = nullptr;
 	}
 
@@ -68,28 +67,4 @@ namespace Noble
 	}
 
 	// ...
-
-	GAME_OBJECT_DEF(TestGameObject);
-
-	TestGameObject::TestGameObject()
-		: GameObject()
-	{
-		// Sample
-
-		StaticMeshComponent* meshComp = CreateChildComponent<StaticMeshComponent>();
-		m_RootComponent = meshComp;
-		/*
-		MeshHandle mesh = ResourceHandler::GetMeshHandle("barrel"); // or whatever this will look like
-
-		CameraComponent* cam = CreateChildComponent<CameraComponent>();
-		m_RootComponent->AttachChild(cam);
-		cam->SetPosition(0.0F, 5.0F, -5.0F);
-		
-		*/
-	}
-
-	void TestGameObject::OnSpawn()
-	{
-		
-	}
 }

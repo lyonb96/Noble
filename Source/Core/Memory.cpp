@@ -13,7 +13,7 @@ namespace Noble
 	 */
 	void* AlignUp(void* in, Size align, Size offset = 0)
 	{
-		CHECK(std::_Is_pow_2(align) && in != nullptr);
+		CHECK((align & (align - 1)) == 0); // verify that align is a power of 2
 
 		union
 		{
@@ -23,208 +23,10 @@ namespace Noble
 
 		as_void = in;
 		as_uint += offset;
-		as_uint = (as_uint + (align - 1)) & (~align);
+		as_uint = (as_uint + (align - 1)) & (~(align - 1));
 
 		return as_void;
 	}
-	/* Old BlockAllocator code
-	BlockAllocatorOld::BlockAllocatorOld()
-		: BlockAllocatorOld(DefaultBlockSize)
-	{}
-
-	BlockAllocatorOld::BlockAllocatorOld(Size blockSize)
-		: m_BlockSize(blockSize)
-	{
-		m_Head = nullptr;
-		m_Tail = nullptr;
-
-		// Allocate a new block so the allocator is ready
-		AllocateNewBlock();
-	}
-
-	void BlockAllocatorOld::AllocateNewBlock()
-	{
-		void* blockAddr = _aligned_malloc(m_BlockSize, 16);
-
-		CHECK(blockAddr != nullptr);
-		
-		if (m_Head)
-		{
-			Block* next = (Block*)blockAddr;
-			m_Tail->NextBlock = next;
-			m_Tail = next;
-
-			next->HeadAlloc = nullptr;
-			next->TailAlloc = nullptr;
-			next->NextBlock = nullptr;
-			next->EndOfBlock = next + 1;
-		}
-		else
-		{
-			Block* newHead = (Block*)blockAddr;
-			newHead->HeadAlloc = nullptr;
-			newHead->TailAlloc = nullptr;
-			newHead->NextBlock = nullptr;
-			newHead->EndOfBlock = newHead + 1;
-
-			m_Head = newHead;
-			m_Tail = newHead;
-		}
-	}
-
-	void* BlockAllocatorOld::Allocate(Size allocSize, Size align)
-	{
-		CHECK(m_Head != nullptr);
-
-		if ((allocSize + BlockHeaderSize + AllocHeaderSize) > m_BlockSize)
-		{
-			NE_LOG_WARNING("Requested allocation is too large for this Block Allocator, returning nullptr");
-			return nullptr;
-		}
-
-		void* baseAddr;
-
-		// Check if this is the first alloc of this block
-		if (!m_Tail->HeadAlloc)
-		{
-			baseAddr = AlignUp(m_Tail + 1, alignof(Alloc));
-			// baseAddr now points to alloc header
-
-			Alloc* alloc = (Alloc*)baseAddr;
-			alloc->AllocSize = allocSize;
-			alloc->NextAlloc = nullptr;
-			alloc->LastAlloc = nullptr;
-			m_Tail->HeadAlloc = alloc;
-			m_Tail->TailAlloc = alloc;
-
-			// Now set up the data
-			void* data = AlignUp(alloc + 1, align);
-			alloc->Data = (U8*)data;
-
-			return data;
-		}
-		else
-		{
-			Alloc* lastAlloc = m_Tail->TailAlloc;
-			baseAddr = AlignUp(lastAlloc->Data + lastAlloc->AllocSize, alignof(Alloc));
-			
-			// baseAddr now points to alloc header
-
-			U8* check = (U8*) baseAddr;
-			check += AllocHeaderSize;
-			check = (U8*) AlignUp(check, align);
-			check += allocSize;
-
-			if (check >= (U8*) m_Tail->EndOfBlock)
-			{
-				// alloc is too large for this block, so...
-				// Grab a new empty block, and then...
-				AllocateNewBlock();
-				// retry the alloc, which will automatically use the new block
-				return Allocate(allocSize, align);
-			}
-			else
-			{
-				// setup alloc header
-				Alloc* newAlloc = (Alloc*)baseAddr;
-				newAlloc->AllocSize = allocSize;
-				newAlloc->LastAlloc = lastAlloc;
-				newAlloc->NextAlloc = nullptr;
-
-				lastAlloc->NextAlloc = newAlloc;
-
-				// now set up the data
-				void* data = AlignUp(newAlloc + 1, align);
-				newAlloc->Data = (U8*)data;
-
-				return data;
-			}
-		}
-	}
-
-	void BlockAllocatorOld::Free(void* ptr)
-	{
-		CHECK(m_Head != nullptr && ptr != nullptr);
-
-		// for now, we're gonna do this the slow way
-		Alloc* alloc = m_Head->HeadAlloc;
-		Block* currentBlock = m_Head;
-		while (alloc)
-		{
-			if (alloc->Data == ptr)
-			{
-				if (alloc->LastAlloc)
-				{
-					alloc->LastAlloc->NextAlloc = alloc->NextAlloc;
-				}
-				if (alloc->NextAlloc)
-				{
-					alloc->NextAlloc->LastAlloc = alloc->LastAlloc;
-				}
-
-				// if i feel like it, I could start adding freed allocs
-				// to another freelist for reuse
-				// it might help cache coherency but would probably
-				// slow down allocs. will have to test and see
-
-				return;
-			}
-			else
-			{
-				if (alloc->NextAlloc)
-				{
-					alloc = alloc->NextAlloc;
-				}
-				else if (currentBlock->NextBlock)
-				{
-					currentBlock = currentBlock->NextBlock;
-					alloc = currentBlock->HeadAlloc;
-				}
-			}
-		}
-	}
-
-	void BlockAllocatorOld::FreeBlock(Block* block)
-	{
-		CHECK(block != nullptr);
-
-		if (block->NextBlock)
-		{
-			FreeBlock(block->NextBlock);
-		}
-
-		_aligned_free(block);
-	}
-
-	void BlockAllocatorOld::FreeExcessBlocks()
-	{
-		CHECK(m_Head != nullptr);
-
-		if (m_Head->NextBlock)
-		{
-			FreeBlock(m_Head->NextBlock);
-		}
-	}
-
-	BlockAllocatorOld::~BlockAllocatorOld()
-	{
-		FreeBlock(m_Head);
-	}
-
-	Size BlockAllocatorOld::GetAllocatedSize() const
-	{
-		U8 totalBlocks = 0;
-
-		Block* next = m_Head;
-		while (next)
-		{
-			++totalBlocks;
-			next = next->NextBlock;
-		}
-
-		return totalBlocks * m_BlockSize;
-	}
-	*/
 
 	// -----------------------------------------------------
 
@@ -279,7 +81,7 @@ namespace Noble
 		}
 	}
 
-	void* BlockAllocator::Allocate(Size allocSize, Size align)
+	void* BlockAllocator::Allocate(Size allocSize, Size align, Size offset)
 	{
 		CHECK(m_Head != nullptr && allocSize > 0 && align > 0);
 		
@@ -314,7 +116,8 @@ namespace Noble
 			freeAlloc = freeAlloc->Next;
 		}
 
-		U8* addr = (U8*) AlignUp(m_Tail->CurrentPointer, align, AllocHeaderSize);
+		U8* addr = (U8*) AlignUp(m_Tail->CurrentPointer, align, AllocHeaderSize + offset);
+		CHECK(((uintptr_t)addr) % align == 0);
 		// addr now points to the data, and (addr - AllocHeaderSize) is the alloc header
 
 		U8* blockEnd = ((U8*)m_Tail) + m_BlockSize;
@@ -384,7 +187,7 @@ namespace Noble
 
 		// Check the free list and remove any entries in this block
 		uintptr_t lowerBound = (uintptr_t)block;
-		uintptr_t upperBound = (uintptr_t)(block + 1);
+		uintptr_t upperBound = lowerBound + m_BlockSize;
 		Alloc* free = m_FreeAllocs;
 		Alloc* last = nullptr;
 		while (free)

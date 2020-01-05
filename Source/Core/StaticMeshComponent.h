@@ -19,6 +19,8 @@ namespace Noble
 	{
 	public:
 
+		StaticMeshComponent();
+
 		static void TemporaryInit();
 		static void TemporaryDestroy();
 

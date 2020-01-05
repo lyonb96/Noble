@@ -3,9 +3,16 @@
 #include <type_traits>
 
 #include "GameObject.h"
+#include "Logger.h"
 
 namespace Noble
 {
+#ifdef NOBLE_DEBUG
+	typedef MemoryArena<BlockAllocator, SimpleTrackingPolicy> GameMemoryArena;
+#else
+	typedef MemoryArena<BlockAllocator, NoTrackingPolicy> GameMemoryArena;
+#endif
+
 	/**
 	 * The World class encompasses a "map" or area of play.
 	 * Worlds hold all of the currently spawned GameObjects.
@@ -24,10 +31,12 @@ namespace Noble
 		template <class T>
 		T* CreateGameObject()
 		{
-			T* object = new (Allocate<T>()) T;
+			//T* object = new (Allocate<T>()) T;
+			T* object = NE_NEW(m_GameMemory, T);
 			// By now, all of the required components have been stored in the temp array
 			Size tempSize = sizeof(Component*) * m_TempCount;
-			Component** compList = m_GameObjectAllocator.Allocate(tempSize, 8);
+			//Component** compList = m_GameObjectAllocator.Allocate(tempSize, 8);
+			Component** compList = (Component**)NE_BUFFER_ALLOC(m_GameMemory, tempSize, 8);
 			Memory::Memcpy(compList, m_TempArray, tempSize);
 
 			object->PostInit(compList, m_TempCount);
@@ -50,7 +59,7 @@ namespace Noble
 				return nullptr;
 			}
 
-			T* comp = new (Allocate<T>()) T;
+			T* comp = NE_NEW(m_GameMemory, T);
 			comp->SetOwningObject(owner);
 			//m_Components->Add(comp);
 
@@ -66,30 +75,18 @@ namespace Noble
 		 */
 		void ClearTempArray();
 
-		/**
-		 * Allocates memory for the requested GameObject/Component
-		 */
-		template <class T>
-		void* Allocate()
-		{
-			Size size = sizeof(T);
-			Size align = alignof(T);
-
-			void* data = m_GameObjectAllocator.Allocate(size, align);
-			CHECK(data);
-
-			return data;
-		}
-
 	private:
 
 		// Temporary array of components to be copied into new GameObjects
 		Component* m_TempArray[32];
 		// Number of components in the temp array
 		U8 m_TempCount;
+		// Memory Arena for GameObjects + Components
+		GameMemoryArena m_GameMemory;
 
 		// Handles allocating objects and components
-		BlockAllocator m_GameObjectAllocator;
+		//BlockAllocator m_GameObjectAllocator;
+
 		//Array<GameObject*> m_GameObjects;
 		//Array<Component*> m_Components;
 

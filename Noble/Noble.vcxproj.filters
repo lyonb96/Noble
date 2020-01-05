@@ -19,6 +19,12 @@
     <Filter Include="Source Files\Gameplay">
       <UniqueIdentifier>{7091364f-c6ed-4965-bb5a-6f99a3c50333}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gameplay\Testing">
+      <UniqueIdentifier>{e5f8fde9-da64-4130-b7a7-15ed5e91d544}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Gameplay\Testing">
+      <UniqueIdentifier>{3c645788-1b4f-4b08-9f45-36962840d41e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Engine.h">
@@ -57,9 +63,6 @@
     <ClInclude Include="..\Source\Core\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\MemoryOld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -83,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\Core\StaticMeshComponent.h">
       <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\TestGameObject.h">
+      <Filter>Header Files\Gameplay\Testing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -110,9 +116,6 @@
     <ClCompile Include="..\Source\Core\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Core\MemoryOld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Core\HelperMacros.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -136,6 +139,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\World.cpp">
       <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\TestGameObject.cpp">
+      <Filter>Source Files\Gameplay\Testing</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -87,6 +87,10 @@ namespace Noble
 	bgfx::ShaderHandle StaticMeshComponent::m_VS;
 	bgfx::ShaderHandle StaticMeshComponent::m_PS;
 
+	StaticMeshComponent::StaticMeshComponent()
+		: Component()
+	{}
+
 	void StaticMeshComponent::TemporaryInit()
 	{
 		m_Layout.begin()
