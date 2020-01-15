@@ -10,10 +10,10 @@ namespace Noble
 	{
 		// Sample
 
-		StaticMeshComponent* meshComp = CreateChildComponent<StaticMeshComponent>();
+		StaticMeshComponent* meshComp = CreateChildComponent<StaticMeshComponent>(SID("Main Mesh"));
 		m_RootComponent = meshComp;
 
-		m_SecondMesh = CreateChildComponent<StaticMeshComponent>();
+		m_SecondMesh = CreateChildComponent<StaticMeshComponent>(SID("Submesh"));
 		meshComp->AttachChildComponent(m_SecondMesh);
 
 		m_SecondMesh->SetPosition(Vector3f(0, 2, 0));
@@ -30,6 +30,10 @@ namespace Noble
 
 	void TestGameObject::OnSpawn()
 	{
-
+		StaticMeshComponent* test = GetComponent<StaticMeshComponent>(SID("Submesh"));
+		if (test)
+		{
+			NE_LOG_DEBUG("Found it!");
+		}
 	}
 }

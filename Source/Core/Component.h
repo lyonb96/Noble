@@ -56,17 +56,22 @@ namespace Noble
 		Transform GetWorldTransform() const;
 
 		/**
-		 * Sets this component's position
+		 * Returns a hashed representation of the Component's name
+		 */
+		const U32 GetName() const { return m_ComponentName; }
+
+		/**
+		 * Sets this component's local position
 		 */
 		FORCEINLINE void SetPosition(const Vector3f& newPos) { m_Transform.Position = newPos; }
 
 		/**
-		 * Sets this component's rotation
+		 * Sets this component's local rotation
 		 */
 		FORCEINLINE void SetRotation(const Quaternion& newRot) { m_Transform.Rotation = newRot; }
 
 		/**
-		 * Sets this component's scale
+		 * Sets this component's local scale
 		 */
 		FORCEINLINE void SetScale(const Vector3f& newScale) { m_Transform.Scale = newScale; }
 
@@ -97,13 +102,20 @@ namespace Noble
 		 */
 		void SetOwningObject(GameObject* owner) { m_Owner = owner; }
 
+		/**
+		 * Called automatically during creation
+		 */
+		void SetComponentName(const U32 name) { m_ComponentName = name; }
+
 	protected:
 
+		// Allows the user to "name" the component using SIDs
+		U32 m_ComponentName;
 		// Component's local Transform
 		Transform m_Transform;
-		// Object that owns this component
+		// Object that owns this component (will always be valid)
 		GameObject* m_Owner;
-		// This component's parent
+		// This component's parent (may be nullptr)
 		Component* m_ParentComponent;
 
 	};

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Component.h"
 #include "Types.h"
 #include "Array.h"
 #include "String.h"
@@ -127,17 +128,31 @@ namespace Noble
 		 */
 		virtual void OnDespawn() {}
 
-	protected:
+	public:
 
 		/**
-		 * Returns a pointer to the World instance
+		 * Returns a pointer to the first component of the specified type
+		 * whose name matches the given parameter
 		 */
-		World* GetWorld() { return m_World; }
-
 		template <class T>
-		T* CreateChildComponent()
+		T* GetComponent(const U32 name)
 		{
-			return GetWorld()->CreateComponent<T>(this);
+			// TODO: figure out if using typeid() and RTTI is a good idea
+
+			const std::type_info& query = typeid(T);
+			for (Size i = 0; i < m_Components.GetSize(); i++)
+			{
+				Component* comp = m_Components[i];
+				if (m_Components[i] && query == typeid(*comp))
+				{
+					if (comp->GetName() == name)
+					{
+						return static_cast<T*>(m_Components[i]);
+					}
+				}
+			}
+
+			return nullptr;
 		}
 
 		/**
@@ -151,13 +166,31 @@ namespace Noble
 			const std::type_info& query = typeid(T);
 			for (Size i = 0; i < m_Components.GetSize(); i++)
 			{
-				if (m_Components[i] && query == typeid(*(m_Components[i])))
+				Component* comp = m_Components[i];
+				if (m_Components[i] && query == typeid(*comp))
 				{
-					return m_Components[i];
+					return static_cast<T*>(m_Components[i]);
 				}
 			}
 
 			return nullptr;
+		}
+
+	protected:
+
+		/**
+		 * Returns a pointer to the World instance
+		 */
+		World* GetWorld() { return m_World; }
+
+		/**
+		 * Creates a child component and adds it to the list of members
+		 * This function can only be called from the constructor!
+		 */
+		template <class T>
+		T* CreateChildComponent(const U32 name = 0)
+		{
+			return GetWorld()->CreateComponent<T>(this, name);
 		}
 
 	private:

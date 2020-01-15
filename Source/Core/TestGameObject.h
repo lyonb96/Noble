@@ -1,8 +1,8 @@
 #pragma once
 
 #include "World.h"
-#include "GameObject.h"
 #include "StaticMeshComponent.h"
+#include "GameObject.h"
 
 namespace Noble
 {

@@ -2,8 +2,10 @@
 
 namespace Noble
 {
+
 	Component::Component()
 	{
+		m_ComponentName = 0;
 		m_Owner = nullptr;
 		m_ParentComponent = nullptr;
 	}

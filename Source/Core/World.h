@@ -29,7 +29,7 @@ namespace Noble
 		 * Creates a new GameObject, but does not immediately spawn it
 		 */
 		template <class T>
-		T* CreateGameObject()
+		T* SpawnGameObject()
 		{
 			//T* object = new (Allocate<T>()) T;
 			T* object = NE_NEW(m_GameMemory, T);
@@ -42,6 +42,9 @@ namespace Noble
 			object->PostInit(compList, m_TempCount);
 			ClearTempArray();
 			//m_GameObjects.Add(object);
+
+			object->OnSpawn();
+
 			return object;
 		}
 
@@ -49,7 +52,7 @@ namespace Noble
 		 * Creates a new Component that is part of the given GameObject
 		 */
 		template <class T>
-		T* CreateComponent(GameObject* owner)
+		T* CreateComponent(GameObject* owner, const U32 name = 0)
 		{
 			CHECK(owner);
 
@@ -61,6 +64,7 @@ namespace Noble
 
 			T* comp = NE_NEW(m_GameMemory, T);
 			comp->SetOwningObject(owner);
+			comp->SetComponentName(name);
 			//m_Components->Add(comp);
 
 			m_TempArray[m_TempCount++] = comp;

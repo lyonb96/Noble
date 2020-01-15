@@ -11,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 #include <half/half.hpp>
+#include <limits>
 
 namespace Noble
 {
@@ -142,6 +143,8 @@ namespace Noble
 #else
 	typedef U32 Size;
 #endif
+
+	const Size SizeMaxValue = std::numeric_limits<Size>::max();
 
 #ifdef NOBLE_DEBUG
 

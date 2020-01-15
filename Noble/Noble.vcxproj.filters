@@ -25,6 +25,9 @@
     <Filter Include="Header Files\Gameplay\Testing">
       <UniqueIdentifier>{3c645788-1b4f-4b08-9f45-36962840d41e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Containers">
+      <UniqueIdentifier>{b2d00fec-82ef-470e-ac84-da5ed65fc53b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Engine.h">
@@ -69,9 +72,6 @@
     <ClInclude Include="..\Source\Core\HelperMacros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Array.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\World.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
@@ -89,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\Core\TestGameObject.h">
       <Filter>Header Files\Gameplay\Testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Array.h">
+      <Filter>Header Files\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

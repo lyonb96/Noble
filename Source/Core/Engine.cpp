@@ -13,6 +13,7 @@
 #include "StaticMeshComponent.h"
 #include "World.h"
 #include "TestGameObject.h"
+#include "Array.h"
 
 #ifndef MAX_FIXED_STEPS_PER_FRAME
 #define MAX_FIXED_STEPS_PER_FRAME 5 // limit fixed steps per frame to avoid spiraling
@@ -132,9 +133,21 @@ namespace Noble
 		// Testing stuff
 		StaticMeshComponent::TemporaryInit();
 
-		g_TestObject1 = g_TestWorld.CreateGameObject<TestGameObject>();
-		g_TestObject2 = g_TestWorld.CreateGameObject<TestGameObject>();
-		g_TestObject3 = g_TestWorld.CreateGameObject<TestGameObject>();
+		g_TestObject1 = g_TestWorld.SpawnGameObject<TestGameObject>();
+		g_TestObject2 = g_TestWorld.SpawnGameObject<TestGameObject>();
+		g_TestObject3 = g_TestWorld.SpawnGameObject<TestGameObject>();
+		GameObject* test4 = g_TestWorld.SpawnGameObject<TestGameObject>();
+
+		Array<GameObject*> arrayTest;
+		arrayTest.Resize(5);
+
+		arrayTest.Add(g_TestObject1);
+		arrayTest.Add(g_TestObject2);
+		arrayTest.Add(g_TestObject3);
+		arrayTest.Add(test4);
+
+		CHECK(arrayTest[0] == g_TestObject1);
+		CHECK(arrayTest.Find(g_TestObject2) == 1);
 
 		return true;
 	}
@@ -247,9 +260,9 @@ namespace Noble
 		g_TestObject3->SetRotation(glm::angleAxis(x, Vector3f(1, 0, 0)));
 		g_TestObject3->SetPosition(Vector3f(5, y * 5.0F, 0));
 
-		StaticMeshComponent* sm1 = (StaticMeshComponent*)g_TestObject1->GetRootComponent();
-		StaticMeshComponent* sm2 = (StaticMeshComponent*)g_TestObject2->GetRootComponent();
-		StaticMeshComponent* sm3 = (StaticMeshComponent*)g_TestObject3->GetRootComponent();
+		StaticMeshComponent* sm1 = (StaticMeshComponent*) g_TestObject1->GetRootComponent();
+		StaticMeshComponent* sm2 = (StaticMeshComponent*) g_TestObject2->GetRootComponent();
+		StaticMeshComponent* sm3 = (StaticMeshComponent*) g_TestObject3->GetRootComponent();
 
 		sm1->TestDraw();
 		sm2->TestDraw();
@@ -257,7 +270,13 @@ namespace Noble
 
 		g_TestObject1->GetSecondMesh()->TestDraw();
 		g_TestObject2->GetSecondMesh()->TestDraw();
-		g_TestObject3->GetSecondMesh()->TestDraw();
+		//g_TestObject3->GetSecondMesh()->TestDraw();
+
+		StaticMeshComponent* sm4 = g_TestObject3->GetComponent<StaticMeshComponent>(SID("Submesh"));
+		if (sm4)
+		{
+			sm4->TestDraw();
+		}
 	}
 }
 

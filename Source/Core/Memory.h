@@ -8,6 +8,9 @@
 #include "Types.h"
 #include <type_traits>
 
+// Macro to shorten the POD type evaluation
+#define POD_CHECK(TYPE) ::Noble::MemHelper::BoolToType<MemHelper::IsPOD<TYPE>::Value>()
+
 namespace Noble
 {
 
@@ -67,6 +70,9 @@ namespace Noble
 		 */
 		FORCEINLINE static void* Malloc(Size size, Size align)
 		{
+#ifdef NOBLE_DEBUG
+			++AllocCount;
+#endif
 			return _aligned_malloc(size, align);
 		}
 
@@ -75,6 +81,9 @@ namespace Noble
 		 */
 		FORCEINLINE static void Free(void* data)
 		{
+#ifdef NOBLE_DEBUG
+			--AllocCount;
+#endif
 			_aligned_free(data);
 		}
 
@@ -83,6 +92,12 @@ namespace Noble
 		 */
 		FORCEINLINE static void* Realloc(void* ptr, Size size, Size align)
 		{
+#ifdef NOBLE_DEBUG
+			if (!ptr)
+			{
+				++AllocCount;
+			}
+#endif
 			return _aligned_realloc(ptr, size, align);
 		}
 
@@ -95,6 +110,16 @@ namespace Noble
 		{
 			return memcpy(dst, src, size);
 		}
+
+		FORCEINLINE static const U32 GetAllocCount()
+		{
+			return AllocCount;
+		}
+
+	private:
+
+		// ++ for alloc, -- for free
+		inline static U32 AllocCount = 0;
 	};
 
 	/**
@@ -166,7 +191,12 @@ namespace Noble
 		/**
 		 * Returns a pointer to the allocated data
 		 */
-		void* GetData() const { return nullptr; }
+		void* GetData() { return nullptr; }
+
+		/**
+		 * Returns a pointer to the allocated data (const version of above)
+		 */
+		const void* GetData() const { return nullptr; }
 
 		/**
 		 * Returns true if this allocator has made any heap allocations
@@ -182,27 +212,19 @@ namespace Noble
 	public:
 
 		FORCEINLINE BasicContainerAllocator()
-			: m_Data(0), m_AllocSize(0), m_ElemCount(0)
+			: m_Data(nullptr), m_AllocSize(0), m_ElemCount(0)
 		{
 		}
 
 		/**
 		 * Resizes the array to fit @newMax elements of size @elementSize
 		 */
-		FORCEINLINE void* Resize(const Size& elementSize, Size newMax)
+		FORCEINLINE void* Resize(const Size& elementSize, Size newMax, Size align = NOBLE_DEFAULT_ALIGN)
 		{
 			CHECK(elementSize > 0 && newMax > m_ElemCount);
 
 			Size newAllocSize = elementSize * newMax;
-			void* newBuffer;
-			if (m_Data)
-			{
-				newBuffer = Memory::Realloc(m_Data, newAllocSize, NOBLE_DEFAULT_ALIGN);
-			}
-			else
-			{
-				newBuffer = Memory::Malloc(newAllocSize, NOBLE_DEFAULT_ALIGN);
-			}
+			void* newBuffer = Memory::Realloc(m_Data, newAllocSize, align);
 
 			m_Data = newBuffer;
 			m_AllocSize = newAllocSize;
@@ -219,10 +241,19 @@ namespace Noble
 			return m_AllocSize;
 		}
 
+
 		/**
 		 * Returns a pointer to the allocated data
 		 */
-		FORCEINLINE void* GetData() const
+		FORCEINLINE void* GetData()
+		{
+			return m_Data;
+		}
+
+		/**
+		 * Returns a pointer to the allocated data (const version of above)
+		 */
+		FORCEINLINE const void* GetData() const
 		{
 			return m_Data;
 		}
@@ -560,7 +591,7 @@ namespace Noble
 	template <class Arena, class Type>
 	void Delete(Arena& arena, Type* ptr)
 	{
-		Delete(arena, ptr, MemHelper::BoolToType<MemHelper::IsPOD<Type>::Value>());
+		Delete(arena, ptr, POD_CHECK(Type));
 	}
 
 	/**
@@ -588,7 +619,7 @@ namespace Noble
 	template <class Arena, class Type>
 	void DeleteArray(Type* ptr, Arena& arena)
 	{
-		DeleteArray(ptr, arena, MemHelper::BoolToType<MemHelper::IsPOD<Type>::Value>());
+		DeleteArray(ptr, arena, POD_CHECK(Type));
 	}
 
 	/**
@@ -694,3 +725,5 @@ void operator delete(void* ptr, Noble::Size align, Arena& arena, const ::Noble::
 
 // Deletes a buffer that was allocated from HE_BUFFER_ALLOC
 #define NE_BUFFER_FREE(ARENA, PTR) ::Noble::FreeBuffer(ARENA, PTR);
+
+#undef POD_CHECK
