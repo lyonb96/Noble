@@ -179,9 +179,16 @@ namespace Noble
 	class ContainerAllocatorInterface
 	{
 		/**
-         * Resizes the array to fit @newMax elements of size @elementSize
+		 * Calculates how much the allocator can/should grow by, and returns recommended
+		 * new max count
 		 */
-		void* Resize(Size elementSize, Size newMax) { return nullptr; }
+		const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount) { return 0; }
+
+		/**
+         * Resizes the array to fit @newMax elements of size @elementSize
+		 * Returns the element count
+		 */
+		Size Resize(Size elementSize, Size newMax) { return 0; }
 
 		/**
 		 * Returns the total amount of memory allocated by this allocator
@@ -217,9 +224,25 @@ namespace Noble
 		}
 
 		/**
-		 * Resizes the array to fit @newMax elements of size @elementSize
+		 * Calculates a suitable new max size
 		 */
-		FORCEINLINE void* Resize(const Size& elementSize, Size newMax, Size align = NOBLE_DEFAULT_ALIGN)
+		FORCEINLINE const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount = 0)
+		{
+			if (requestedCount > m_ElemCount)
+			{
+				return requestedCount;
+			}
+			else
+			{
+				return glm::max((m_ElemCount * 3) / 2, m_ElemCount + 4);
+			}
+		}
+
+		/**
+		 * Resizes the array to fit @newMax elements of size @elementSize
+		 * Returns the element count
+		 */
+		FORCEINLINE Size Resize(const Size& elementSize, Size newMax, Size align = NOBLE_DEFAULT_ALIGN)
 		{
 			CHECK(elementSize > 0 && newMax > m_ElemCount);
 
@@ -230,7 +253,7 @@ namespace Noble
 			m_AllocSize = newAllocSize;
 			m_ElemCount = newMax;
 
-			return m_Data;
+			return m_ElemCount;
 		}
 
 		/**
@@ -240,7 +263,6 @@ namespace Noble
 		{
 			return m_AllocSize;
 		}
-
 
 		/**
 		 * Returns a pointer to the allocated data
@@ -286,6 +308,90 @@ namespace Noble
 		// Total number of "elements"
 		Size m_ElemCount;
 
+	};
+
+	/**
+	 * A container allocator that only holds a fixed number of elements and cannot be resized
+	 */
+	template <Size N>
+	class FixedContainerAllocator
+	{
+	public:
+
+		FixedContainerAllocator()
+			: m_Data(nullptr), m_AllocSize(0)
+		{
+		}
+
+		/**
+		 * Fixed Allocator - just returns the fixed size
+		 */
+		const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount) { return N; }
+
+		/**
+		 * Fixed Allocator - does not resize the array, just returns the existing data ptr
+		 */
+		Size Resize(const Size& elementSize, Size newMax, Size align = NOBLE_DEFAULT_ALIGN)
+		{
+			if (!m_Data)
+			{
+				m_AllocSize = elementSize * N;
+				m_Data = Memory::Malloc(m_AllocSize, align);
+			}
+
+			return N;
+		}
+
+		/**
+		 * Returns the total amount of memory allocated by this allocator
+		 */
+		Size GetAllocationSize() const
+		{
+			return m_AllocSize;
+		}
+
+
+		/**
+		 * Returns a pointer to the allocated data
+		 */
+		void* GetData()
+		{
+			return m_Data;
+		}
+
+		/**
+		 * Returns a pointer to the allocated data (const version of above)
+		 */
+		const void* GetData() const
+		{
+			return m_Data;
+		}
+
+		/**
+		 * Returns true if this allocator has made any heap allocations
+		 */
+		bool HasAllocated() const
+		{
+			return m_Data != nullptr;
+		}
+
+		/**
+		 * Destructor frees memory if necessary
+		 */
+		virtual ~FixedContainerAllocator()
+		{
+			if (m_Data)
+			{
+				Memory::Free(m_Data);
+			}
+		}
+
+	private:
+
+		// Raw Data
+		void* m_Data;
+		// Total allocated size
+		Size m_AllocSize;
 	};
 
 	/**

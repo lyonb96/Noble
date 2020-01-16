@@ -286,8 +286,7 @@ namespace Noble
 		{
 			CHECK(newCount >= m_ArrayCount);
 
-			m_Allocator.Resize(ElementSize, newCount, ElementAlign);
-			m_ArrayMax = newCount;
+			m_ArrayMax = m_Allocator.Resize(ElementSize, newCount, ElementAlign);
 		}
 
 		/**
@@ -296,7 +295,7 @@ namespace Noble
 		 */
 		void Shrink()
 		{
-			Resize(glm::max(0, m_ArrayCount));
+			Resize(glm::max(1, m_ArrayCount));
 		}
 
 		/**
@@ -355,15 +354,13 @@ namespace Noble
 		}
 
 		/**
-		 * Grows the Array by either 50% or 4 elements or the requested minimum new amount (if not 0)
-		 * whichever is greatest
+		 * Grows the Array's storage to hold more data. It can optionally use a
+		 * requested minimum as guidance for the calculation, though it is up to
+		 * the Allocator if this is actually used or not.
 		 */
 		void Grow(Size minNew = 0)
 		{
-			Size old = m_ArrayCount;
-			// 50% increase, but always grow at least 4
-			minNew = (minNew == 0 ? old + 4 : minNew);
-			Size grow = glm::max((old * 3) / 2, minNew);
+			Size grow = m_Allocator.CalculateGrowSize(ElementSize, minNew);
 
 			Resize(grow);
 		}
@@ -407,9 +404,8 @@ namespace Noble
 		 */
 		void MoveElement(Size fromIndex, Size toIndex)
 		{
-			ElementType tmp = std::move(GetData()[fromIndex]);
-			*(GetData() + fromIndex) = std::move(*(GetData() + toIndex));
-			*(GetData() + toIndex) = std::move(tmp);
+			// it ain't pretty, but it does the job
+			*(GetData() + toIndex) = std::move(*(GetData() + fromIndex));
 		}
 
 	private:
