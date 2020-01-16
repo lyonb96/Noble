@@ -207,11 +207,11 @@ namespace Noble
 	/**
 	 * Most basic implementation of a container allocator; uses Malloc/Realloc/Free
 	 */
-	class BasicContainerAllocator
+	class DefaultContainerAllocator
 	{
 	public:
 
-		FORCEINLINE BasicContainerAllocator()
+		FORCEINLINE DefaultContainerAllocator()
 			: m_Data(nullptr), m_AllocSize(0), m_ElemCount(0)
 		{
 		}
@@ -269,7 +269,7 @@ namespace Noble
 		/**
 		 * Destructor frees memory if necessary
 		 */
-		FORCEINLINE virtual ~BasicContainerAllocator()
+		FORCEINLINE virtual ~DefaultContainerAllocator()
 		{
 			if (m_Data)
 			{
@@ -585,7 +585,7 @@ namespace Noble
 	}
 
 	/**
-	 * Delete function, just provides a clean place for calls to HE_DELETE to redirect
+	 * Delete function, just provides a clean place for calls to NE_DELETE to redirect
 	 * Also determines if destructor needs to be called
 	 */
 	template <class Arena, class Type>
@@ -723,7 +723,7 @@ void operator delete(void* ptr, Noble::Size align, Arena& arena, const ::Noble::
 // Deletes an array of objects and calls each member's destructor if necessary
 #define NE_DELETE_ARRAY(ARENA, PTR) ::Noble::DeleteArray(PTR, ARENA)
 
-// Deletes a buffer that was allocated from HE_BUFFER_ALLOC
+// Deletes a buffer that was allocated from NE_BUFFER_ALLOC
 #define NE_BUFFER_FREE(ARENA, PTR) ::Noble::FreeBuffer(ARENA, PTR);
 
 #undef POD_CHECK

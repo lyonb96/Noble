@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "Types.h"
 #include "Memory.h"
 
@@ -107,7 +109,7 @@ namespace Noble
 		 */
 		ArrayBase(ElementType* ptr, Size count)
 		{
-			CopyInit(ptr, count);
+			AddMultiple(ptr, count);
 		}
 
 		/**
@@ -126,7 +128,7 @@ namespace Noble
 	public:
 
 		/**
-		 * Adds the requested element to the end of array and returns its index
+		 * Moves the requested element to the end of array and returns its index
 		 */
 		Size Add(ElementType&& elem)
 		{
@@ -138,9 +140,9 @@ namespace Noble
 		}
 
 		/**
-		 * Adds the requested element to the end of array and returns its index
+		 * Copies the requested element to the end of array and returns its index
 		 */
-		Size Add(ElementType elem)
+		Size Add(const ElementType& elem)
 		{
 			Size index = MakeRoom();
 
@@ -150,7 +152,7 @@ namespace Noble
 		}
 
 		/**
-		 * Adds @count elements from the array @ptr
+		 * Copies @count elements from the array @ptr
 		 * Returns the index of the last added element
 		 */
 		Size AddMultiple(ElementType* ptr, Size count)
@@ -172,12 +174,29 @@ namespace Noble
 		 * Copies the given element to the requested index, assuming the index is valid
 		 * Shifts up all proceeding array elements
 		 */
-		Size Insert(ElementType& elem, Size index)
+		Size Insert(const ElementType& elem, Size index)
 		{
 			// vibe check
 			CHECK((index >= 0) && (index < m_ArrayCount));
 
 			Size currentEnd = MakeRoom();
+			ShiftUp(index);
+
+			Emplace(index, elem);
+
+			return index;
+		}
+
+		/**
+		 * Moves the given element to the requested index, assuming the index is valid
+		 * Shifts up all proceeding array elements
+		 */
+		Size Insert(ElementType&& elem, Size index)
+		{
+			// vibe check
+			CHECK((index >= 0) && (index < m_ArrayCount));
+
+			MakeRoom();
 			ShiftUp(index);
 
 			Emplace(index, elem);
@@ -299,12 +318,21 @@ namespace Noble
 	private:
 
 		/**
-		 * Constructs a new element at the given index and passes in the args
+		 * Moves the element to the given index
 		 */
-		template <typename... Args>
-		FORCEINLINE Size Emplace(Size index, Args&&... args)
+		Size Emplace(Size index, ElementType&& elem)
 		{
-			new (GetData() + index) ElementType(args...);
+			*(GetData() + index) = elem;
+			++m_ArrayCount;
+			return index;
+		}
+
+		/**
+		 * Copies the element to the given index
+		 */
+		Size Emplace(Size index, const ElementType& elem)
+		{
+			*(GetData() + index) = elem;
 			++m_ArrayCount;
 			return index;
 		}
@@ -324,21 +352,6 @@ namespace Noble
 			}
 
 			return old;
-		}
-
-		/**
-		 * Copies @count elements from the array @data
-		 * This function will overwrite any existing array elements!
-		 */
-		void CopyInit(ElementType* data, Size count)
-		{
-			CHECK(count > 0 && data != nullptr);
-
-			Resize(count);
-
-			Memory::Memcpy(m_Allocator.GetData(), data, count * ElementSize);
-			
-			m_ArrayCount = count;
 		}
 
 		/**
@@ -389,12 +402,14 @@ namespace Noble
 		}
 
 		/**
-		 * Copies the element at the first index to the second index
+		 * Moves the element at the "from" index to the "to" index
+		 * It will overwrite any existing element at the "to" index
 		 */
 		void MoveElement(Size fromIndex, Size toIndex)
 		{
-			ElementType& elem = GetData()[fromIndex];
-			Emplace(toIndex, elem);
+			ElementType tmp = std::move(GetData()[fromIndex]);
+			*(GetData() + fromIndex) = std::move(*(GetData() + toIndex));
+			*(GetData() + toIndex) = std::move(tmp);
 		}
 
 	private:
@@ -414,5 +429,5 @@ namespace Noble
 	};
 
 	template <typename T>
-	using Array = ArrayBase<T, BasicContainerAllocator>;
+	using Array = ArrayBase<T, DefaultContainerAllocator>;
 }

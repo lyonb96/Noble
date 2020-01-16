@@ -397,7 +397,7 @@ namespace Noble
 		Size m_StrLimit;
 	};
 
-	typedef BaseString<BasicContainerAllocator> String;
+	typedef BaseString<DefaultContainerAllocator> String;
 
 	/**
 	 * Time to go for compile-time string hashing
