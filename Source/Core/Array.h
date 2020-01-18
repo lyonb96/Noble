@@ -134,7 +134,7 @@ namespace Noble
 		{
 			Size index = MakeRoom();
 
-			Emplace(index, elem);
+			Emplace(index, std::move(elem));
 
 			return index;
 		}
@@ -152,7 +152,7 @@ namespace Noble
 		}
 
 		/**
-		 * Copies @count elements from the array @ptr
+		 * Moves @count elements from the array @ptr
 		 * Returns the index of the last added element
 		 */
 		Size AddMultiple(ElementType* ptr, Size count)
@@ -162,7 +162,7 @@ namespace Noble
 
 			for (U32 i = 0; i < count; ++i)
 			{
-				ElementType& elem = *(ptr + i);
+				ElementType elem = std::move(*(ptr + i));
 				Emplace(index, elem);
 				++index;
 			}
@@ -176,8 +176,7 @@ namespace Noble
 		 */
 		Size Insert(const ElementType& elem, Size index)
 		{
-			// vibe check
-			CHECK((index >= 0) && (index < m_ArrayCount));
+			/* VIBE */ CHECK((index >= 0) && (index < m_ArrayCount));
 
 			Size currentEnd = MakeRoom();
 			ShiftUp(index);

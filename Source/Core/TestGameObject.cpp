@@ -30,10 +30,5 @@ namespace Noble
 
 	void TestGameObject::OnSpawn()
 	{
-		StaticMeshComponent* test = GetComponent<StaticMeshComponent>(SID("Submesh"));
-		if (test)
-		{
-			NE_LOG_DEBUG("Found it!");
-		}
 	}
 }

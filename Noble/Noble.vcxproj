@@ -157,6 +157,7 @@
     <ClInclude Include="..\Source\Core\Array.h" />
     <ClInclude Include="..\Source\Core\Component.h" />
     <ClInclude Include="..\Source\Core\Config.h" />
+    <ClInclude Include="..\Source\Core\Freelist.h" />
     <ClInclude Include="..\Source\Core\GameObject.h" />
     <ClInclude Include="..\Source\Core\HelperMacros.h" />
     <ClInclude Include="..\Source\Core\Memory.h" />

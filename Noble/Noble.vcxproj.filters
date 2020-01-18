@@ -93,6 +93,9 @@
     <ClInclude Include="..\Source\Core\Array.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Freelist.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">

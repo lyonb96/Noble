@@ -182,7 +182,7 @@ namespace Noble
 		 * Calculates how much the allocator can/should grow by, and returns recommended
 		 * new max count
 		 */
-		const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount) { return 0; }
+		const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount = 0) { return 0; }
 
 		/**
          * Resizes the array to fit @newMax elements of size @elementSize
@@ -326,7 +326,7 @@ namespace Noble
 		/**
 		 * Fixed Allocator - just returns the fixed size
 		 */
-		const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount) { return N; }
+		const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount = 0) { return N; }
 
 		/**
 		 * Fixed Allocator - does not resize the array, just returns the existing data ptr

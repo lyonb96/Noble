@@ -14,6 +14,7 @@
 #include "World.h"
 #include "TestGameObject.h"
 #include "Array.h"
+#include "Freelist.h"
 
 #ifndef MAX_FIXED_STEPS_PER_FRAME
 #define MAX_FIXED_STEPS_PER_FRAME 5 // limit fixed steps per frame to avoid spiraling
@@ -148,6 +149,20 @@ namespace Noble
 
 		CHECK(arrayTest[0] == g_TestObject1);
 		CHECK(arrayTest.Find(g_TestObject2) == 1);
+
+		LinkedList<GameObject*> listTest(5);
+		listTest.PushTail(g_TestObject1);
+		listTest.PushTail(g_TestObject3);
+		listTest.Push(1, g_TestObject2);
+
+		listTest.PushTail(test4);
+
+		CHECK(listTest.GetHead() == g_TestObject1);
+		CHECK(listTest.Get(1) == g_TestObject2);
+
+		GameObject* testOut = listTest.PopTail();
+
+		CHECK(testOut == test4);
 
 		return true;
 	}
