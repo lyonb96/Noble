@@ -137,11 +137,13 @@ namespace Noble
 
 			if (index == 0)
 			{
-				return PushHead(elem);
+				PushHead(elem);
+				return;
 			}
 			else if (index == m_CurrentEntries)
 			{
-				return PushTail(elem);
+				PushTail(elem);
+				return;
 			}
 
 			ListEntry* start = m_Head, last = nullptr;

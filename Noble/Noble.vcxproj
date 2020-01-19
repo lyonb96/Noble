@@ -157,6 +157,7 @@
     <ClInclude Include="..\Source\Core\Array.h" />
     <ClInclude Include="..\Source\Core\Component.h" />
     <ClInclude Include="..\Source\Core\Config.h" />
+    <ClInclude Include="..\Source\Core\FileSystem.h" />
     <ClInclude Include="..\Source\Core\Freelist.h" />
     <ClInclude Include="..\Source\Core\GameObject.h" />
     <ClInclude Include="..\Source\Core\HelperMacros.h" />
@@ -166,7 +167,6 @@
     <ClInclude Include="..\Source\Core\TestGameObject.h" />
     <ClInclude Include="..\Source\Core\Time.h" />
     <ClInclude Include="..\Source\Core\Engine.h" />
-    <ClInclude Include="..\Source\Core\FileIO.h" />
     <ClInclude Include="..\Source\Core\Functional.h" />
     <ClInclude Include="..\Source\Core\GameInput.h" />
     <ClInclude Include="..\Source\Core\Globals.h" />
@@ -180,6 +180,7 @@
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Component.cpp" />
     <ClCompile Include="..\Source\Core\Config.cpp" />
+    <ClCompile Include="..\Source\Core\FileSystem.cpp" />
     <ClCompile Include="..\Source\Core\GameObject.cpp" />
     <ClCompile Include="..\Source\Core\HelperMacros.cpp" />
     <ClCompile Include="..\Source\Core\Memory.cpp" />
@@ -188,7 +189,6 @@
     <ClCompile Include="..\Source\Core\TestGameObject.cpp" />
     <ClCompile Include="..\Source\Core\Time.cpp" />
     <ClCompile Include="..\Source\Core\Engine.cpp" />
-    <ClCompile Include="..\Source\Core\FileIO.cpp" />
     <ClCompile Include="..\Source\Core\GameInput.cpp" />
     <ClCompile Include="..\Source\Core\Globals.cpp" />
     <ClCompile Include="..\Source\Core\Input.cpp" />

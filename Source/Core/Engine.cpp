@@ -157,6 +157,9 @@ namespace Noble
 
 		listTest.PushTail(test4);
 
+		const Size listSize = sizeof(arrayTest);
+		const Size allocSize = sizeof(DefaultContainerAllocator);
+
 		CHECK(listTest.GetHead() == g_TestObject1);
 		CHECK(listTest.Get(1) == g_TestObject2);
 

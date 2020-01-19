@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-#include "FileIO.h"
+#include "FileSystem.h"
 #include "String.h"
 
 #ifdef _DEBUG
@@ -126,14 +126,10 @@ namespace Noble
 
 		void PrintLog(const char* filename)
 		{
-			File logFile(filename, true);
-			if (logFile)
-			{
-				for (U32 i = 0; i < g_LogBufferPos; i++)
-				{
-					logFile << g_LogBuffer[i];
-				}
-			}
+			File logFile;
+			logFile.OpenFile(filename, false, FileMode::READWRITE);
+			
+			logFile.Write(g_LogBuffer, g_LogBufferPos);
 		}
 
 		void CloseLog()

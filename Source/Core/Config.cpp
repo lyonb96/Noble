@@ -2,7 +2,7 @@
 
 #include <json/json.hpp>
 
-#include "FileIO.h"
+#include "FileSystem.h"
 #include "Logger.h"
 
 namespace Noble
@@ -18,10 +18,20 @@ namespace Noble
 		{
 			NE_LOG_INFO("Loading configuration from file");
 
-			File configFile("JSON Test.txt");
-			if (configFile)
+			bool configExists = CheckExists("JSON Test.txt");
+			if (configExists)
 			{
-				configFile.ReadIntoJson(g_ConfigData);
+				Size configSize = CheckFileSize("JSON Test.txt");
+				File configFile/*("JSON Test.txt")*/;
+				configFile.OpenFile("JSON Test.txt", false);
+
+				char* data = static_cast<char*>(Memory::Malloc(configSize + 1, NOBLE_DEFAULT_ALIGN));
+				configFile.Read((U8*)data, configSize);
+				data[configSize] = '\0';
+
+				g_ConfigData = json::parse(data);
+				
+				Memory::Free(data);
 			}
 			else
 			{
@@ -33,9 +43,11 @@ namespace Noble
 		void SaveConfig()
 		{
 			NE_LOG_INFO("Saving config to file");
-			File configFile("JSON Test.txt", true, true);
+			File configFile/*("JSON Test.txt", true, true)*/;
+			configFile.OpenFile("JSON Test.txt", false, FileMode::READWRITE);
 
-			configFile << g_ConfigData.dump(4);
+			std::string str = g_ConfigData.dump(4);
+			configFile.Write(str.c_str(), str.length());
 		}
 
 		json& GetConfigData()

@@ -1,6 +1,6 @@
 #include "StaticMeshComponent.h"
 
-#include "FileIO.h"
+#include "FileSystem.h"
 
 #include <string.h>
 
@@ -31,15 +31,17 @@ namespace Noble
 		strcat_s(filePath, name);
 		strcat_s(filePath, ".bin");
 
+		bool exists = CheckExists(filePath);
 
-		File shaderFile(filePath);
-
-		if (shaderFile)
+		if (exists)
 		{
+			File shaderFile;
+			shaderFile.OpenFile(filePath);
+
 			Size fSize = shaderFile.GetFileSize();
 			const bgfx::Memory* mem = bgfx::alloc(fSize + 1);
 			
-			shaderFile.ReadIntoBuffer( (char*) mem->data);
+			shaderFile.Read(mem->data, fSize);
 			mem->data[mem->size - 1] = '\0';
 
 			bgfx::ShaderHandle handle = bgfx::createShader(mem);
