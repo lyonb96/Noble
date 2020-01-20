@@ -368,8 +368,7 @@ namespace Noble
 
 			for (U32 i = 0; i < count; ++i)
 			{
-				ElementType elem = std::move(*(ptr + i));
-				Emplace(index, elem);
+				Emplace(index, std::move(*(ptr + i)));
 				++index;
 			}
 
@@ -635,7 +634,7 @@ namespace Noble
 		 */
 		bool CheckIndex(const Size& index) const
 		{
-			return index >= 0 && index < m_ArrayCount;
+			return (index >= 0 && index < m_ArrayCount);
 		}
 
 	private:
@@ -656,6 +655,10 @@ namespace Noble
 		 */
 		Size Emplace(Size index, ElementType&& elem)
 		{
+			if (index >= m_ArrayMax)
+			{
+				return SizeMaxValue;
+			}
 			*(GetData() + index) = elem;
 			++m_ArrayCount;
 			return index;
@@ -666,6 +669,10 @@ namespace Noble
 		 */
 		Size Emplace(Size index, const ElementType& elem)
 		{
+			if (index >= m_ArrayMax)
+			{
+				return SizeMaxValue;
+			}
 			*(GetData() + index) = elem;
 			++m_ArrayCount;
 			return index;

@@ -17,7 +17,7 @@ namespace Noble
 			// Array of triggers, all default to unassigned
 			Action m_Triggers[3];
 			// String identifier
-			FixedString<16> m_Identifier;
+			NStringFixed<16> m_Identifier;
 			// Hash of the identifier
 			U32 m_IdentifierHash;
 
@@ -97,7 +97,7 @@ namespace Noble
 			} m_Triggers[6];
 
 			// String identifier
-			FixedString<16> m_Identifier;
+			NStringFixed<16> m_Identifier;
 			// Hash of the string identifier
 			U32 m_IdentifierHash;
 

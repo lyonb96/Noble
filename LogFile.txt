@@ -2,23 +2,5 @@
 [Noble] INFO: Loading configuration from file
 [Noble] DEBUG: Creating game window
 [Noble] DEBUG: After adjustment, size: 1296 x 759
-[Noble] DEBUG: ./.git
-[Noble] DEBUG: ./.gitattributes
-[Noble] DEBUG: ./.gitignore
-[Noble] DEBUG: ./.vs
-[Noble] DEBUG: ./3rdParty
-[Noble] DEBUG: ./Content
-[Noble] DEBUG: ./Include
-[Noble] DEBUG: ./Intermediate
-[Noble] DEBUG: ./JSON Test - Backup.txt
-[Noble] DEBUG: ./JSON Test.txt
-[Noble] DEBUG: ./Library
-[Noble] DEBUG: ./LogFile.txt
-[Noble] DEBUG: ./Noble
-[Noble] DEBUG: ./Noble.sln
-[Noble] DEBUG: ./Output
-[Noble] DEBUG: ./rambles.txt
-[Noble] DEBUG: ./Source
-[Noble] DEBUG: Hello, World!
 [Noble] INFO: Engine shutting down
 [Noble] INFO: Saving config to file

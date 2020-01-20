@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <cmath>
+#include <type_traits>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -25,6 +26,12 @@ namespace Noble
 	typedef std::uint32_t U32;
 	typedef std::int64_t I64;
 	typedef std::uint64_t U64;
+
+	// Byte types for buffers and such
+	typedef char Byte;
+	static_assert(sizeof(Byte) == 1 && std::is_signed<Byte>::value);
+	typedef unsigned char UByte;
+	static_assert(sizeof(UByte) == 1 && !std::is_signed<UByte>::value);
 
 	// Floating point
 	typedef half_float::half F16;

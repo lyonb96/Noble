@@ -1,6 +1,7 @@
 #include "FileSystem.h"
 
 #include "Logger.h"
+#include "WindowsMinimal.h"
 
 namespace Noble
 {
@@ -222,5 +223,239 @@ namespace Noble
 		{
 			fputc(buffer[i], m_FileHandle);
 		}
+	}
+
+	// ----- Mapped File -----
+
+	MappedFile::MappedFile()
+		: m_FilePath(), m_FileSize(0), m_MappedSize(0)
+	{
+		m_MappedFile = nullptr;
+		m_File = nullptr;
+		m_MappedView = nullptr;
+	}
+
+	MappedFile::MappedFile(const fs::path& path, Size mappedSize, CacheHint hint)
+		: MappedFile()
+	{
+		Open(path, mappedSize, hint);
+	}
+
+	MappedFile::MappedFile(MappedFile&& other) noexcept
+	{
+		m_FilePath = std::move(other.m_FilePath);
+		m_FileSize = other.m_FileSize;
+		m_MappedSize = other.m_MappedSize;
+		m_MappedFile = other.m_MappedFile;
+		m_MappedView = other.m_MappedView;
+		m_File = other.m_File;
+
+		other.m_FileSize = 0;
+		other.m_MappedSize = 0;
+		other.m_MappedFile = nullptr;
+		other.m_MappedView = nullptr;
+		other.m_File = nullptr;
+	}
+
+	MappedFile& MappedFile::operator=(MappedFile&& other) noexcept
+	{
+		// Close any existing opened file
+		if (IsValid())
+		{
+			Close();
+		}
+
+		m_FilePath = std::move(other.m_FilePath);
+		m_FileSize = other.m_FileSize;
+		m_MappedSize = other.m_MappedSize;
+		m_MappedFile = other.m_MappedFile;
+		m_MappedView = other.m_MappedView;
+		m_File = other.m_File;
+
+		other.m_FileSize = 0;
+		other.m_MappedSize = 0;
+		other.m_MappedFile = nullptr;
+		other.m_MappedView = nullptr;
+		other.m_File = nullptr;
+
+		return *this;
+	}
+
+	MappedFile::~MappedFile()
+	{
+		if (IsValid())
+		{
+			Close();
+		}
+	}
+
+	bool MappedFile::Open(const fs::path& path, Size mappedSize, CacheHint hint)
+	{
+		// Don't map another file if this is already mapped
+		if (IsValid())
+		{
+			return false;
+		}
+
+		// Prepare member fields
+		m_File = nullptr;
+		m_FileSize = 0;
+		m_MappedFile = nullptr;
+		m_MappedView = nullptr;
+
+		// Grab the proper cache hint constant
+		DWORD whint = 0;
+		switch (hint)
+		{
+		case Normal: whint = FILE_ATTRIBUTE_NORMAL;
+		case SequentialScan: whint = FILE_FLAG_SEQUENTIAL_SCAN;
+		case RandomAccess: whint = FILE_FLAG_RANDOM_ACCESS;
+		default: break;
+		}
+
+		// Messy! Convert std::filesystem::path's wchar_t string to a c_str that's Windows friendly
+		Size strlen = path.string().length();
+		const wchar_t* str = path.c_str();
+		char* cstr = new char[strlen + 1];
+		Size converted = 0;
+		wcstombs_s(&converted, cstr, size_t(strlen + 1), str, size_t(strlen));
+
+		// Actually open the file
+		m_File = CreateFileA(cstr, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, whint, NULL);
+		delete[] cstr;
+
+		if (!m_File)
+		{
+			return false;
+		}
+
+		// Grab file size
+		LARGE_INTEGER result;
+		if (!GetFileSizeEx(m_File, &result))
+		{
+			return false;
+		}
+		m_FileSize = static_cast<Size>(result.QuadPart);
+
+		// Convert to mapped file
+		m_MappedFile = ::CreateFileMapping(m_File, NULL, PAGE_READONLY, 0, 0, NULL);
+		if (!m_MappedFile)
+		{
+			return false;
+		}
+
+		// Map the initial part
+		Remap(0, mappedSize);
+
+		if (!m_MappedView)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	void MappedFile::Close()
+	{
+		if (m_MappedView)
+		{
+			::UnmapViewOfFile(m_MappedView);
+			m_MappedView = nullptr;
+		}
+
+		if (m_MappedFile)
+		{
+			::CloseHandle(m_MappedFile);
+			m_MappedFile = NULL;
+		}
+
+		if (m_File)
+		{
+			::CloseHandle(m_File);
+			m_File = 0;
+		}
+
+		m_FileSize = 0;
+	}
+
+	bool MappedFile::Remap(Size offset, Size mappedSize)
+	{
+		if (!m_File)
+		{
+			return false;
+		}
+
+		// mappedSize of 0 means map the whole file
+		if (mappedSize == 0)
+		{
+			mappedSize = m_FileSize;
+		}
+
+		// Clear the existing mapped view
+		if (m_MappedView)
+		{
+			::UnmapViewOfFile(m_MappedView);
+			m_MappedView = NULL;
+		}
+
+		// Check the passed-in constants for validity, adjust accordingly
+		if (offset > m_FileSize)
+		{
+			NE_LOG_ERROR("Cannot map file with offset greater than file size!");
+			return false;
+		}
+		if (offset + mappedSize > m_FileSize)
+		{
+			NE_LOG_WARNING("Requested map size [" << mappedSize << "] and offset [" << offset << "] exceeds file size ["
+				<< m_FileSize << "]. Actual mapped size will be less than requested.");
+			mappedSize = (m_FileSize - offset);
+		}
+
+		DWORD offsetLow = DWORD(offset & 0xFFFFFFFF);
+		DWORD offsetHigh = DWORD(offset >> 32);
+		m_MappedSize = mappedSize;
+
+		m_MappedView = ::MapViewOfFile(m_MappedFile, FILE_MAP_READ, offsetHigh, offsetLow, mappedSize);
+		if (m_MappedView == NULL)
+		{
+			m_MappedSize = 0;
+			m_MappedView = NULL;
+			return false;
+		}
+
+		return true;
+	}
+
+	Size MappedFile::GetFileSize() const
+	{
+		return m_FileSize;
+	}
+
+	Size MappedFile::GetMappedSize() const
+	{
+		return m_MappedSize;
+	}
+
+	U32 MappedFile::GetPageSize()
+	{
+		SYSTEM_INFO sys;
+		GetSystemInfo(&sys);
+		return sys.dwAllocationGranularity;
+	}
+
+	const UByte* MappedFile::GetData() const
+	{
+		return static_cast<UByte*>(m_MappedFile);
+	}
+
+	UByte MappedFile::At(Size offset) const
+	{
+		CHECK(offset >= 0 && offset < GetMappedSize());
+		return GetData()[offset];
+	}
+
+	UByte MappedFile::operator[](Size offset) const
+	{
+		return At(offset);
 	}
 }

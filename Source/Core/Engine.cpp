@@ -141,21 +141,6 @@ namespace Noble
 		g_TestObject2 = g_TestWorld.SpawnGameObject<TestGameObject>();
 		g_TestObject3 = g_TestWorld.SpawnGameObject<TestGameObject>();
 
-		Directory testDir("./");
-		Array<fs::path> paths = testDir.GetChildren();
-
-		for (auto path : paths)
-		{
-			NE_LOG_DEBUG(path.c_str());
-		}
-
-		NString str;
-		str += "Hello, ";
-		NString str2 = "World!";
-		NString str3 = str + str2;
-		const char* strRaw = str3;
-		NE_LOG_DEBUG(strRaw);
-
 		return true;
 	}
 

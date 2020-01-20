@@ -1,10 +1,5 @@
 #pragma once
 
-// Memory 2.0
-// This time it won't just be a clone of Molecule's
-// It'll be a clone of Unreal's!
-// Just kidding...
-
 #include "Types.h"
 #include <type_traits>
 
@@ -30,35 +25,6 @@ namespace Noble
 		typedef BoolToType<true> PODType;
 		typedef BoolToType<false> NonPODType;
 	}
-
-	// Container allocator structure:
-	// void Resize(size, alignment)
-	// Size GetAllocatedSize()
-	// void* GetData()
-
-	// The gist of the new memory system is focused on container 
-	// allocation, because most allocation for the game will take
-	// place in containers that require special allocation procedures.
-	// Therefore a template based API similar to the old system will
-	// be used to introduce virtual-free allocation and free mechanics,
-	// that slot directly into custom containers. I didn't originaly
-	// want to do custom containers, but doing so allows much more
-	// freedom when it comes to allocation procedures and underlying
-	// data structures. There's no guarantee that std::vector will be
-	// consistently implemented acrossa platforms, and trying to write
-	// my own custom std::allocator to fit may work on some platforms
-	// and break on others, so I'd rather own the pipeline all the way
-	// through.
-
-	// The second major part of the new memory management system is 
-	// standard Allocators. These will work similarly to the old 
-	// MemoryArenas, but will be a little more pared down and 
-	// simplified. They will simply return some bytes to the user.
-
-	// All allocator types should clean up after themselves when their 
-	// destructor runs, to prevent memory leaks. This may not be 
-	// necessary for "gloabl" type allocators, but we'll cross that 
-	// bridge when we come to it.
 
 	/**
 	 * Wrappers to system calls to support mem tracking
@@ -443,8 +409,97 @@ namespace Noble
 	public:
 
 		FixedContainerAllocator()
-			: m_Data(nullptr), m_AllocSize(0)
+			: m_Data(nullptr), m_AllocSize(0), m_ElemSize(0), m_ElemAlign(0)
 		{
+		}
+
+		/**
+		 * Copies the elements from the given allocator to this one
+		 */
+		FixedContainerAllocator(const FixedContainerAllocator& other)
+		{
+			m_Data = nullptr;
+			m_AllocSize = 0;
+			m_ElemSize = 0;
+			m_ElemAlign = 0;
+			if (other.m_Data)
+			{
+				// Resize - in the case of the fixed, the requested max doesn't matter
+				Resize(other.m_ElemSize, 0, other.m_ElemAlign);
+				// Copy elements
+				Memory::Memcpy(m_Data, other.m_Data, m_AllocSize);
+			}
+		}
+
+		/**
+		 * Moves the elements from the given allocator to this one, invalidating the original
+		 */
+		FixedContainerAllocator(FixedContainerAllocator&& other)
+		{
+			m_Data = other.m_Data;
+			m_AllocSize = other.m_AllocSize;
+			m_ElemSize = other.m_ElemSize;
+			m_ElemAlign = other.m_ElemAlign;
+
+			other.m_Data = nullptr;
+			other.m_AllocSize = 0;
+			other.m_ElemSize = 0;
+			other.m_ElemAlign = 0;
+		}
+
+		/**
+		 * Copies the elements from the given allocator to this one
+		 * Also frees any memory that is currently in this allocator!
+		 */
+		FixedContainerAllocator& operator=(const FixedContainerAllocator& other)
+		{
+			if (this == &other)
+			{
+				return *this;
+			}
+
+			if (m_Data)
+			{
+				Memory::Free(m_Data);
+			}
+
+			m_Data = nullptr;
+			m_AllocSize = 0;
+			m_ElemSize = 0;
+			m_ElemAlign = 0;
+			if (other.m_Data)
+			{
+				// Resize - in the case of the fixed, the requested max doesn't matter
+				Resize(other.m_ElemSize, 0, other.m_ElemAlign);
+				// Copy elements
+				Memory::Memcpy(m_Data, other.m_Data, m_AllocSize);
+			}
+
+			return *this;
+		}
+
+		/**
+		 * Moves the elements from the given allocator to this one, invalidating the original
+		 * Also frees any memory that is currently in this allocator!
+		 */
+		FixedContainerAllocator& operator=(FixedContainerAllocator&& other)
+		{
+			if (m_Data)
+			{
+				Memory::Free(m_Data);
+			}
+
+			m_Data = other.m_Data;
+			m_AllocSize = other.m_AllocSize;
+			m_ElemSize = other.m_ElemSize;
+			m_ElemAlign = other.m_ElemAlign;
+
+			other.m_Data = nullptr;
+			other.m_AllocSize = 0;
+			other.m_ElemSize = 0;
+			other.m_ElemAlign = 0;
+
+			return *this;
 		}
 
 		/**
@@ -459,6 +514,8 @@ namespace Noble
 		{
 			if (!m_Data)
 			{
+				m_ElemSize = elementSize;
+				m_ElemAlign = align;
 				m_AllocSize = elementSize * N;
 				m_Data = Memory::Malloc(m_AllocSize, align);
 			}
@@ -516,6 +573,10 @@ namespace Noble
 		void* m_Data;
 		// Total allocated size
 		Size m_AllocSize;
+		// Element size
+		Size m_ElemSize;
+		// Element align
+		Size m_ElemAlign;
 	};
 
 	/**

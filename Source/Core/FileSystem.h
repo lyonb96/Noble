@@ -151,4 +151,121 @@ namespace Noble
 		FILE* m_FileHandle;
 
 	};
+
+	/**
+	 * Memory-mapped File
+	 * Inspired by Stephan Brumme's MemoryMapped
+	 * https://github.com/stbrumme/portable-memory-mapping
+	 */
+	class MappedFile
+	{
+	public:
+
+		enum CacheHint
+		{
+			Normal,
+			SequentialScan,
+			RandomAccess
+		};
+
+		/**
+		 * Empty init
+		 */
+		MappedFile();
+
+		/**
+		 * Initializes the MappedFile and attempts to open the requested File
+		 */
+		explicit MappedFile(const fs::path& path, Size mappedSize = 0, CacheHint hint = Normal);
+
+		/**
+		 * Moves the mapped file info from the other instance to this one, invalidating the original
+		 */
+		MappedFile(MappedFile&& other) noexcept;
+
+		/**
+		 * Moves the mapped file info from the other instance to this one, invalidating the original
+		 */
+		MappedFile& operator=(MappedFile&& other) noexcept;
+
+		// No copying allowed
+		MappedFile(const MappedFile& other) = delete;
+		MappedFile& operator=(const MappedFile& other) = delete;
+
+		/**
+		 * Cleans up and closes the file
+		 */
+		~MappedFile();
+
+	public:
+
+		/**
+		 * Attempts to open the requested file and map the requested number of bytes (default: ALL THE BYTES)
+		 * Returns false on failure
+		 */
+		bool Open(const fs::path& path, Size mappedSize = 0, CacheHint hint = Normal);
+
+		/**
+		 * Cleans up and closes the file
+		 */
+		void Close();
+
+		/**
+		 * Remaps to a new offset in the same file
+		 * Offset must be a multiple of the OS page size
+		 */
+		bool Remap(Size offset, Size mappedSize);
+
+		/**
+		 * Returns true if a file is successfully opened
+		 */
+		FORCEINLINE bool IsValid() const { return m_MappedView != NULL; };
+
+		/**
+		 * Returns the total file size in bytes
+		 * Returns 0 if no file is mapped
+		 */
+		Size GetFileSize() const;
+
+		/**
+		 * Returns the number of bytes currently mapped
+		 * Returns 0 if no file is mapped
+		 */
+		Size GetMappedSize() const;
+
+		/**
+		 * Returns the data for the mapped portion of the file
+		 */
+		const UByte* GetData() const;
+
+		/**
+		 * Returns the byte at the requested offset
+		 */
+		UByte At(Size offset) const;
+
+		/**
+		 * Returns the byte at the requested offset
+		 */
+		UByte operator[](Size offset) const;
+
+	private:
+
+		/**
+		 * Returns OS page file size
+		 */
+		static U32 GetPageSize();
+
+		// Path to the file
+		fs::path m_FilePath;
+		// File size
+		Size m_FileSize;
+		// Mapped size
+		Size m_MappedSize;
+
+		// Platform specifics
+		typedef void* FileHandle;
+		void* m_MappedFile;
+		FileHandle m_File;
+		void* m_MappedView;
+	};
 }

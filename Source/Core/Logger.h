@@ -175,14 +175,8 @@ namespace Noble
 				return *this;
 			}
 
-			template<>
-			StringFormatter& operator<< (const NString& str)
-			{
-				return operator<<(str.GetCharArray());
-			}
-
-			template<>
-			StringFormatter& operator<< (NString& str)
+			template<typename Allocator>
+			StringFormatter& operator<< (const NStringBase<Allocator>& str)
 			{
 				return operator<<(str.GetCharArray());
 			}
