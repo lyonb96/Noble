@@ -19,5 +19,6 @@
 [Noble] DEBUG: ./Output
 [Noble] DEBUG: ./rambles.txt
 [Noble] DEBUG: ./Source
+[Noble] DEBUG: Hello, World!
 [Noble] INFO: Engine shutting down
 [Noble] INFO: Saving config to file

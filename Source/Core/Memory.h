@@ -241,6 +241,11 @@ namespace Noble
 		{
 			if (other.m_ElemCount > 0)
 			{
+				m_ElemCount = 0;
+				m_ElemSize = 0;
+				m_ElemAlign = 0;
+				m_AllocSize = 0;
+				m_Data = nullptr;
 				// Resize to make room for the copy
 				Resize(other.m_ElemSize, other.m_ElemCount, other.m_ElemAlign);
 				// Copy all of the elements
@@ -261,6 +266,68 @@ namespace Noble
 		 */
 		FORCEINLINE DefaultContainerAllocator(DefaultContainerAllocator&& other) noexcept
 		{
+			m_ElemCount = other.m_ElemCount;
+			m_AllocSize = other.m_AllocSize;
+			m_Data = other.m_Data;
+			m_ElemSize = other.m_ElemSize;
+			m_ElemAlign = other.m_ElemAlign;
+
+			other.m_ElemCount = 0;
+			other.m_AllocSize = 0;
+			other.m_Data = nullptr;
+			other.m_ElemSize = 0;
+			other.m_ElemAlign = 0;
+		}
+
+		/**
+		 * Copy assignment
+		 */
+		FORCEINLINE DefaultContainerAllocator& operator=(const DefaultContainerAllocator& other)
+		{
+			if (this == &other)
+			{
+				return *this;
+			}
+
+			if (m_Data)
+			{
+				Memory::Free(m_Data);
+			}
+
+			if (other.m_ElemCount > 0)
+			{
+				m_ElemCount = 0;
+				m_ElemSize = 0;
+				m_ElemAlign = 0;
+				m_AllocSize = 0;
+				m_Data = nullptr;
+				// Resize to make room for the copy
+				Resize(other.m_ElemSize, other.m_ElemCount, other.m_ElemAlign);
+				// Copy all of the elements
+				Memory::Memcpy(m_Data, other.m_Data, m_AllocSize);
+			}
+			else
+			{
+				m_ElemCount = other.m_ElemCount;
+				m_AllocSize = other.m_AllocSize;
+				m_Data = nullptr;
+				m_ElemSize = other.m_ElemSize;
+				m_ElemAlign = other.m_ElemAlign;
+			}
+
+			return *this;
+		}
+
+		/**
+		 * Move assignment
+		 */
+		FORCEINLINE DefaultContainerAllocator& operator=(DefaultContainerAllocator&& other) noexcept
+		{
+			if (m_Data)
+			{
+				Memory::Free(m_Data);
+			}
+
 			m_ElemCount = other.m_ElemCount;
 			m_AllocSize = other.m_AllocSize;
 			m_Data = other.m_Data;

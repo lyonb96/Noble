@@ -2,6 +2,7 @@
 
 #include "HelperMacros.h"
 #include "Memory.h"
+#include "String.h"
 
 #include <cstring>
 
@@ -172,6 +173,18 @@ namespace Noble
 				}
 
 				return *this;
+			}
+
+			template<>
+			StringFormatter& operator<< (const NString& str)
+			{
+				return operator<<(str.GetCharArray());
+			}
+
+			template<>
+			StringFormatter& operator<< (NString& str)
+			{
+				return operator<<(str.GetCharArray());
 			}
 
 			/**

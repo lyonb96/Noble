@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "Array.h"
 #include "Types.h"
 #include "Memory.h"
 
@@ -398,6 +399,191 @@ namespace Noble
 	};
 
 	typedef BaseString<DefaultContainerAllocator> String;
+
+	/**
+	 * There are too many wonky extraneous types floating around
+	 * It's time to pare down strings. 2 new types of strings will be introduced
+	 * NString: A standard, variable-length string
+	 * NIdentifier: A rename of the existing PString, contains an immutable string and hash
+	 */
+
+	/**
+	 * Primary string class for the engine, uses any Container allocator
+	 */
+	template <class Allocator>
+	class NStringBase
+	{
+	public:
+
+		NStringBase()
+		{
+			m_Array.Add(s_char(0));
+		}
+
+		/**
+		 * Creates a copy of the string from the given NString
+		 */
+		NStringBase(const NStringBase& other)
+			: m_Array(other.m_Array)
+		{}
+
+		/**
+		 * Moves the requested string into this instance
+		 */
+		NStringBase(NStringBase&& other)
+			: m_Array(std::move(other.m_Array))
+		{}
+
+		/**
+		 * Initializes the string with a raw string
+		 */
+		NStringBase(const s_char* init)
+		{
+			AppendString(init, std::strlen(init));
+		}
+
+	public:
+
+		/**
+		 * Copy assignment
+		 */
+		NStringBase& operator=(const NStringBase other)
+		{
+			if (this == &other)
+			{
+				return *this;
+			}
+
+			m_Array = other.m_Array;
+			return *this;
+		}
+
+		/**
+		 * Move assignment
+		 */
+		NStringBase& operator=(NStringBase&& other)
+		{
+			m_Array = std::move(other.m_Array);
+			return *this;
+		}
+
+		/**
+		 * Appends the raw string to this instance
+		 */
+		NStringBase& operator+=(const s_char* val)
+		{
+			AppendString(val, std::strlen(val));
+
+			return *this;
+		}
+
+		/**
+		 * Appends the NString to this instance
+		 */
+		NStringBase& operator+=(const NStringBase& other)
+		{
+			AppendString(other.GetCharArray(), other.GetLength());
+
+			return *this;
+		}
+
+		/**
+		 * Returns a new NString with the given raw string added to it
+		 */
+		NStringBase operator+(const s_char* val)
+		{
+			NStringBase tmp(*this);
+			return tmp += val;
+		}
+
+		/**
+		 * Returns a new NString with the given NString added to it
+		 */
+		NStringBase operator+(const NStringBase& other)
+		{
+			NStringBase tmp(*this);
+			return tmp += other;
+		}
+
+		/**
+		 * Allows access to string characters via [] operator
+		 */
+		s_char& operator[](Size index)
+		{
+			return m_Array[index];
+		}
+
+		/**
+		 * Allows access to string characters via [] operator
+		 */
+		const s_char& operator[](Size index) const
+		{
+			return m_Array[index];
+		}
+
+	public:
+
+		/**
+		 * Returns the length of the string
+		 */
+		const Size GetLength() const
+		{
+			// Minus 1 is there to exclude the null terminator
+			return m_Array.GetCount() - 1;
+		}
+
+		/**
+		 * Returns the current max number of characters the string can hold (without reallocating)
+		 */
+		const Size GetMaxLength() const
+		{
+			// Minus 1 is there to leave room for null terminator
+			return m_Array.GetMax() - 1;
+		}
+
+		/**
+		 * Returns a raw string array
+		 */
+		s_char* GetCharArray()
+		{
+			return m_Array.GetData();
+		}
+
+		/**
+		 * Returns a raw string array
+		 */
+		const s_char* GetCharArray() const
+		{
+			return m_Array.GetData();
+		}
+
+		operator const s_char* () const
+		{
+			return m_Array.GetData();
+		}
+
+	private:
+
+		/**
+		 * Internally used as a single central place for appending multiple chars to the string
+		 */
+		void AppendString(const s_char* str, Size count)
+		{
+			CHECK(str && count > 0);
+
+			// Remove the top element, which will always be the null terminator
+			m_Array.RemoveAt(GetLength());
+			// Add the string to it, including null terminator
+			m_Array.AddMultiple(str, count + 1);
+		}
+
+	private:
+
+		// Array that handles all of the adding/removing
+		ArrayBase<s_char, Allocator> m_Array;
+	};
+
+	typedef NStringBase<DefaultContainerAllocator> NString;
 
 	/**
 	 * Time to go for compile-time string hashing

@@ -301,6 +301,36 @@ namespace Noble
 			other.m_ArrayCount = 0;
 		}
 
+		/**
+		 * Copy assignment
+		 */
+		ArrayBase& operator=(const ArrayBase& other)
+		{
+			if (this == &other)
+			{
+				return *this;
+			}
+
+			m_Allocator = other.m_Allocator;
+			m_ArrayMax = other.m_ArrayMax;
+			m_ArrayCount = other.m_ArrayCount;
+
+			return *this;
+		}
+
+		/**
+		 * Move assignment
+		 */
+		ArrayBase& operator=(ArrayBase&& other)
+		{
+			m_Allocator = std::move(other.m_Allocator);
+			m_ArrayMax = other.m_ArrayMax;
+			m_ArrayCount = other.m_ArrayCount;
+
+			other.m_ArrayCount = 0;
+			other.m_ArrayMax = 0;
+		}
+
 	public:
 
 		/**
@@ -340,6 +370,24 @@ namespace Noble
 			{
 				ElementType elem = std::move(*(ptr + i));
 				Emplace(index, elem);
+				++index;
+			}
+
+			return index;
+		}
+
+		/**
+		 * Copies @count elements from the array @ptr
+		 * Returns the index of the last added element
+		 */
+		Size AddMultiple(const ElementType* ptr, Size count)
+		{
+			// Prepare the array
+			Size index = MakeRoom(count);
+
+			for (U32 i = 0; i < count; ++i)
+			{
+				Emplace(index, *(ptr + i));
 				++index;
 			}
 
@@ -447,6 +495,16 @@ namespace Noble
 		 * Provides access to Array elements via [] operator
 		 */
 		ElementType& operator[](Size index)
+		{
+			CHECK(index >= 0 && index < m_ArrayCount);
+
+			return GetData()[index];
+		}
+
+		/**
+		 * Provides access to Array elements via [] operator
+		 */
+		const ElementType& operator[](Size index) const
 		{
 			CHECK(index >= 0 && index < m_ArrayCount);
 

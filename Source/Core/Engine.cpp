@@ -149,6 +149,13 @@ namespace Noble
 			NE_LOG_DEBUG(path.c_str());
 		}
 
+		NString str;
+		str += "Hello, ";
+		NString str2 = "World!";
+		NString str3 = str + str2;
+		const char* strRaw = str3;
+		NE_LOG_DEBUG(strRaw);
+
 		return true;
 	}
 
