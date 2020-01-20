@@ -160,6 +160,20 @@ namespace Noble
 				return *this;
 			}
 
+			template<>
+			StringFormatter& operator<< (const wchar_t* data)
+			{
+				for (U32 i = 0; i < std::wcslen(data); i++)
+				{
+					if (data[i] != '\0')
+					{
+						m_Buffer[m_Index++] = char(data[i]);
+					}
+				}
+
+				return *this;
+			}
+
 			/**
 			 * This function implicitly adds the null terminator to the string
 			 */

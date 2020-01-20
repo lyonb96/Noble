@@ -2,6 +2,8 @@
 
 #include <json/json.hpp>
 
+#include <fstream>
+
 #include "Config.h"
 #include "GameInput.h"
 #include "Globals.h"
@@ -15,6 +17,7 @@
 #include "TestGameObject.h"
 #include "Array.h"
 #include "Freelist.h"
+#include "FileSystem.h"
 
 #ifndef MAX_FIXED_STEPS_PER_FRAME
 #define MAX_FIXED_STEPS_PER_FRAME 5 // limit fixed steps per frame to avoid spiraling
@@ -137,35 +140,14 @@ namespace Noble
 		g_TestObject1 = g_TestWorld.SpawnGameObject<TestGameObject>();
 		g_TestObject2 = g_TestWorld.SpawnGameObject<TestGameObject>();
 		g_TestObject3 = g_TestWorld.SpawnGameObject<TestGameObject>();
-		GameObject* test4 = g_TestWorld.SpawnGameObject<TestGameObject>();
 
-		Array<GameObject*> arrayTest;
-		arrayTest.Resize(5);
+		Directory testDir("./");
+		Array<fs::path> paths = testDir.GetChildren();
 
-		arrayTest.Add(g_TestObject1);
-		arrayTest.Add(g_TestObject2);
-		arrayTest.Add(g_TestObject3);
-		arrayTest.Add(test4);
-
-		CHECK(arrayTest[0] == g_TestObject1);
-		CHECK(arrayTest.Find(g_TestObject2) == 1);
-
-		LinkedList<GameObject*> listTest(5);
-		listTest.PushTail(g_TestObject1);
-		listTest.PushTail(g_TestObject3);
-		listTest.Push(1, g_TestObject2);
-
-		listTest.PushTail(test4);
-
-		const Size listSize = sizeof(arrayTest);
-		const Size allocSize = sizeof(DefaultContainerAllocator);
-
-		CHECK(listTest.GetHead() == g_TestObject1);
-		CHECK(listTest.Get(1) == g_TestObject2);
-
-		GameObject* testOut = listTest.PopTail();
-
-		CHECK(testOut == test4);
+		for (auto path : paths)
+		{
+			NE_LOG_DEBUG(path.c_str());
+		}
 
 		return true;
 	}

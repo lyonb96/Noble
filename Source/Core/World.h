@@ -2,6 +2,7 @@
 
 #include <type_traits>
 
+#include "Array.h"
 #include "GameObject.h"
 #include "Logger.h"
 
@@ -41,7 +42,7 @@ namespace Noble
 
 			object->PostInit(compList, m_TempCount);
 			ClearTempArray();
-			//m_GameObjects.Add(object);
+			m_GameObjects.Add(object);
 
 			object->OnSpawn();
 
@@ -65,7 +66,7 @@ namespace Noble
 			T* comp = NE_NEW(m_GameMemory, T);
 			comp->SetOwningObject(owner);
 			comp->SetComponentName(name);
-			//m_Components->Add(comp);
+			m_Components.Add(comp);
 
 			m_TempArray[m_TempCount++] = comp;
 
@@ -88,11 +89,10 @@ namespace Noble
 		// Memory Arena for GameObjects + Components
 		GameMemoryArena m_GameMemory;
 
-		// Handles allocating objects and components
-		//BlockAllocator m_GameObjectAllocator;
-
-		//Array<GameObject*> m_GameObjects;
-		//Array<Component*> m_Components;
+		// Array of all currently spawned GameObjects
+		Array<GameObject*> m_GameObjects;
+		// Array of all Components in the game
+		Array<Component*> m_Components;
 
 	};
 }

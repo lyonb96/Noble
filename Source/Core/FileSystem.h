@@ -3,11 +3,58 @@
 #include <cstdio>
 #include <filesystem>
 
+#include "Array.h"
 #include "Memory.h"
 #include "Types.h"
 
 namespace Noble
 {
+	namespace fs = std::filesystem;
+
+	/**
+	 * Represents a directory and allows traversal to parent and child directories
+	 * Can also return an open File contained in the directory
+	 */
+	class Directory
+	{
+	public:
+
+		Directory();
+
+		/**
+		 * Initializes the Directory in the given path
+		 */
+		Directory(const char* path);
+
+		/**
+		 * Changes the Directory to the given path
+		 */
+		void SetPath(const char* path);
+
+		/**
+		 * Changes the Directory to its parent
+		 */
+		void GotoParent();
+
+		/**
+		 * Changes the Directory to the given child of the current Directory
+		 */
+		void GotoSubdir(const char* dir);
+
+		/**
+		 * Returns an Array of paths to files or folders in the directory
+		 */
+		Array<fs::path> GetChildren();
+
+	private:
+
+		// Path object for manipulation and iteration
+		fs::path m_Path;
+
+	};
+
+
+
 	/**
 	 * Returns true if the requested file exists, false if not
 	 */
@@ -49,6 +96,11 @@ namespace Noble
 	public:
 
 		File();
+
+		/**
+		 * Creates a File instance and opens the requested file immediately
+		 */
+		File(const char* path, bool bin = true, FileMode mode = FileMode::READONLY);
 
 		/**
 		 * Opens the requested file with the requested mode (default Read-Only)

@@ -179,6 +179,16 @@ namespace Noble
 	class ContainerAllocatorInterface
 	{
 		/**
+		 * Copy constructor, should allocate the same amount of memory and copy elements
+		 */
+		ContainerAllocatorInterface(const ContainerAllocatorInterface& other) {}
+
+		/**
+		 * Move constructor, should leave "other" in a deterministic state
+		 */
+		ContainerAllocatorInterface(ContainerAllocatorInterface&& other) noexcept {}
+
+		/**
 		 * Calculates how much the allocator can/should grow by, and returns recommended
 		 * new max count
 		 */
@@ -219,8 +229,49 @@ namespace Noble
 	public:
 
 		FORCEINLINE DefaultContainerAllocator()
-			: m_Data(nullptr), m_AllocSize(0), m_ElemCount(0)
+			: m_Data(nullptr), m_AllocSize(0), m_ElemCount(0), m_ElemSize(0), m_ElemAlign(0)
 		{
+		}
+
+		/**
+		 * Deep copies the allocator - fully reallocates the storage
+		 * This is slow and should be avoided if at all possible
+		 */
+		FORCEINLINE DefaultContainerAllocator(const DefaultContainerAllocator& other)
+		{
+			if (other.m_ElemCount > 0)
+			{
+				// Resize to make room for the copy
+				Resize(other.m_ElemSize, other.m_ElemCount, other.m_ElemAlign);
+				// Copy all of the elements
+				Memory::Memcpy(m_Data, other.m_Data, m_AllocSize);
+			}
+			else
+			{
+				m_ElemCount = other.m_ElemCount;
+				m_AllocSize = other.m_AllocSize;
+				m_Data = nullptr;
+				m_ElemSize = other.m_ElemSize;
+				m_ElemAlign = other.m_ElemAlign;
+			}
+		}
+
+		/**
+		 * Moves the data from "other" to this one, leaving "other" in a clean state
+		 */
+		FORCEINLINE DefaultContainerAllocator(DefaultContainerAllocator&& other) noexcept
+		{
+			m_ElemCount = other.m_ElemCount;
+			m_AllocSize = other.m_AllocSize;
+			m_Data = other.m_Data;
+			m_ElemSize = other.m_ElemSize;
+			m_ElemAlign = other.m_ElemAlign;
+
+			other.m_ElemCount = 0;
+			other.m_AllocSize = 0;
+			other.m_Data = nullptr;
+			other.m_ElemSize = 0;
+			other.m_ElemAlign = 0;
 		}
 
 		/**
@@ -252,6 +303,8 @@ namespace Noble
 			m_Data = newBuffer;
 			m_AllocSize = newAllocSize;
 			m_ElemCount = newMax;
+			m_ElemSize = elementSize;
+			m_ElemAlign = align;
 
 			return m_ElemCount;
 		}
@@ -307,6 +360,10 @@ namespace Noble
 		Size m_AllocSize;
 		// Total number of "elements"
 		Size m_ElemCount;
+		// Size of an element
+		Size m_ElemSize;
+		// Alignment of the element
+		Size m_ElemAlign;
 
 	};
 

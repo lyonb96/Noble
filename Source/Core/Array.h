@@ -83,6 +83,165 @@ namespace Noble
 	};
 
 	/**
+	 * Iterators that work on containers that use indices for element access
+	 * Requires that the Container implements operator [], GetCount()/GetMax(),
+	 * and CheckIndex().
+	 * Based on Epic's TIndexedContainerIterator from UE4
+	 */
+	template <class Container, class ElementType>
+	class IndexedContainerIterator
+	{
+	public:
+
+		explicit IndexedContainerIterator(Container& arr, Size start = 0)
+			: m_Container(arr), m_Index(start)
+		{}
+
+		/**
+		 * Prefix increment operator
+		 */
+		IndexedContainerIterator& operator++()
+		{
+			++m_Index;
+			return *this;
+		}
+
+		/**
+		 * Postfix increment operator
+		 */
+		IndexedContainerIterator operator++(int)
+		{
+			IndexedContainerIterator tmp(*this);
+			++m_Index;
+			return tmp;
+		}
+
+		/**
+		 * Prefix decrement operator
+		 */
+		IndexedContainerIterator& operator--()
+		{
+			--m_Index;
+			return *this;
+		}
+
+		/**
+		 * Postfix decrement operator
+		 */
+		IndexedContainerIterator operator--(int)
+		{
+			IndexedContainerIterator tmp(*this);
+			--m_Index;
+			return tmp;
+		}
+
+		/**
+		 * Arithmetic operators
+		 */
+
+		IndexedContainerIterator& operator+=(Size offset)
+		{
+			m_Index += offset;
+			return *this;
+		}
+
+		IndexedContainerIterator operator+(Size offset) const
+		{
+			IndexedContainerIterator tmp(*this);
+			return tmp += offset;
+		}
+
+		IndexedContainerIterator& operator-=(Size offset)
+		{
+			m_Index -= offset;
+			return *this;
+		}
+
+		IndexedContainerIterator operator-(Size offset) const
+		{
+			IndexedContainerIterator tmp(*this);
+			return tmp -= offset;
+		}
+
+		/**
+		 * Dereference operator accesses the element in the container at the current index
+		 */
+		ElementType& operator* () const
+		{
+			return m_Container[m_Index];
+		}
+
+		/**
+		 * Dereference operator accesses the element in the container at the current index
+		 */
+		ElementType* operator-> () const
+		{
+			return &m_Container[m_Index];
+		}
+
+		/**
+		 * Allows conversion to bool for quick checking if the iterator is valid
+		 */
+		FORCEINLINE operator bool() const
+		{
+			return m_Container.CheckIndex(m_Index);
+		}
+
+		/**
+		 * Returns the current index of the iterator
+		 */
+		Size GetIndex() const
+		{
+			return m_Index;
+		}
+
+		/**
+		 * Sets the index of the iterator to 0
+		 */
+		void Reset()
+		{
+			m_Index = 0;
+		}
+
+		/**
+		 * Sets the index of the iterator to the end of the container
+		 */
+		void SetToEnd()
+		{
+			m_Index = m_Container.GetCount();
+		}
+
+		/**
+		 * Removes the current element from the container
+		 */
+		void RemoveCurrent()
+		{
+			m_Container.RemoveAt(m_Index);
+			--m_Index;
+		}
+
+		/**
+		 * Comparison operators
+		 */
+
+		FORCEINLINE friend bool operator==(const IndexedContainerIterator& lhs, const IndexedContainerIterator& rhs)
+		{
+			return (&lhs.m_Container == &rhs.m_Container) && (lhs.GetIndex() == rhs.GetIndex());
+		}
+
+		FORCEINLINE friend bool operator!=(const IndexedContainerIterator& lhs, const IndexedContainerIterator& rhs)
+		{
+			return (lhs.GetIndex() != rhs.GetIndex()) || (&lhs.m_Container != &rhs.m_Container);
+		}
+
+	private:
+
+		Container& m_Container;
+		Size m_Index;
+
+	};
+
+	/**
 	 * An array implementation inspired by Unreal Engine's TArray
 	 *
 	 * Capable of allocating more memory on the fly to hold more elements
@@ -92,7 +251,13 @@ namespace Noble
 	template <class ElementType, class Allocator>
 	class ArrayBase
 	{
+		template <class OtherElemType, class OtherAlloc>
+		friend class ArrayBase;
+
 	public:
+
+		typedef IndexedContainerIterator<ArrayBase, ElementType> Iterator;
+		typedef IndexedContainerIterator<const ArrayBase, const ElementType> ConstIterator;
 
 		/**
 		 * Default constructor - this does not prepare the array for any elements
@@ -116,13 +281,24 @@ namespace Noble
 		 * Creates an exact copy of the given array
 		 */
 		ArrayBase(const ArrayBase& other)
+			: m_Allocator(other.m_Allocator)
+		{
+			m_ArrayMax = other.m_ArrayMax;
+			m_ArrayCount = other.m_ArrayCount;
+		}
+
+		/**
+		 * Moves the data from the other array to this one
+		 * Leaves the other array in an empty state
+		 */
+		ArrayBase(ArrayBase&& other) noexcept
+			: m_Allocator(std::move(other.m_Allocator))
 		{
 			m_ArrayMax = other.m_ArrayMax;
 			m_ArrayCount = other.m_ArrayCount;
 
-			Resize(m_ArrayMax);
-
-			m_Allocator.CopyFrom(other.m_Allocator);
+			other.m_ArrayMax = 0;
+			other.m_ArrayCount = 0;
 		}
 
 	public:
@@ -286,6 +462,7 @@ namespace Noble
 			CHECK(newCount >= m_ArrayCount);
 
 			m_ArrayMax = m_Allocator.Resize(ElementSize, newCount, ElementAlign);
+			ConstructDefaults(m_ArrayCount);
 		}
 
 		/**
@@ -313,7 +490,108 @@ namespace Noble
 			return static_cast<const ElementType*>(m_Allocator.GetData());
 		}
 
+		/**
+		 * Iterator that points to the first element in the Array
+		 */
+		Iterator Start()
+		{
+			return Iterator(*this, 0);
+		}
+
+		/**
+		 * Iterator that points to the first element in the Array
+		 */
+		ConstIterator Start() const
+		{
+			return ConstIterator(*this, 0);
+		}
+
+		/**
+		 * Iterator that points to the end of the Array
+		 */
+		Iterator End()
+		{
+			return Iterator(*this, GetCount());
+		}
+
+		/**
+		 * Iterator that points to the end of the Array
+		 */
+		ConstIterator End() const
+		{
+			return ConstIterator(*this, GetCount());
+		}
+
+		// RANGED FOR LOOP SUPPORT
+
+		/**
+		 * Iterator that points to the first element in the Array
+		 */
+		Iterator begin()
+		{
+			return Start();
+		}
+
+		/**
+		 * Iterator that points to the first element in the Array
+		 */
+		ConstIterator begin() const
+		{
+			return Start();
+		}
+
+		/**
+		 * Iterator that points to the end of the Array
+		 */
+		Iterator end()
+		{
+			return End();
+		}
+
+		/**
+		 * Iterator that points to the end of the Array
+		 */
+		ConstIterator end() const
+		{
+			return End();
+		}
+
+		/**
+		 * Returns the current number of elements in the array
+		 */
+		const Size GetCount() const
+		{
+			return m_ArrayCount;
+		}
+
+		/**
+		 * Returns the maximum number of elements the array can currently hold
+		 */
+		const Size GetMax() const
+		{
+			return m_ArrayMax;
+		}
+
+		/**
+		 * Returns true if the index is valid, false if otherwise
+		 */
+		bool CheckIndex(const Size& index) const
+		{
+			return index >= 0 && index < m_ArrayCount;
+		}
+
 	private:
+
+		/**
+		 * Builds a default object for all array elements after the given index
+		 */
+		void ConstructDefaults(Size index = 0)
+		{
+			for (index; index < m_ArrayMax; ++index)
+			{
+				new (GetData() + index) ElementType;
+			}
+		}
 
 		/**
 		 * Moves the element to the given index
@@ -423,6 +701,23 @@ namespace Noble
 
 	};
 
+	// RANGED FOR LOOP SUPPORT
+
+	template <typename Container, typename ElementType>
+	IndexedContainerIterator<Container, ElementType> begin(Container& cont)
+	{
+		return cont.begin();
+	}
+
+	template <typename Container, typename ElementType>
+	IndexedContainerIterator<Container, ElementType> end(Container& cont)
+	{
+		return cont.end();
+	}
+
+	/**
+	 * Array that uses the default heap allocator
+	 */
 	template <typename T>
 	using Array = ArrayBase<T, DefaultContainerAllocator>;
 }

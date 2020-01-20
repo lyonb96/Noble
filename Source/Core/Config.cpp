@@ -21,13 +21,14 @@ namespace Noble
 			bool configExists = CheckExists("JSON Test.txt");
 			if (configExists)
 			{
-				Size configSize = CheckFileSize("JSON Test.txt");
-				File configFile/*("JSON Test.txt")*/;
-				configFile.OpenFile("JSON Test.txt", false);
+				File configFile;
+				configFile.OpenFile("JSON Test.txt");
+				Size configSize = configFile.GetFileSize();
+				Size bugSize = CheckFileSize("JSON Test.txt");
 
 				char* data = static_cast<char*>(Memory::Malloc(configSize + 1, NOBLE_DEFAULT_ALIGN));
-				configFile.Read((U8*)data, configSize);
-				data[configSize] = '\0';
+				Size bytesRead = configFile.Read((U8*)data, configSize + 1);
+				data[bytesRead] = '\0';
 
 				g_ConfigData = json::parse(data);
 				
@@ -43,8 +44,7 @@ namespace Noble
 		void SaveConfig()
 		{
 			NE_LOG_INFO("Saving config to file");
-			File configFile/*("JSON Test.txt", true, true)*/;
-			configFile.OpenFile("JSON Test.txt", false, FileMode::READWRITE);
+			File configFile("JSON Test.txt", true, FileMode::READWRITE);
 
 			std::string str = g_ConfigData.dump(4);
 			configFile.Write(str.c_str(), str.length());
