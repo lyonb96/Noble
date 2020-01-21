@@ -39,6 +39,19 @@ namespace Noble
 		}
 	}
 
+	MappedFile Directory::MapFile(const char* filename) const
+	{
+		MappedFile file;
+		fs::path filepath = m_Path / filename;
+
+		if (fs::exists(filepath) && fs::is_regular_file(filepath))
+		{
+			file.Open(filepath);
+		}
+
+		return std::move(file);
+	}
+
 	Array<fs::path> Directory::GetChildren()
 	{
 		// First count the number of relevant children

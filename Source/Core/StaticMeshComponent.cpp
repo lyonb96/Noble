@@ -122,7 +122,7 @@ namespace Noble
 		uint64_t state = BGFX_STATE_DEFAULT;
 		state = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_WRITE_Z | BGFX_STATE_DEPTH_TEST_LESS | BGFX_STATE_CULL_CCW | BGFX_STATE_MSAA;
 
-		Matrix4x4f transform = GetWorldTransform().GetMatrix4x4();
+		Matrix4x4f transform = GetWorldTransform();
 
 		bgfx::setTransform(&transform);
 

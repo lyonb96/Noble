@@ -53,7 +53,7 @@ namespace Noble
 		/**
 		 * Returns the component's world transform (transform is relative to world origin)
 		 */
-		Transform GetWorldTransform() const;
+		Matrix4x4f GetWorldTransform() const;
 
 		/**
 		 * Returns a hashed representation of the Component's name

@@ -11,6 +11,9 @@ namespace Noble
 {
 	namespace fs = std::filesystem;
 
+	// Predefine for use in Directory
+	class MappedFile;
+
 	/**
 	 * Represents a directory and allows traversal to parent and child directories
 	 * Can also return an open File contained in the directory
@@ -40,6 +43,13 @@ namespace Noble
 		 * Changes the Directory to the given child of the current Directory
 		 */
 		void GotoSubdir(const char* dir);
+
+		/**
+		 * Returns a mapped file from the current Directory
+		 * If the file does not exist, is not a regular file, or otherwise 
+		 * fails to open, the MappedFile returned will not be valid
+		 */
+		MappedFile MapFile(const char* filename) const;
 
 		/**
 		 * Returns an Array of paths to files or folders in the directory

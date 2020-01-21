@@ -131,11 +131,6 @@ namespace Noble
 			: Position(pos), Rotation(rot), Scale(scale)
 		{}
 
-		FORCEINLINE Transform operator+(const Transform& other)
-		{
-			return Transform(Position + other.Position, Rotation * other.Rotation, Scale * other.Scale);
-		}
-
 		/**
 		 * Converts this transform into a 4x4 matrix
 		 */
