@@ -7,80 +7,6 @@
 
 namespace Noble
 {
-	/**
-	 * An array of fixed size, which cannot be added or removed from.
-	 * Changing elements is done by assignment rather than add/remove
-	 * Primarily used as a safety wrapper to prevent out of bounds read/write
-	 */
-	template<class T, Size N>
-	class FixedArray
-	{
-	public:
-
-		/**
-		 * Allows bracket access to members of the array and clamps the given
-		 * index to ensure safe read/write
-		 */
-		T& operator[](Size index)
-		{
-			index = glm::clamp(index, Size(0), N - 1);
-			return m_Array[index];
-		}
-
-		const Size GetSize() const { return N; }
-
-	private:
-
-		T m_Array[N];
-	};
-
-	/**
-	 * Wraps an existing, externally-created Array for safe read/write
-	 */
-	template <class T>
-	class SafeArray
-	{
-	public:
-
-		SafeArray()
-			: m_Array(nullptr), m_Size(0)
-		{}
-
-		SafeArray(T* data, Size count)
-			: m_Array(data), m_Size(count)
-		{}
-
-		/**
-		 * Sets the internal pointer and the number of elements
-		 */
-		void Initialize(T* data, Size count)
-		{
-			CHECK(data != nullptr);
-			CHECK(count > 0);
-
-			m_Array = data;
-			m_Size = count;
-		}
-
-		/**
-		 * Allows bracket access to members of the array and clamps the given
-		 * index to ensure safe read/write
-		 */
-		T& operator[](Size index)
-		{
-			CHECK(m_Array != nullptr && m_Size > 0);
-
-			index = glm::clamp(index, Size(0), m_Size - 1);
-			return m_Array[index];
-		}
-
-		const Size GetSize() const { return m_Size; }
-		
-	private:
-
-		T* m_Array;
-		Size m_Size;
-	};
 
 	/**
 	 * Iterators that work on containers that use indices for element access
@@ -528,7 +454,8 @@ namespace Noble
 		 */
 		void Shrink()
 		{
-			Resize(glm::max(1, m_ArrayCount));
+			if ((m_ArrayCount < m_ArrayMax) || m_ArrayCount == 0)
+				Resize(glm::max(Size(1), m_ArrayCount));
 		}
 
 		/**
@@ -785,4 +712,7 @@ namespace Noble
 	 */
 	template <typename T>
 	using Array = ArrayBase<T, DefaultContainerAllocator>;
+
+	template <typename T, Size N>
+	using FixedArray = ArrayBase<T, FixedContainerAllocator<N>>;
 }

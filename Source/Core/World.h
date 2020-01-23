@@ -32,16 +32,22 @@ namespace Noble
 		template <class T>
 		T* SpawnGameObject()
 		{
-			//T* object = new (Allocate<T>()) T;
+			// After the constructor call, the object and all its components are created
 			T* object = NE_NEW(m_GameMemory, T);
-			// By now, all of the required components have been stored in the temp array
-			Size tempSize = sizeof(Component*) * m_TempCount;
-			//Component** compList = m_GameObjectAllocator.Allocate(tempSize, 8);
-			Component** compList = (Component**)NE_BUFFER_ALLOC(m_GameMemory, tempSize, 8);
-			Memory::Memcpy(compList, m_TempArray, tempSize);
+			// If this is the first instance of this Object type created, fill out the fields
+			if (T::ComponentCount == -1)
+			{
+				// Set the number of components used to minimize calls to Realloc in the array
+				T::ComponentCount = m_CreatedComponentCount;
+				m_CreatedComponentCount = 0;
 
-			object->PostInit(compList, m_TempCount);
-			ClearTempArray();
+				// Resize, if the GameObject actually has components
+				if (T::ComponentCount > 0)
+				{
+					object->m_Components.Shrink();
+				}
+			}
+
 			m_GameObjects.Add(object);
 
 			object->OnSpawn();
@@ -57,35 +63,21 @@ namespace Noble
 		{
 			CHECK(owner);
 
-			if (owner->IsInitialized())
-			{
-				NE_LOG_WARNING("Cannot add Components outside the constructor!");
-				return nullptr;
-			}
-
 			T* comp = NE_NEW(m_GameMemory, T);
 			comp->SetOwningObject(owner);
 			comp->SetComponentName(name);
 			m_Components.Add(comp);
 
-			m_TempArray[m_TempCount++] = comp;
+			owner->AddComponent(comp);
+			++m_CreatedComponentCount;
 
 			return comp;
 		}
 
 	private:
 
-		/**
-		 * Clears the temporary component list
-		 */
-		void ClearTempArray();
-
-	private:
-
-		// Temporary array of components to be copied into new GameObjects
-		Component* m_TempArray[32];
 		// Number of components in the temp array
-		U8 m_TempCount;
+		U8 m_CreatedComponentCount;
 		// Memory Arena for GameObjects + Components
 		GameMemoryArena m_GameMemory;
 

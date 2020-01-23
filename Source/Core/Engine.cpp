@@ -110,8 +110,7 @@ namespace Noble
 		g_Engine = this;
 
 		// Initialize the logger
-		Logger::InitLog();
-		NE_LOG_INFO("Noble Engine " << NOBLE_VERSION << " - " << __DATE__);
+		NE_LOG_INFO("Noble Engine %s - %s", NOBLE_VERSION, __DATE__);
 
 		// Load the config file for other subsystems to use
 		Config::LoadConfig();
@@ -140,6 +139,16 @@ namespace Noble
 		g_TestObject1 = g_TestWorld.SpawnGameObject<TestGameObject>();
 		g_TestObject2 = g_TestWorld.SpawnGameObject<TestGameObject>();
 		g_TestObject3 = g_TestWorld.SpawnGameObject<TestGameObject>();
+
+		Directory testDir;
+		testDir.GotoDirectory("3rdParty/");
+
+		NE_LOG_DEBUG("---------------------");
+		for (const auto& entry : testDir.Iterate())
+		{
+			NE_LOG_DEBUG("Hello, %s", entry.string().c_str());
+		}
+		NE_LOG_DEBUG("---------------------");
 
 		return true;
 	}
@@ -216,9 +225,8 @@ namespace Noble
 		// Close the window down
 		m_Renderer.Shutdown();
 
-		// Print and stop the logger
-		Logger::PrintLog();
-		Logger::CloseLog();
+		// Print the current log
+		Logger::PrintLog("LogFile.txt");
 
 		return true;
 	}

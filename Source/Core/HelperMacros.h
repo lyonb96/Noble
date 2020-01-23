@@ -43,11 +43,11 @@ namespace Noble
 	 */
 	struct SourceInfo
 	{
-		const char* m_File;
-		const int m_Line;
+		const char* File;
+		const int Line;
 
 		SourceInfo(const char* file, const int line)
-			: m_File(file), m_Line(line)
+			: File(file), Line(line)
 		{}
 	};
 

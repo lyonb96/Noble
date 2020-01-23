@@ -12,6 +12,8 @@ namespace Noble
 	{
 		m_TickEachFrame = false;
 		m_RootComponent = nullptr;
+
+		ConstructorCallForward();
 	}
 
 	void GameObject::SetPosition(const Vector3f& newPos) const
@@ -56,14 +58,9 @@ namespace Noble
 		return m_RootComponent->GetScale();
 	}
 
-	void GameObject::PostInit(Component** components, Size componentCount)
+	void GameObject::AddComponent(Component* comp)
 	{
-		m_Components.Initialize(components, componentCount);
-	}
-
-	bool GameObject::IsInitialized() const
-	{
-		return m_Components.GetSize() > 0;
+		m_Components.Add(comp);
 	}
 
 	// ...

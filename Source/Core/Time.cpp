@@ -96,6 +96,6 @@ namespace Noble
 	BenchmarkHelper::~BenchmarkHelper()
 	{
 		U64 duration = GetTimeNow() - m_StartTime;
-		NE_LOG_DEBUG("Benchmark Helper: " << m_Identifier << " - " << duration << "u");
+		NE_LOG_DEBUG("Benchmark Helper: %s - %uu", m_Identifier);
 	}
 }

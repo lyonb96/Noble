@@ -8,15 +8,13 @@ namespace Noble
 	Directory::Directory()
 	{}
 
-	Directory::Directory(const char* path)
+	Directory::Directory(const fs::path& path)
 	{
 		SetPath(path);
 	}
 
-	void Directory::SetPath(const char* path)
+	void Directory::SetPath(const fs::path& path)
 	{
-		CHECK(path);
-
 		if (fs::exists(path) && fs::is_directory(path))
 		{
 			m_Path = path;
@@ -28,18 +26,24 @@ namespace Noble
 		m_Path = m_Path.parent_path();
 	}
 
-	void Directory::GotoSubdir(const char* dir)
+	void Directory::GotoSubdir(const fs::path& dir)
 	{
-		CHECK(dir);
-
 		fs::path newPath = m_Path / dir;
-		if (fs::is_directory(newPath))
+		if (fs::exists(newPath) && fs::is_directory(newPath))
 		{
 			m_Path = newPath;
 		}
 	}
 
-	MappedFile Directory::MapFile(const char* filename) const
+	void Directory::GotoDirectory(const fs::path& path)
+	{
+		if (fs::exists(path) && fs::is_directory(path))
+		{
+			m_Path = path;
+		}
+	}
+
+	MappedFile Directory::MapFile(const fs::path& filename) const
 	{
 		MappedFile file;
 		fs::path filepath = m_Path / filename;
@@ -52,7 +56,7 @@ namespace Noble
 		return std::move(file);
 	}
 
-	Array<fs::path> Directory::GetChildren()
+	Array<fs::path> Directory::Iterate()
 	{
 		// First count the number of relevant children
 		Size count = 0;
@@ -70,6 +74,36 @@ namespace Noble
 		{
 			arr.Resize(count);
 			for (const auto& entry : fs::directory_iterator(m_Path))
+			{
+				if (fs::is_directory(entry) || fs::is_regular_file(entry))
+				{
+					fs::path path = entry.path();
+					arr.Add(path);
+				}
+			}
+		}
+
+		return std::move(arr);
+	}
+
+	Array<fs::path> Directory::IterateRecursive()
+	{
+		// First count the number of relevant children
+		Size count = 0;
+		for (const auto& entry : fs::recursive_directory_iterator(m_Path))
+		{
+			if (fs::is_directory(entry) || fs::is_regular_file(entry))
+			{
+				count++;
+			}
+		}
+
+		// Now fill the array
+		Array<fs::path> arr;
+		if (count > 0)
+		{
+			arr.Resize(count);
+			for (const auto& entry : fs::recursive_directory_iterator(m_Path))
 			{
 				if (fs::is_directory(entry) || fs::is_regular_file(entry))
 				{
@@ -320,22 +354,13 @@ namespace Noble
 		DWORD whint = 0;
 		switch (hint)
 		{
-		case Normal: whint = FILE_ATTRIBUTE_NORMAL;
-		case SequentialScan: whint = FILE_FLAG_SEQUENTIAL_SCAN;
-		case RandomAccess: whint = FILE_FLAG_RANDOM_ACCESS;
-		default: break;
+			case Normal: whint = FILE_ATTRIBUTE_NORMAL;
+			case SequentialScan: whint = FILE_FLAG_SEQUENTIAL_SCAN;
+			case RandomAccess: whint = FILE_FLAG_RANDOM_ACCESS;
+			default: break;
 		}
 
-		// Messy! Convert std::filesystem::path's wchar_t string to a c_str that's Windows friendly
-		Size strlen = path.string().length();
-		const wchar_t* str = path.c_str();
-		char* cstr = new char[strlen + 1];
-		Size converted = 0;
-		wcstombs_s(&converted, cstr, size_t(strlen + 1), str, size_t(strlen));
-
-		// Actually open the file
-		m_File = CreateFileA(cstr, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, whint, NULL);
-		delete[] cstr;
+		m_File = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, whint, NULL);
 
 		if (!m_File)
 		{
@@ -419,8 +444,8 @@ namespace Noble
 		}
 		if (offset + mappedSize > m_FileSize)
 		{
-			NE_LOG_WARNING("Requested map size [" << mappedSize << "] and offset [" << offset << "] exceeds file size ["
-				<< m_FileSize << "]. Actual mapped size will be less than requested.");
+			NE_LOG_WARNING("Requested map size [%u] and offset [%u] exceeds file size [%u]\
+				. Actual mapped size will be less than requested.", mappedSize, offset, m_FileSize);
 			mappedSize = (m_FileSize - offset);
 		}
 

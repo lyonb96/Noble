@@ -13,13 +13,20 @@ public: \
 \
 	static ::Noble::I16 ComponentCount; \
 \
+protected:\
+\
+	virtual void ConstructorCallForward() override;\
+\
 private:
 // --------------------------------------------------------------------------------------------
 
 /**
  * This macro takes care of defining necessary functions and members for child GameObjects
  */
-#define GAME_OBJECT_DEF(CLASS_NAME) ::Noble::I16 CLASS_NAME::ComponentCount = -1
+#define GAME_OBJECT_DEF(CLASS_NAME) \
+::Noble::I16 CLASS_NAME::ComponentCount = -1; \
+\
+void CLASS_NAME::ConstructorCallForward() { if (ComponentCount > 0) { m_Components.Resize(ComponentCount); } }
 
 namespace Noble
 {
@@ -140,14 +147,13 @@ namespace Noble
 			// TODO: figure out if using typeid() and RTTI is a good idea
 
 			const std::type_info& query = typeid(T);
-			for (Size i = 0; i < m_Components.GetSize(); i++)
+			for (Component* comp : m_Components)
 			{
-				Component* comp = m_Components[i];
-				if (m_Components[i] && query == typeid(*comp))
+				if (comp && query == typeid(*comp))
 				{
 					if (comp->GetName() == name)
 					{
-						return static_cast<T*>(m_Components[i]);
+						return static_cast<T*>(comp);
 					}
 				}
 			}
@@ -164,12 +170,11 @@ namespace Noble
 			// TODO: figure out if using typeid() and RTTI is a good idea
 
 			const std::type_info& query = typeid(T);
-			for (Size i = 0; i < m_Components.GetSize(); i++)
+			for (Component* comp : m_Components)
 			{
-				Component* comp = m_Components[i];
-				if (m_Components[i] && query == typeid(*comp))
+				if (comp && query == typeid(*comp))
 				{
-					return static_cast<T*>(m_Components[i]);
+					return static_cast<T*>(comp);
 				}
 			}
 
@@ -177,6 +182,11 @@ namespace Noble
 		}
 
 	protected:
+
+		/**
+		 * Called by the constructor and forwarded to the overridden class
+		 */
+		virtual void ConstructorCallForward() {};
 
 		/**
 		 * Returns a pointer to the World instance
@@ -196,11 +206,10 @@ namespace Noble
 	private:
 
 		/**
-		 * Called automatically after the object is created to fill out the Components array
+		 * Called by the World class after it creates a Component instance to add it
+		 * to this GameObject's array of components
 		 */
-		void PostInit(Component** components, Size componentCount);
-
-		bool IsInitialized() const;
+		void AddComponent(Component* comp);
 
 	protected:
 
@@ -211,11 +220,10 @@ namespace Noble
 		bool m_TickEachFrame;
 		// Root Component
 		Component* m_RootComponent;
+		// Array of all components
+		Array<Component*> m_Components;
 
 	private:
-
-		// Array of all components
-		SafeArray<Component*> m_Components;
 
 	};
 }

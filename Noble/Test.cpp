@@ -34,8 +34,6 @@ bool HandleWindowsMessages(MSG& msg)
 
 int main_disabled()
 {
-	Noble::Logger::InitLog();
-
 	Noble::Window window;
 	window.Create(true);
 

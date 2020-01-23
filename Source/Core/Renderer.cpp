@@ -373,7 +373,7 @@ namespace Noble
 
 		RECT rect = { 0, 0, m_WindowConfig.Width, m_WindowConfig.Height };
 		AdjustWindowRect(&rect, m_CurrentStyle, false);
-		NE_LOG_DEBUG("After adjustment, size: " << (rect.right - rect.left) << " x " << (rect.bottom - rect.top));
+		NE_LOG_DEBUG("After adjustment, size: %i x %i", (rect.right - rect.left), (rect.bottom - rect.top));
 
 		m_WindowConfig.WindowWidth = rect.right - rect.left;
 		m_WindowConfig.WindowHeight = rect.bottom - rect.top;
@@ -409,7 +409,7 @@ namespace Noble
 		// Adjust the WindowWidth and Height based on style
 		RECT rect = { 0, 0, m_RenderWidth, m_RenderHeight };
 		AdjustWindowRect(&rect, m_CurrentStyle, false);
-		NE_LOG_DEBUG("After adjustment, size: " << (rect.right - rect.left) << " x " << (rect.bottom - rect.top));
+		NE_LOG_DEBUG("After adjustment, size: %i x %i", (rect.right - rect.left), (rect.bottom - rect.top));
 
 		m_WindowWidth = rect.right - rect.left;
 		m_WindowHeight = rect.bottom - rect.top;

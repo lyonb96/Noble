@@ -48,7 +48,7 @@ namespace Noble
 #ifdef _DEBUG
 			if (index < 0 || index > 2)
 			{
-				NE_LOG_ERROR("Index (" << index << ") out of bounds for action binding: " << m_Identifier);
+				NE_LOG_ERROR("Index (%u) out of bounds for action binding: %s", index, m_Identifier);
 				return Action::ACTION_UNKNOWN;
 			}
 #endif
@@ -61,7 +61,7 @@ namespace Noble
 #ifdef _DEBUG
 			if (index < 0 || index > 2)
 			{
-				NE_LOG_ERROR("Index (" << index << ") out of bounds for action binding: " << m_Identifier);
+				NE_LOG_ERROR("Index (%u) out of bounds for action binding: %s", index, m_Identifier);
 				return;
 			}
 #endif
@@ -189,7 +189,7 @@ namespace Noble
 #ifdef _DEBUG
 			if (index < 0 || index > 2)
 			{
-				NE_LOG_ERROR("Index (" << index << ") out of bounds for action binding: " << m_Identifier);
+				NE_LOG_ERROR("Index (%u) out of bounds for action binding: %s", index, m_Identifier);
 				return;
 			}
 #endif
@@ -204,7 +204,7 @@ namespace Noble
 #ifdef _DEBUG
 			if (index < 0 || index > 2)
 			{
-				NE_LOG_ERROR("Index (" << index << ") out of bounds for action binding: " << m_Identifier);
+				NE_LOG_ERROR("Index (%u) out of bounds for action binding: %s", index, m_Identifier);
 				return;
 			}
 #endif
@@ -314,7 +314,7 @@ namespace Noble
 			const U32 aIndex = GetAxisIndex(id);
 			if (aIndex > g_AxisCount)
 			{
-				NE_LOG_WARNING("No matching Axis ID! Index: " << aIndex << ". Count: " << g_AxisCount);
+				NE_LOG_WARNING("No matching Axis ID! Index: %u. Count: %u", index, g_AxisCount);
 				return;
 			}
 			g_AxisBindings[aIndex].SetTrigger(index, action, value);

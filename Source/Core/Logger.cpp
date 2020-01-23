@@ -14,127 +14,115 @@
 
 namespace Noble
 {
-	namespace Logger
+	Logger::Logger()
 	{
-		namespace
+		// Allocate log space
+		m_LogBuffer = static_cast<char*>(Memory::Malloc(LOG_BUFFER_SIZE, NOBLE_DEFAULT_ALIGN));
+		m_LogBufferPos = 0;
+		m_LogWrites = 0;
+	}
+
+	Logger::~Logger()
+	{
+		if (m_LogBuffer)
 		{
-			// log buffer
-			char* g_LogBuffer;
-			// how much of the log buffer is used / position to write at
-			U32 g_LogBufferPos;
-			// How many times the log has been written off
-			U8 g_LogWrites;
+			Memory::Free(m_LogBuffer);
+			m_LogBufferPos = 0;
 		}
+	}
 
-		void InitLog()
+	char* Logger::GetCurrentPos() const
+	{
+		return m_LogBuffer + m_LogBufferPos;
+	}
+
+	Size Logger::GetRemainingSpace() const
+	{
+		return LOG_BUFFER_SIZE - m_LogBufferPos;
+	}
+
+	bool Logger::IsLogBufferFull() const
+	{
+		return m_LogBufferPos >= ((LOG_BUFFER_SIZE * 9) / 10);
+	}
+
+	void Logger::WriteString(const char* str, bool newline)
+	{
+		for (U32 i = 0; i < std::strlen(str); i++)
 		{
-			g_LogBuffer = new char[LOG_BUFFER_SIZE];
-			g_LogBufferPos = 0;
-			g_LogWrites = 0;
-		}
-
-		/**
-		 * Dumps the current log to a file and clears the buffer
-		 */
-		void CleanLog()
-		{
-			// make the log name
-			char logname[16];
-			sprintf_s(&logname[0], 16, "LogFile%i.txt", ++g_LogWrites);
-			// print the log
-			PrintLog(logname);
-
-			// clear the buffer
-			memset(g_LogBuffer, 0, LOG_BUFFER_SIZE);
-			g_LogBufferPos = 0;
-		}
-
-		// Writes a string to the log file
-		void WriteString(const char* str, bool addNewline = false)
-		{
-			for (U32 i = 0; i < std::strlen(str); i++)
+			// don't write null terminators
+			if (str[i] != '\0')
 			{
-				// don't write null terminators
-				if (str[i] != '\0')
-				{
-					g_LogBuffer[g_LogBufferPos++] = str[i];
-				}
+				m_LogBuffer[m_LogBufferPos++] = str[i];
 			}
+		}
 
 #ifdef _DEBUG
-			OutputDebugString(str);
+		OutputDebugString(str);
 #endif
 
-			if (addNewline)
-			{
-				g_LogBuffer[g_LogBufferPos++] = '\n';
+		if (newline)
+		{
+			m_LogBuffer[m_LogBufferPos++] = '\n';
 #ifdef _DEBUG
-				OutputDebugString("\n");
+			OutputDebugString("\n");
 #endif
-			}
 		}
+	}
 
-		// Builds the string for the log level then writes it to the file
-		void WriteLogLevel(LogLevel level)
+	void Logger::WriteLevel(LogLevel level)
+	{
+		const char* str;
+		switch (level)
 		{
-			const char* str;
-			switch (level)
-			{
-				case LOG_LEVEL_DEBUG:
-					str = "[Noble] DEBUG: ";
-					break;
+		case LogLevel::LV_DEBUG:
+			str = "[Noble] DEBUG: ";
+			break;
 
-				case LOG_LEVEL_INFO:
-					str = "[Noble] INFO: ";
-					break;
+		case LogLevel::LV_INFO:
+			str = "[Noble] INFO: ";
+			break;
 
-				case LOG_LEVEL_WARNING:
-					str = "[Noble] WARNING: ";
-					break;
+		case LogLevel::LV_WARNING:
+			str = "[Noble] WARNING: ";
+			break;
 
-				case LOG_LEVEL_ERROR:
-					str = "[Noble] ERROR: ";
-					break;
+		case LogLevel::LV_ERROR:
+			str = "[Noble] ERROR: ";
+			break;
 
-				case LOG_LEVEL_CRITICAL:
-					str = "[Noble] CRITICAL: ";
-					break;
+		case LogLevel::LV_CRITICAL:
+			str = "[Noble] CRITICAL: ";
+			break;
 
-				case LOG_LEVEL_FATAL:
-					str = "[Noble] FATAL: ";
-					break;
-				default:
-					str = "";
-					break;
-			}
-			WriteString(str);
+		case LogLevel::LV_FATAL:
+			str = "[Noble] FATAL: ";
+			break;
+		default:
+			str = "";
+			break;
 		}
 
-		void Log(LogLevel level, StringFormatter& str)
-		{
-			// First write the log level to the buffer
-			WriteLogLevel(level);
-			WriteString(str.GetBuffer(), true); // append new line
+		WriteString(str);
+	}
 
-			// check if log file is getting full (>90% used)
-			if (g_LogBufferPos >= ((LOG_BUFFER_SIZE * 9) / 10))
-			{
-				// clear the log to make room
-				CleanLog();
-			}
-		}
+	void Logger::ClearLog()
+	{
+		// Fill out the log name and print to the file
+		char logname[24];
+		sprintf_s(&logname[0], 24, "LogFile%i.txt", ++m_LogWrites);
+		PrintLogInternal(logname);
 
-		void PrintLog(const char* filename)
-		{
-			File logFile;
-			logFile.OpenFile(filename, false, FileMode::READWRITE);
-			
-			logFile.Write(g_LogBuffer, g_LogBufferPos);
-		}
+		// Clear the buffer
+		memset(m_LogBuffer, 0, LOG_BUFFER_SIZE);
+		m_LogBufferPos = 0;
+	}
 
-		void CloseLog()
-		{
-			delete[] g_LogBuffer;
-		}
+	void Logger::PrintLogInternal(const char* file)
+	{
+		File logFile;
+		logFile.OpenFile(file, false, FileMode::READWRITE);
+
+		logFile.Write(m_LogBuffer, m_LogBufferPos);
 	}
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdio>
 #include <filesystem>
 
 #include "Array.h"
@@ -27,12 +26,12 @@ namespace Noble
 		/**
 		 * Initializes the Directory in the given path
 		 */
-		Directory(const char* path);
+		Directory(const fs::path& path);
 
 		/**
 		 * Changes the Directory to the given path
 		 */
-		void SetPath(const char* path);
+		void SetPath(const fs::path& path);
 
 		/**
 		 * Changes the Directory to its parent
@@ -42,19 +41,29 @@ namespace Noble
 		/**
 		 * Changes the Directory to the given child of the current Directory
 		 */
-		void GotoSubdir(const char* dir);
+		void GotoSubdir(const fs::path& dir);
+
+		/**
+		 * Changes the directory to the given path
+		 */
+		void GotoDirectory(const fs::path& path);
 
 		/**
 		 * Returns a mapped file from the current Directory
 		 * If the file does not exist, is not a regular file, or otherwise 
 		 * fails to open, the MappedFile returned will not be valid
 		 */
-		MappedFile MapFile(const char* filename) const;
+		MappedFile MapFile(const fs::path& filename) const;
 
 		/**
 		 * Returns an Array of paths to files or folders in the directory
 		 */
-		Array<fs::path> GetChildren();
+		Array<fs::path> Iterate();
+
+		/**
+		 * Returns an Array of paths to files or folders in the directory and its subdirectories
+		 */
+		Array<fs::path> IterateRecursive();
 
 	private:
 
@@ -62,8 +71,6 @@ namespace Noble
 		fs::path m_Path;
 
 	};
-
-
 
 	/**
 	 * Returns true if the requested file exists, false if not
@@ -171,6 +178,10 @@ namespace Noble
 	{
 	public:
 
+		/**
+		 * Used to hint at the OS how we plan to use the file
+		 * Can optimize certain reads. Default is Normal
+		 */
 		enum CacheHint
 		{
 			Normal,
@@ -274,8 +285,9 @@ namespace Noble
 
 		// Platform specifics
 		typedef void* FileHandle;
-		void* m_MappedFile;
+
 		FileHandle m_File;
+		void* m_MappedFile;
 		void* m_MappedView;
 	};
 }

@@ -8,233 +8,142 @@
 
 namespace Noble
 {
-	namespace Logger
+	enum class LogLevel
 	{
+		LV_DEBUG, // most verbose, used for spitting out debugging or testing info
+		LV_INFO, // informative log info
+		LV_WARNING, // issues that the program can generally gracefully recover from
+		LV_ERROR, // issues that may alter the running state of the program or cause cascading issues
+		LV_CRITICAL, // issues that will have a considerable effect on the running state of the program
+		LV_FATAL // issues that cause program termination
+	};
+
+	/**
+	 * Class that wraps logging functionality
+	 */
+	class Logger
+	{
+	public:
+
+		// No copying or moving
+		Logger(const Logger&) = delete;
+		Logger(Logger&&) = delete;
+		Logger& operator=(const Logger&) = delete;
+		Logger& operator=(Logger&&) = delete;
+
 		/**
-		 * Helps format log strings
+		 * Uses printf-style formatting to write to the log
 		 */
-		class StringFormatter
+		template <typename... Args>
+		static void Log(LogLevel level, const char* fmt, Args... args)
 		{
-			// 128 byte buffer to write to
-			SafeBuffer<128> m_Buffer;
-			U8 m_Index;
-
-		public:
-
-			StringFormatter()
-				: m_Index(0), m_Buffer() {}
-
-			template <class T>
-			StringFormatter& operator<< (T data)
-			{
-				// StringFormatter does not write non-POD data
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (int data)
-			{
-				I32 res = sprintf_s(&m_Buffer[m_Index], 128 - m_Index, "%i", data);
-				if (res > 0)
-				{
-					m_Index += res;
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (unsigned int data)
-			{
-				I32 res = sprintf_s(&m_Buffer[m_Index], 128 - m_Index, "%u", data);
-				if (res > 0)
-				{
-					m_Index += res;
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (long data)
-			{
-				I32 res = sprintf_s(&m_Buffer[m_Index], 128 - m_Index, "%i", data);
-				if (res > 0)
-				{
-					m_Index += res;
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (unsigned long data)
-			{
-				I32 res = sprintf_s(&m_Buffer[m_Index], 128 - m_Index, "%u", data);
-				if (res > 0)
-				{
-					m_Index += res;
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (long long data)
-			{
-				I32 res = sprintf_s(&m_Buffer[m_Index], 128 - m_Index, "%lli", data);
-				if (res > 0)
-				{
-					m_Index += res;
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (unsigned long long data)
-			{
-				I32 res = sprintf_s(&m_Buffer[m_Index], 128 - m_Index, "%llu", data);
-				if (res > 0)
-				{
-					m_Index += res;
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (float data)
-			{
-				I32 res = sprintf_s(&m_Buffer[m_Index], 128 - m_Index, "%f", data);
-				if (res > 0)
-				{
-					m_Index += res;
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (double data)
-			{
-				I32 res = sprintf_s(&m_Buffer[m_Index], 128 - m_Index, "%f", data);
-				if (res > 0)
-				{
-					m_Index += res;
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (long double data)
-			{
-				I32 res = sprintf_s(&m_Buffer[m_Index], 128 - m_Index, "%f", data);
-				if (res > 0)
-				{
-					m_Index += res;
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (char data)
-			{
-				m_Buffer[m_Index++] = data;
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (const char* data)
-			{
-				for (U32 i = 0; i < std::strlen(data); i++)
-				{
-					if (data[i] != '\0')
-					{
-						m_Buffer[m_Index++] = data[i];
-					}
-				}
-
-				return *this;
-			}
-
-			template<>
-			StringFormatter& operator<< (const wchar_t* data)
-			{
-				for (U32 i = 0; i < std::wcslen(data); i++)
-				{
-					if (data[i] != '\0')
-					{
-						m_Buffer[m_Index++] = char(data[i]);
-					}
-				}
-
-				return *this;
-			}
-
-			template<typename Allocator>
-			StringFormatter& operator<< (const NStringBase<Allocator>& str)
-			{
-				return operator<<(str.GetCharArray());
-			}
-
-			/**
-			 * This function implicitly adds the null terminator to the string
-			 */
-			const char* GetBuffer()
-			{
-				m_Buffer[m_Index] = '\0';
-				return m_Buffer;
-			}
-		};
+			Get().LogInternal(level, fmt, args...);
+		}
 
 		/**
-		 * Different levels of information to be logged
+		 * Prints the current log data to the requested file
 		 */
-		enum LogLevel
+		FORCEINLINE static void PrintLog(const char* file)
 		{
-			LOG_LEVEL_DEBUG, // most verbose, used for spitting out debugging or testing info
-			LOG_LEVEL_INFO, // informative log info
-			LOG_LEVEL_WARNING, // issues that the program can generally gracefully recover from
-			LOG_LEVEL_ERROR, // issues that may alter the running state of the program or cause cascading issues
-			LOG_LEVEL_CRITICAL, // issues that will have a considerable effect on the running state of the program
-			LOG_LEVEL_FATAL // issues that cause program termination
-		};
+			Get().PrintLogInternal(file);
+		}
+
+	private:
 
 		/**
-		 * Allocates the space for the log data
+		 * Allocates the space needed for the logger
 		 */
-		void InitLog();
+		Logger();
 
 		/**
-		 * Logs the given string at the given level
+		 * Prints anything in the log and frees the space used by the logger
 		 */
-		void Log(LogLevel level, StringFormatter& str);
+		~Logger();
+
+	private:
 
 		/**
-		 * Saves the log to a file
+		 * Writes a string to the log buffer
 		 */
-		void PrintLog(const char* filename = "LogFile.txt");
+		void WriteString(const char* str, bool newline = false);
+		
+		/**
+		 * Converts the LogLevel to a string and writes it to the log buffer
+		 */
+		void WriteLevel(LogLevel level);
 
 		/**
-		 * Frees space used for logging
+		 * Returns the current write position in the buffer
 		 */
-		void CloseLog();
-	}
+		char* GetCurrentPos() const;
+
+		/**
+		 * Returns the remaining space in the buffer
+		 */
+		Size GetRemainingSpace() const;
+
+		/**
+		 * Returns true if the log buffer has exceeded 90% usage
+		 */
+		bool IsLogBufferFull() const;
+
+		/**
+		 * Internal - just does whatever the static one asks
+		 */
+		template <typename... Args>
+		void LogInternal(LogLevel level, const char* fmt, Args... args)
+		{
+			CHECK(fmt); // ensure the format string is valid
+
+			WriteLevel(level);
+			I32 res = sprintf_s(GetCurrentPos(), GetRemainingSpace(), fmt, args...);
+			WriteString(GetCurrentPos(), true);
+
+			if (IsLogBufferFull())
+			{
+				ClearLog();
+			}
+		}
+
+		/**
+		 * Dumps the current log contents if the buffer is getting too full
+		 */
+		void ClearLog();
+
+		/**
+		 * Prints the log to a file with the given name
+		 */
+		void PrintLogInternal(const char* file);
+
+	private:
+
+		/**
+		 * Singleton get
+		 */
+		FORCEINLINE static Logger& Get()
+		{
+			static Logger inst;
+			return inst;
+		}
+
+		// The buffer used for storing log strings
+		char* m_LogBuffer;
+		// Current write position of the buffer
+		Size m_LogBufferPos;
+		// Number of times the log has been written out this run
+		U8 m_LogWrites;
+	};
 }
 
 // Logging macros
 
 #ifdef NOBLE_DEBUG
-#define NE_LOG_DEBUG(STR)	 ::Noble::Logger::Log(::Noble::Logger::LOG_LEVEL_DEBUG,    ::Noble::Logger::StringFormatter() << STR)
+#define NE_LOG_DEBUG(STR, ...)	 ::Noble::Logger::Log(::Noble::LogLevel::LV_DEBUG, STR, __VA_ARGS__)
 #else
-#define NE_LOG_DEBUG(STR)
+#define NE_LOG_DEBUG(STR, ...)
 #endif
-#define NE_LOG_INFO(STR)	 ::Noble::Logger::Log(::Noble::Logger::LOG_LEVEL_INFO,	   ::Noble::Logger::StringFormatter() << STR)
-#define NE_LOG_WARNING(STR)  ::Noble::Logger::Log(::Noble::Logger::LOG_LEVEL_WARNING,  ::Noble::Logger::StringFormatter() << STR)
-#define NE_LOG_ERROR(STR)	 ::Noble::Logger::Log(::Noble::Logger::LOG_LEVEL_ERROR,	   ::Noble::Logger::StringFormatter() << STR)
-#define NE_LOG_CRITICAL(STR) ::Noble::Logger::Log(::Noble::Logger::LOG_LEVEL_CRITICAL, ::Noble::Logger::StringFormatter() << STR)
-#define NE_LOG_FATAL(STR)	 ::Noble::Logger::Log(::Noble::Logger::LOG_LEVEL_FATAL,    ::Noble::Logger::StringFormatter() << STR)
+#define NE_LOG_INFO(STR, ...)	  ::Noble::Logger::Log(::Noble::LogLevel::LV_INFO, STR, __VA_ARGS__)
+#define NE_LOG_WARNING(STR, ...)  ::Noble::Logger::Log(::Noble::LogLevel::LV_WARNING, STR, __VA_ARGS__)
+#define NE_LOG_ERROR(STR, ...)	  ::Noble::Logger::Log(::Noble::LogLevel::LV_ERROR, STR, __VA_ARGS__)
+#define NE_LOG_CRITICAL(STR, ...) ::Noble::Logger::Log(::Noble::LogLevel::LV_CRITICAL, STR, __VA_ARGS__)
+#define NE_LOG_FATAL(STR, ...)	  ::Noble::Logger::Log(::Noble::LogLevel::LV_FATAL, STR, __VA_ARGS__)
