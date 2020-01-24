@@ -54,8 +54,6 @@ namespace Noble
 
 	private:
 
-		// Clock for timing the main loop
-		Clock m_LoopClock;
 		Renderer m_Renderer;
 	};
 }

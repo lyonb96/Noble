@@ -1,15 +1,6 @@
-[Noble] INFO: Noble Engine Early Dev - Jan 22 2020
+[Noble] INFO: Noble Engine Early Dev - Jan 23 2020
 [Noble] INFO: Loading configuration from file
 [Noble] DEBUG: Creating game window
 [Noble] DEBUG: After adjustment, size: 1296 x 759
-[Noble] DEBUG: ---------------------
-[Noble] DEBUG: Hello, 3rdParty/bgfx-master.zip
-[Noble] DEBUG: Hello, 3rdParty/glad.c
-[Noble] DEBUG: Hello, 3rdParty/glm-master (1).zip
-[Noble] DEBUG: Hello, 3rdParty/half-2.1.0.zip
-[Noble] DEBUG: Hello, 3rdParty/imgui-master.zip
-[Noble] DEBUG: Hello, 3rdParty/json-develop.zip
-[Noble] DEBUG: Hello, 3rdParty/ThirdParty.txt
-[Noble] DEBUG: ---------------------
 [Noble] INFO: Engine shutting down
 [Noble] INFO: Saving config to file

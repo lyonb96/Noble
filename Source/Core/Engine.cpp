@@ -57,7 +57,6 @@ namespace Noble
 
 	namespace
 	{
-		//StaticMeshComponent g_TestComponent;
 		World g_TestWorld;
 		TestGameObject* g_TestObject1;
 		TestGameObject* g_TestObject2;
@@ -93,7 +92,7 @@ namespace Noble
 
 	Engine::Engine()
 	{
-
+		Time::Initialize();
 	}
 
 	bool Engine::Start()
@@ -139,17 +138,7 @@ namespace Noble
 		g_TestObject1 = g_TestWorld.SpawnGameObject<TestGameObject>();
 		g_TestObject2 = g_TestWorld.SpawnGameObject<TestGameObject>();
 		g_TestObject3 = g_TestWorld.SpawnGameObject<TestGameObject>();
-
-		Directory testDir;
-		testDir.GotoDirectory("3rdParty/");
-
-		NE_LOG_DEBUG("---------------------");
-		for (const auto& entry : testDir.Iterate())
-		{
-			NE_LOG_DEBUG("Hello, %s", entry.string().c_str());
-		}
-		NE_LOG_DEBUG("---------------------");
-
+		
 		return true;
 	}
 
@@ -174,20 +163,18 @@ namespace Noble
 		bool finish = false;
 		MSG msg;
 		float accumulator = 0.0F;
+		Timestamp last = Time::GetNowTimestamp();
 
-		Clock::UpdateNow();
-		m_LoopClock.Mark();
+		Sleep(1);
 
 		while (!finish)
 		{
-			Clock::UpdateNow();
-			U64 time = m_LoopClock.GetMicrosecondsSinceMark();
-			m_LoopClock.Mark();
 
-			F32 seconds = (F32)time / 1000000.0F;
-			F32 fps = 1.0F / seconds;
+			Timestamp now = Time::GetNowTimestamp();
+			Time::SetLoopTime(now - last);
+			last = now;
 
-			accumulator += seconds;
+			accumulator += Time::GetDeltaTime();
 
 			finish = HandleWindowsMessages(msg);
 			if (!finish)
@@ -204,7 +191,7 @@ namespace Noble
 					accumulator -= FIXED_STEP_RATE;
 				}
 
-				Update(seconds);
+				Update(Time::GetDeltaTime());
 
 				// finish = Game::ShouldGameQuit();
 

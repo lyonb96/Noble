@@ -5,80 +5,109 @@
 namespace Noble
 {
 	/**
-	 * Called once at the beginning of the app to prepare timing information
+	 *
 	 */
-	inline void InitTiming();
+	struct Timestamp
+	{
+		friend class Time;
+
+		Timestamp(U64 stamp)
+			: Stamp(stamp)
+		{}
+
+		Timestamp()
+			: Stamp(0)
+		{}
+
+		Timestamp& operator+(const Timestamp& other);
+
+		Timestamp& operator-(const Timestamp& other);
+
+		Timestamp& operator+=(const Timestamp& other);
+
+		Timestamp& operator-=(const Timestamp& other);
+
+	private:
+
+		U64 Stamp;
+	};
 
 	/**
-	 * This class is a lightweight clock / stopwatch, it provides microsecond accurate time measurements.
+	 * Wraps time-related functions such as timestamping, date/time conversion etc
 	 */
-	class Clock
+	class Time
 	{
 	public:
 
-		/**
-		 * Default Constructor initializes static variables as required and prepares default values
-		 */
-		Clock();
+		// allow the Engine to access private members for core loop timestamping
+		friend class Engine;
 
 		/**
-		 * Places a mark at the current time, which can be used to reference a specific moment
+		 * Returns a timestamp at the current time
 		 */
-		void Mark();
+		static Timestamp GetNowTimestamp();
 
 		/**
-		 * Returns the number of microseconds since the clock started
+		 * Returns the delta time in seconds as a float
 		 */
-		U64 GetMicrosecondsSinceStart();
+		static F32 GetDeltaTime();
 
 		/**
-		 * Returns the number of microseconds since the last call to Mark()
-		 * If Mark() has not been called yet, this is the same as GetMicrosecondsSinceStart()
+		 * Returns the delta time in microseconds as a U64
 		 */
-		U64 GetMicrosecondsSinceMark();
+		static U64 GetDeltaTimeMicro();
 
 		/**
-		 * Same as GetMicrosecondsSinceStart, but returns seconds in float format
+		 * Converts a Timestamp into a duration in seconds
 		 */
-		F32 GetSecondsSinceStart();
+		static F32 GetDuration(const Timestamp& time);
 
 		/**
-		 * Same as GetMicrosecondsSinceMark, but returns seconds in float format
+		 * Converts a Timestamp into a duration in microseconds
 		 */
-		F32 GetSecondsSinceMark();
+		static U64 GetDurationMicro(const Timestamp& time);
 
 		/**
-		 * Only called once per frame, updates the clock's "now" marker
+		 * Returns the number of times the loop clock has been reset
 		 */
-		static void UpdateNow();
+		static U64 GetFrameCount();
 
-	private:
-		
 		/**
-		 * Converts arbitrary deltas to microseconds
+		 * Returns the calculated framerate based on the loop clock
 		 */
-		U64 Microseconds(U64 rawIn) const;
+		static U64 GetFrameRate();
 
 	private:
 
 		/**
-		 * Frequency will be the same across all clocks
+		 * Initializes default values and system variables
 		 */
-		static U64 m_Freq;
+		static void Initialize();
 
 		/**
-		 * Each clock will have access to a variable that is updated at the start of each frame
+		 * Resets the loop clock and stores new delta information
 		 */
-		static U64 m_Now;
+		static void SetLoopTime(Timestamp duration);
 
-		/**
-		 * Log of when the clock started
-		 */
-		U64 m_StartTime;
-		/**
-		 * Log of last call to Mark()
-		 */
-		U64 m_LastMarker;
+	private:
+
+		Time() {}
+
+		// no copy or move
+		Time(const Time&) = delete;
+		Time(Time&&) = delete;
+		Time& operator=(const Time&) = delete;
+		Time& operator=(Time&&) = delete;
+
+		// Result of QueryPerformanceFrequency
+		static U64 PerfFreq;
+		// Time the last loop took in microseconds
+		static U64 LoopMicroseconds;
+		// Time the last loop took in seconds
+		static F32 LoopSeconds;
+		// Number of times the loop clock has been updated
+		static U64 FrameCount;
+
 	};
 
 	/**
@@ -95,7 +124,7 @@ namespace Noble
 		BenchmarkHelper(const char* id);
 
 		BenchmarkHelper(const BenchmarkHelper&) = delete;
-		BenchmarkHelper(const BenchmarkHelper&&) = delete;
+		BenchmarkHelper(BenchmarkHelper&&) = delete;
 
 		/**
 		 * Determines how long the BenchmarkHelper was alive and logs this under DEBUG
@@ -107,9 +136,13 @@ namespace Noble
 		// A stringized representation of whatever the user passes into BENCHMARK
 		const char* m_Identifier;
 		// The time the BenchmarkHelper instance was created
-		U64 m_StartTime;
+		Timestamp m_StartTime;
 	};
 }
 
 // Benchmarking macros
+#ifdef NOBLE_DEBUG
 #define BENCHMARK(ID) ::Noble::BenchmarkHelper bh##ID(#ID)
+#else
+#define BENCHMARK(ID)
+#endif

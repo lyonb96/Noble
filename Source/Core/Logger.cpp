@@ -3,7 +3,7 @@
 #include "FileSystem.h"
 #include "String.h"
 
-#ifdef _DEBUG
+#ifdef NOBLE_DEBUG
 #include "WindowsMinimal.h" // OutputDebugString
 #endif
 
@@ -57,14 +57,14 @@ namespace Noble
 			}
 		}
 
-#ifdef _DEBUG
+#ifdef NOBLE_DEBUG
 		OutputDebugString(str);
 #endif
 
 		if (newline)
 		{
 			m_LogBuffer[m_LogBufferPos++] = '\n';
-#ifdef _DEBUG
+#ifdef NOBLE_DEBUG
 			OutputDebugString("\n");
 #endif
 		}

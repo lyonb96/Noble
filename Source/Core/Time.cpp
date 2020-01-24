@@ -1,101 +1,106 @@
 #include "Time.h"
 
+#include <utility>
+
 #include "WindowsMinimal.h"
 #include "Logger.h"
 
 namespace Noble
 {
-	U64 Clock::m_Freq = 0;
-	U64 Clock::m_Now = 0;
-
-	// Result of QueryPerformanceFrequency, only needs to be set once for the whole app lifetime
-	U64 g_PFreq = 0;
-
-	inline void InitTiming()
+	Timestamp& Timestamp::operator+(const Timestamp& other)
 	{
-		if (g_PFreq == 0)
-		{
-			LARGE_INTEGER li;
-			QueryPerformanceFrequency(&li);
-			g_PFreq = li.QuadPart / 1000000;
-		}
+		Timestamp tmp(*this);
+		return tmp += other;
 	}
 
-	/**
-	 * Helper function, wraps QPC call and just returns the Quad Part of the LARGE_INTEGER
-	 */
-	inline U64 GetTimeNow()
+	Timestamp& Timestamp::operator-(const Timestamp& other)
+	{
+		Timestamp tmp(*this);
+		return tmp -= other;
+	}
+
+	Timestamp& Timestamp::operator+=(const Timestamp& other)
+	{
+		Stamp += other.Stamp;
+		return *this;
+	}
+
+	Timestamp& Timestamp::operator-=(const Timestamp& other)
+	{
+		Stamp -= other.Stamp;
+		return *this;
+	}
+
+	// Declare statics
+	U64 Time::PerfFreq = 0;
+	U64 Time::LoopMicroseconds = 0;
+	F32 Time::LoopSeconds = 0.0F;
+	U64 Time::FrameCount = 0;
+
+	void Time::Initialize()
 	{
 		LARGE_INTEGER li;
-		QueryPerformanceCounter(&li);
-		return li.QuadPart;
+		QueryPerformanceFrequency(&li);
+		PerfFreq = li.QuadPart / 1000000;
 	}
 
-	Clock::Clock()
-	{
-		LARGE_INTEGER li;
-
-		if (m_Freq == 0)
-		{
-			// Grab frequency if it hasn't been setup yet
-			QueryPerformanceFrequency(&li);
-			m_Freq = li.QuadPart / 1000000;
-		}
-
-		// Log start time
-		QueryPerformanceCounter(&li);
-		m_StartTime = li.QuadPart;
-		m_LastMarker = m_StartTime;
-	}
-
-	void Clock::UpdateNow()
+	Timestamp Time::GetNowTimestamp()
 	{
 		LARGE_INTEGER li;
 		QueryPerformanceCounter(&li);
 
-		m_Now = li.QuadPart;
+		Timestamp t(0);
+		t.Stamp = li.QuadPart;
+		return std::move(t);
 	}
 
-	U64 Clock::Microseconds(U64 rawIn) const
+	F32 Time::GetDeltaTime()
 	{
-		return rawIn / m_Freq;
+		return LoopSeconds;
 	}
 
-	void Clock::Mark()
+	U64 Time::GetDeltaTimeMicro()
 	{
-		m_LastMarker = m_Now;
+		return LoopMicroseconds;
 	}
 
-	U64 Clock::GetMicrosecondsSinceStart()
+	F32 Time::GetDuration(const Timestamp& time)
 	{
-		return Microseconds(m_Now - m_StartTime);
+		return GetDurationMicro(time) / 1000000.0F;
 	}
 
-	U64 Clock::GetMicrosecondsSinceMark()
+	U64 Time::GetDurationMicro(const Timestamp& time)
 	{
-		return Microseconds(m_Now - m_LastMarker);
+		return (time.Stamp / PerfFreq);
+	}
+	
+	U64 Time::GetFrameCount()
+	{
+		return FrameCount;
 	}
 
-	F32 Clock::GetSecondsSinceStart()
+	U64 Time::GetFrameRate()
 	{
-		return (float) GetMicrosecondsSinceStart() / 1000000.0F;
+		return 1000000 / LoopMicroseconds;
 	}
 
-	F32 Clock::GetSecondsSinceMark()
+	void Time::SetLoopTime(Timestamp duration)
 	{
-		return (float) GetMicrosecondsSinceMark() / 1000000.0F;
+		LoopMicroseconds = GetDurationMicro(duration);
+		LoopSeconds = float(LoopMicroseconds) / 1000000.0F;
+		++FrameCount;
 	}
 
 
 	BenchmarkHelper::BenchmarkHelper(const char* id)
 		: m_Identifier(id)
 	{
-		m_StartTime = GetTimeNow();
+		m_StartTime = Time::GetNowTimestamp();
 	}
 
 	BenchmarkHelper::~BenchmarkHelper()
 	{
-		U64 duration = GetTimeNow() - m_StartTime;
-		NE_LOG_DEBUG("Benchmark Helper: %s - %uu", m_Identifier);
+		Timestamp duration = Time::GetNowTimestamp() - m_StartTime;
+		NE_LOG_DEBUG("Benchmark Helper: %s - %uu", m_Identifier, Time::GetDurationMicro(duration));
 	}
 }
