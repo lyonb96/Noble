@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdexcept>
-
 #include "Array.h"
 #include "Types.h"
 #include "Memory.h"
@@ -229,41 +227,68 @@ namespace Noble
 	};
 
 	/**
-	 * This will hopefully be a compile-time string class
-	 * Works fine as both a constexpr string class and a
-	 * holder for a regular const char* at runtime
-	 * Constexpr can make effective use of compile-time hashing
-	 *
-	 * Based on Scott Schurr's str_const, presented at C++ Now 2012
-	 *
-	 * For my own sanity... the P stands for permanent. I know I'll forget that at some point.
+	 * Compile-time String class used for immutable strings such as identifiers
+	 * Also contains a compile-time hash that can accelerate comparisons
 	 */
-	class PString
+	class NIdentifier
 	{
 	public:
 
+		/**
+		 * Constructs the Identifier and computes the hash at compile time, if possible
+		 */
 		template <Size N>
-		constexpr PString(const char(&in)[N])
+		constexpr NIdentifier(const char(&in)[N])
 			: m_Data(in), m_Size(N), m_Hash(HashString(in))
 		{}
 
+		constexpr NIdentifier(const NIdentifier& other)
+			: m_Data(other.m_Data),
+			m_Size(other.m_Size),
+			m_Hash(other.m_Hash)
+		{}
+
+		/**
+		 * Allows access to characters in the string, clamped at the length of the string
+		 */
 		constexpr char operator[](Size index) const
 		{
-			return index < m_Size ? m_Data[index] : throw std::out_of_range("Index out of range in PString");
+			return index < m_Size ? m_Data[index] : m_Data[m_Size - 1];
 		}
 
+		/**
+		 * Returns the length of the string
+		 */
 		constexpr const Size GetSize() const { return m_Size; }
 
+		/**
+		 * Implicit const char* conversion
+		 */
 		constexpr operator const char*() const { return m_Data; }
 
+		/**
+		 * Implicit U32 conversion for hash
+		 */
 		constexpr operator const U32() const { return m_Hash; }
 
+		/**
+		 * Returns the hash of the Identifier
+		 */
 		constexpr const U32 GetHash() const { return m_Hash; }
+
+		/**
+		 * Comparison operators use only the hash for fast comparisons
+		 */
+		friend bool operator==(const NIdentifier& lhs, const NIdentifier& rhs) { return lhs.m_Hash == rhs.m_Hash; }
+		friend bool operator!=(const NIdentifier& lhs, const NIdentifier& rhs) { return lhs.m_Hash != rhs.m_Hash; }
 
 	private:
 
+		// Original string
 		const char* m_Data;
+		// Length of the original string
 		const Size m_Size;
+		// Hashed string
 		const U32 m_Hash;
 	};
 

@@ -27,10 +27,22 @@ namespace Noble
 		World();
 
 		/**
-		 * Creates a new GameObject, but does not immediately spawn it
+		 * Creates and spawns a new GameObject of the specified type
+		 * Optionally takes a location at which to spawn the GameObject
 		 */
 		template <class T>
-		T* SpawnGameObject()
+		T* CreateAndSpawnGameObject(Vector3f spawnPos = Vector3f(0))
+		{
+			T* object = CreateGameObject<T>();
+
+			object->SetPosition(spawnPos);
+			object->OnSpawn();
+
+			return object;
+		}
+
+		template <class T>
+		T* CreateGameObject()
 		{
 			// After the constructor call, the object and all its components are created
 			T* object = NE_NEW(m_GameMemory, T);
@@ -50,8 +62,6 @@ namespace Noble
 
 			m_GameObjects.Add(object);
 
-			object->OnSpawn();
-
 			return object;
 		}
 
@@ -59,13 +69,12 @@ namespace Noble
 		 * Creates a new Component that is part of the given GameObject
 		 */
 		template <class T>
-		T* CreateComponent(GameObject* owner, const U32 name = 0)
+		T* CreateComponent(GameObject* owner, const NIdentifier& name = "")
 		{
 			CHECK(owner);
 
-			T* comp = NE_NEW(m_GameMemory, T);
+			T* comp = NE_NEW(m_GameMemory, T) (name);
 			comp->SetOwningObject(owner);
-			comp->SetComponentName(name);
 			m_Components.Add(comp);
 
 			owner->AddComponent(comp);
@@ -80,7 +89,6 @@ namespace Noble
 		U8 m_CreatedComponentCount;
 		// Memory Arena for GameObjects + Components
 		GameMemoryArena m_GameMemory;
-
 		// Array of all currently spawned GameObjects
 		Array<GameObject*> m_GameObjects;
 		// Array of all Components in the game

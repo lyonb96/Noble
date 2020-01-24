@@ -135,9 +135,9 @@ namespace Noble
 		// Testing stuff
 		StaticMeshComponent::TemporaryInit();
 
-		g_TestObject1 = g_TestWorld.SpawnGameObject<TestGameObject>();
-		g_TestObject2 = g_TestWorld.SpawnGameObject<TestGameObject>();
-		g_TestObject3 = g_TestWorld.SpawnGameObject<TestGameObject>();
+		g_TestObject1 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
+		g_TestObject2 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
+		g_TestObject3 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
 		
 		return true;
 	}
@@ -259,7 +259,7 @@ namespace Noble
 		g_TestObject2->GetSecondMesh()->TestDraw();
 		//g_TestObject3->GetSecondMesh()->TestDraw();
 
-		StaticMeshComponent* sm4 = g_TestObject3->GetComponent<StaticMeshComponent>(SID("Submesh"));
+		StaticMeshComponent* sm4 = g_TestObject3->GetComponent<StaticMeshComponent>("Submesh");
 		if (sm4)
 		{
 			sm4->TestDraw();

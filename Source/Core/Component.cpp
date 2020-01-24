@@ -3,9 +3,9 @@
 namespace Noble
 {
 
-	Component::Component()
+	Component::Component(const NIdentifier& name)
+		: m_ComponentName(name)
 	{
-		m_ComponentName = 0;
 		m_Owner = nullptr;
 		m_ParentComponent = nullptr;
 	}

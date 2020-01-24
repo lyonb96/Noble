@@ -5,10 +5,11 @@
 namespace Noble
 {
 	/**
-	 *
+	 * Wraps some functionality for measuring and storing time
 	 */
 	struct Timestamp
 	{
+		// Time can access the Stamp member
 		friend class Time;
 
 		Timestamp(U64 stamp)
@@ -18,6 +19,11 @@ namespace Noble
 		Timestamp()
 			: Stamp(0)
 		{}
+
+		/**
+		 * Operators for basic arithmetic with Timestamps
+		 * Subtracting time stamps makes them more like Durations
+		 */
 
 		Timestamp& operator+(const Timestamp& other);
 
@@ -29,7 +35,9 @@ namespace Noble
 
 	private:
 
+		// Internal timestamp value, generally filled by call to QPC
 		U64 Stamp;
+
 	};
 
 	/**
@@ -125,6 +133,8 @@ namespace Noble
 
 		BenchmarkHelper(const BenchmarkHelper&) = delete;
 		BenchmarkHelper(BenchmarkHelper&&) = delete;
+		BenchmarkHelper& operator=(const BenchmarkHelper&) = delete;
+		BenchmarkHelper& operator=(BenchmarkHelper&&) = delete;
 
 		/**
 		 * Determines how long the BenchmarkHelper was alive and logs this under DEBUG

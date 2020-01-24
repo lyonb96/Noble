@@ -89,8 +89,8 @@ namespace Noble
 	bgfx::ShaderHandle StaticMeshComponent::m_VS;
 	bgfx::ShaderHandle StaticMeshComponent::m_PS;
 
-	StaticMeshComponent::StaticMeshComponent()
-		: Component()
+	StaticMeshComponent::StaticMeshComponent(const NIdentifier& name)
+		: Component(name)
 	{}
 
 	void StaticMeshComponent::TemporaryInit()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Types.h"
+#include "String.h"
 
 #include <typeinfo>
 
@@ -18,7 +19,7 @@ namespace Noble
 
 		friend class World;
 
-		Component();
+		Component(const NIdentifier& name);
 
 	public:
 
@@ -58,7 +59,7 @@ namespace Noble
 		/**
 		 * Returns a hashed representation of the Component's name
 		 */
-		const U32 GetName() const { return m_ComponentName; }
+		const NIdentifier& GetName() const { return m_ComponentName; }
 
 		/**
 		 * Sets this component's local position
@@ -102,15 +103,10 @@ namespace Noble
 		 */
 		void SetOwningObject(GameObject* owner) { m_Owner = owner; }
 
-		/**
-		 * Called automatically during creation
-		 */
-		void SetComponentName(const U32 name) { m_ComponentName = name; }
-
 	protected:
 
-		// Allows the user to "name" the component using SIDs
-		U32 m_ComponentName;
+		// Component Name
+		NIdentifier m_ComponentName;
 		// Component's local Transform
 		Transform m_Transform;
 		// Object that owns this component (will always be valid)
