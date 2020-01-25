@@ -160,7 +160,7 @@ namespace Noble
 			return (lhs.GetIndex() != rhs.GetIndex()) || (&lhs.m_Container != &rhs.m_Container);
 		}
 
-	private:
+	protected:
 
 		Container& m_Container;
 		Size m_Index;
@@ -403,7 +403,7 @@ namespace Noble
 		 * Checks to see if the element is in this Array and returns its index if so
 		 * If it is not in the array, it returns Size's max value
 		 */
-		Size Find(ElementType elem) const
+		Size Find(const ElementType& elem) const
 		{
 			for (Size i = 0; i < m_ArrayCount; ++i)
 			{
@@ -444,7 +444,7 @@ namespace Noble
 		{
 			CHECK(newCount >= m_ArrayCount);
 
-			m_ArrayMax = m_Allocator.Resize(ElementSize, newCount, ElementAlign);
+			m_ArrayMax = m_Allocator.Resize(sizeof(ElementType), newCount, alignof(ElementType));
 			ConstructDefaults(m_ArrayCount);
 		}
 
@@ -629,7 +629,7 @@ namespace Noble
 		 */
 		void Grow(Size minNew = 0)
 		{
-			Size grow = m_Allocator.CalculateGrowSize(ElementSize, minNew);
+			Size grow = m_Allocator.CalculateGrowSize(sizeof(ElementType), minNew);
 
 			Resize(grow);
 		}
@@ -678,11 +678,6 @@ namespace Noble
 		}
 
 	private:
-
-		// Size in bytes of the element type
-		const Size ElementSize = sizeof(ElementType);
-		// Required alignment of the element type
-		const Size ElementAlign = alignof(ElementType);
 
 		// Allocator instance
 		Allocator m_Allocator;

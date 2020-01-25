@@ -1,4 +1,4 @@
-[Noble] INFO: Noble Engine Early Dev - Jan 23 2020
+[Noble] INFO: Noble Engine Early Dev - Jan 25 2020
 [Noble] INFO: Loading configuration from file
 [Noble] DEBUG: Creating game window
 [Noble] DEBUG: After adjustment, size: 1296 x 759

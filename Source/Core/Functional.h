@@ -2,6 +2,7 @@
 
 // Used for argument packing in Fat function pointers
 #include <tuple>
+#include "Types.h"
 
 namespace Noble
 {

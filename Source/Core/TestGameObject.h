@@ -9,7 +9,7 @@ namespace Noble
 
 	class TestGameObject : public GameObject
 	{
-		GAME_OBJECT_BODY(TestGameObject)
+		GAME_OBJECT_BODY(TestGameObject, GameObject)
 
 	private:
 

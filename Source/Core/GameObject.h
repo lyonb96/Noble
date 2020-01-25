@@ -1,14 +1,17 @@
 #pragma once
 
+#include "Object.h"
 #include "Component.h"
 #include "Types.h"
 #include "Array.h"
 #include "String.h"
+#include "Logger.h"
 
 /**
- * This macro automatically defines special functions that are required in child GameObjects
+ * This macro automatically declares special functions that are required in child GameObjects
  */
-#define GAME_OBJECT_BODY(CLASS_NAME) \
+#define GAME_OBJECT_BODY(CLASS_NAME, PARENT_NAME) \
+OBJECT_DECL(CLASS_NAME, PARENT_NAME)\
 public: \
 \
 	static ::Noble::I16 ComponentCount; \
@@ -24,9 +27,10 @@ private:
  * This macro takes care of defining necessary functions and members for child GameObjects
  */
 #define GAME_OBJECT_DEF(CLASS_NAME) \
+OBJECT_DEF(CLASS_NAME); \
 ::Noble::I16 CLASS_NAME::ComponentCount = -1; \
 \
-void CLASS_NAME::ConstructorCallForward() { if (ComponentCount > 0) { m_Components.Resize(ComponentCount); } }
+void CLASS_NAME::ConstructorCallForward() { if (ComponentCount > 0) { m_Components.Resize(ComponentCount); } } \
 
 namespace Noble
 {
@@ -43,8 +47,9 @@ namespace Noble
 	 * All subclasses of GameObject have to provide an empty constructor
 	 * that calls the parent empty constructor!
 	 */
-	class GameObject
+	class GameObject : public Object
 	{
+		OBJECT_DECL(GameObject, Object)
 	public:
 
 		// Allow the World class to access private members

@@ -8,6 +8,8 @@ namespace Noble
 {
 	World* GameObject::m_World = nullptr;
 
+	OBJECT_DEF(GameObject);
+
 	GameObject::GameObject()
 	{
 		m_TickEachFrame = false;

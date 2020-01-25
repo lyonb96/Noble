@@ -6,7 +6,7 @@ namespace Noble
 	GAME_OBJECT_DEF(TestGameObject);
 
 	TestGameObject::TestGameObject()
-		: GameObject()
+		: Super()
 	{
 		// Sample
 

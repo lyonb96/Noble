@@ -96,6 +96,12 @@
     <ClInclude Include="..\Source\Core\FileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Map.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -144,6 +150,9 @@
       <Filter>Source Files\Gameplay\Testing</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Core\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
