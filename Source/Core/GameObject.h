@@ -147,7 +147,7 @@ namespace Noble
 		 * whose name matches the given parameter
 		 */
 		template <class T>
-		T* GetComponent(const NIdentifier& name)
+		T* GetComponent(const NImmutableIdentifier& name)
 		{
 			// TODO: figure out if using typeid() and RTTI is a good idea
 
@@ -203,7 +203,7 @@ namespace Noble
 		 * This function can only be called from the constructor!
 		 */
 		template <class T>
-		T* CreateChildComponent(const NIdentifier& name = "")
+		T* CreateChildComponent(const NImmutableIdentifier& name = "")
 		{
 			return GetWorld()->CreateComponent<T>(this, name);
 		}

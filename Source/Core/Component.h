@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Object.h"
 #include "Types.h"
 #include "String.h"
 
@@ -13,13 +14,14 @@ namespace Noble
 	/**
 	 * Components are modular pieces of functionality that attach to GameObjects
 	 */
-	class Component
+	class Component : public Object
 	{
+		OBJECT_DECL(Component, Object)
 	public:
 
 		friend class World;
 
-		Component(const NIdentifier& name);
+		Component();
 
 	public:
 
@@ -102,6 +104,12 @@ namespace Noble
 		 * Called automatically during creation
 		 */
 		void SetOwningObject(GameObject* owner) { m_Owner = owner; }
+
+		/**
+		 * Changes the Component's name
+		 */
+		void SetComponentName(const NIdentifier& name) { m_ComponentName = name; }
+		void SetComponentName(NIdentifier&& name) { m_ComponentName = std::move(name); }
 
 	protected:
 

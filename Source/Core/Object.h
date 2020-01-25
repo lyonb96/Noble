@@ -2,6 +2,7 @@
 
 #include "Functional.h"
 #include "Map.h"
+#include "String.h"
 #include "Types.h"
 
 namespace Noble
@@ -24,12 +25,12 @@ namespace Noble
 
 	public:
 
-		static Object* CreateInstance(const U32 id, void* ptr);
+		static Object* CreateInstance(const NImmutableIdentifier& id, void* ptr);
 
 	private:
 
 		// Map of all object registrations
-		static Map<U32, ObjectRegistration> ObjectRegistry;
+		static Map<NIdentifier, ObjectRegistration> ObjectRegistry;
 
 	};
 
@@ -39,7 +40,7 @@ namespace Noble
 	struct ObjectRegistration
 	{
 	private:
-		ObjectRegistration(U32 id, ObjectCreator fn, Size size, Size align)
+		ObjectRegistration(const NImmutableIdentifier& id, ObjectCreator fn, Size size, Size align)
 			: ObjectID(id), CreateInstance(fn), ObjectSize(size), ObjectAlign(align)
 		{
 			Object::ObjectRegistry.Insert(id, *this);
@@ -48,9 +49,8 @@ namespace Noble
 	public:
 
 		ObjectRegistration()
-			: CreateInstance(nullptr)
+			: CreateInstance(nullptr), ObjectID()
 		{
-			ObjectID = 0;
 			ObjectSize = 0;
 			ObjectAlign = 0;
 		}
@@ -66,7 +66,7 @@ namespace Noble
 		}
 
 		// Unique ID of the Object subclass (Hash of the class name)
-		U32 ObjectID;
+		NIdentifier ObjectID;
 		// Function that uses placement new to create an instance of the Object subclass
 		ObjectCreator CreateInstance;
 		// Size of an instance of the Object subclass, in bytes
@@ -80,7 +80,7 @@ namespace Noble
 #define OBJECT_DECL(CLASS_NAME, PARENT_NAME)\
 public:\
 	typedef PARENT_NAME Super;\
-	static constexpr ::Noble::NIdentifier ClassName = #CLASS_NAME;\
+	static constexpr ::Noble::NImmutableIdentifier ClassName = #CLASS_NAME;\
 	static ::Noble::Object* CreateInstance(void* ptr);\
 private:\
 	static ::Noble::ObjectRegistration Registration;

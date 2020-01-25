@@ -6,6 +6,7 @@
 
 namespace Noble
 {
+	OBJECT_DEF(StaticMeshComponent);
 
 	bgfx::ShaderHandle CreateShader(const char* name)
 	{
@@ -89,8 +90,8 @@ namespace Noble
 	bgfx::ShaderHandle StaticMeshComponent::m_VS;
 	bgfx::ShaderHandle StaticMeshComponent::m_PS;
 
-	StaticMeshComponent::StaticMeshComponent(const NIdentifier& name)
-		: Component(name)
+	StaticMeshComponent::StaticMeshComponent()
+		: Component()
 	{}
 
 	void StaticMeshComponent::TemporaryInit()

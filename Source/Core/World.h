@@ -69,12 +69,13 @@ namespace Noble
 		 * Creates a new Component that is part of the given GameObject
 		 */
 		template <class T>
-		T* CreateComponent(GameObject* owner, const NIdentifier& name = "")
+		T* CreateComponent(GameObject* owner, const NImmutableIdentifier& name = "")
 		{
 			CHECK(owner);
 
-			T* comp = NE_NEW(m_GameMemory, T) (name);
+			T* comp = NE_NEW(m_GameMemory, T);
 			comp->SetOwningObject(owner);
+			comp->SetComponentName(name);
 			m_Components.Add(comp);
 
 			owner->AddComponent(comp);

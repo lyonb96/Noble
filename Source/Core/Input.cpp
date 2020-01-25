@@ -162,7 +162,7 @@ namespace Noble
 			U16 ind = 0;
 			while (ind < Action::ACTION_COUNT)
 			{
-				if (StrMatches(str, ActionStrings[ind]))
+				if (strcmp(str, ActionStrings[ind]))
 				{
 					return (Action) ind;
 				}
@@ -177,7 +177,8 @@ namespace Noble
 			U16 ind = 0;
 			while (ind < Axis::AXIS_COUNT)
 			{
-				if (StrMatches(str, AxisStrings[ind]))
+				
+				if (strcmp(str, AxisStrings[ind]))
 				{
 					return (Axis) ind;
 				}

@@ -4,9 +4,9 @@
 
 namespace Noble
 {
-	Map<U32, ObjectRegistration> Object::ObjectRegistry;
+	Map<NIdentifier, ObjectRegistration> Object::ObjectRegistry;
 
-	Object* Object::CreateInstance(const U32 id, void* ptr)
+	Object* Object::CreateInstance(const NImmutableIdentifier& id, void* ptr)
 	{
 		CHECK(ptr);
 		if (ObjectRegistry.ContainsKey(id))

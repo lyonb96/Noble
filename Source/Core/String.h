@@ -200,7 +200,6 @@ namespace Noble
 	using NStringFixed = NStringBase<FixedContainerAllocator<N>>;
 
 	/**
-	 * Time to go for compile-time string hashing
 	 * FNV1a C++11 Compile Time Hash Function by UnderscoreDiscovery on Github
 	 * https://gist.github.com/underscorediscovery/81308642d0325fd386237cfa3b44785c
 	 *
@@ -220,6 +219,9 @@ namespace Noble
 		return HashString(in);
 	}
 
+	/**
+	 * Little bit of voodoo template magic that may or may not be necessary
+	 */
 	template<U32 N>
 	struct HashStruct
 	{
@@ -229,23 +231,21 @@ namespace Noble
 	/**
 	 * Compile-time String class used for immutable strings such as identifiers
 	 * Also contains a compile-time hash that can accelerate comparisons
+	 * This class is great for automatically hashing a string constant in a function parameter
+	 * However, it falls flat when said function parameter needs to be stored at all
 	 */
-	class NIdentifier
+	class NImmutableIdentifier
 	{
+		friend class NIdentifier;
+
 	public:
 
 		/**
 		 * Constructs the Identifier and computes the hash at compile time, if possible
 		 */
 		template <Size N>
-		constexpr NIdentifier(const char(&in)[N])
+		constexpr NImmutableIdentifier(const char(&in)[N])
 			: m_Data(in), m_Size(N), m_Hash(HashString(in))
-		{}
-
-		constexpr NIdentifier(const NIdentifier& other)
-			: m_Data(other.m_Data),
-			m_Size(other.m_Size),
-			m_Hash(other.m_Hash)
 		{}
 
 		/**
@@ -279,8 +279,8 @@ namespace Noble
 		/**
 		 * Comparison operators use only the hash for fast comparisons
 		 */
-		friend bool operator==(const NIdentifier& lhs, const NIdentifier& rhs) { return lhs.m_Hash == rhs.m_Hash; }
-		friend bool operator!=(const NIdentifier& lhs, const NIdentifier& rhs) { return lhs.m_Hash != rhs.m_Hash; }
+		friend bool operator==(const NImmutableIdentifier& lhs, const NImmutableIdentifier& rhs) { return lhs.m_Hash == rhs.m_Hash; }
+		friend bool operator!=(const NImmutableIdentifier& lhs, const NImmutableIdentifier& rhs) { return lhs.m_Hash != rhs.m_Hash; }
 
 	private:
 
@@ -292,73 +292,121 @@ namespace Noble
 		const U32 m_Hash;
 	};
 
-	// Below are some nifty string manipulating functions
-
-	inline bool StrStartsWith(const char* in, const char* phrase)
-	{
-		I32 ind = 0;
-		while (in[ind] != '\0' && phrase[ind] != '\0')
-		{
-			if (in[ind] != phrase[ind])
-			{
-				return false;
-			}
-			++ind;
-		}
-
-		return true;
-	}
-
-	inline bool StrMatches(const char* a, const char* b)
-	{
-		I32 ind = 0;
-		while (a[ind] == b[ind])
-		{
-			if (a[ind] == '\0')
-			{
-				return true;
-			}
-			++ind;
-		}
-
-		return false;
-	}
-
 	/**
-	 * Returns the index of the first instance of the given character in the string, or -1 if none
+	 * Still immutable, but copy- and move-able version of NImmutableIdentifier
 	 */
-	inline I32 IndexOf(char val, const char* str)
+	class NIdentifier
 	{
-		I32 ind = 0;
-		while (str[ind] != '\0')
+	public:
+
+		/**
+		 * Default constructor
+		 */
+		NIdentifier()
+			: m_Data(nullptr), m_Size(0), m_Hash(0)
+		{}
+
+		/**
+		 * Allow copy straight from an immutable instance
+		 */
+		NIdentifier(const NImmutableIdentifier& init)
+			: m_Data(init.m_Data), m_Size(init.m_Size), m_Hash(init.m_Hash)
+		{}
+
+		/**
+		 * Allow construction from a string literal
+		 * Note that this runs the hash at runtime, so don't do this
+		 */
+		template <Size N>
+		NIdentifier(const char(&in)[N])
+			: m_Data(in), m_Size(N), m_Hash(HashString(in))
+		{}
+
+		/**
+		 * Copy constructor
+		 */
+		NIdentifier(const NIdentifier& other)
+			: m_Data(other.m_Data), m_Size(other.m_Size), m_Hash(other.m_Hash)
+		{}
+
+		/**
+		 * Move constructor
+		 */
+		NIdentifier(NIdentifier&& other) noexcept
+			: m_Data(other.m_Data), m_Size(other.m_Size), m_Hash(other.m_Hash)
 		{
-			if (str[ind] == val)
+			other.m_Data = nullptr;
+			other.m_Size = 0;
+			other.m_Hash = 0;
+		}
+
+		/**
+		 * Copy assignment
+		 */
+		NIdentifier& operator=(const NIdentifier& other)
+		{
+			if (this == &other)
 			{
-				return ind;
+				return *this;
 			}
-			++ind;
+
+			m_Data = other.m_Data;
+			m_Size = other.m_Size;
+			m_Hash = other.m_Hash;
+
+			return *this;
 		}
 
-		return -1;
-	}
-
-	/**
-	 * Copies "source" into "dest" and optionally appends a null terminator
-	 */
-	inline void CopyInto(const char* source, char* dest, bool appendNull = true)
-	{
-		I32 ind = 0;
-		while (source[ind] != '\0')
+		/**
+		 * Move assignment
+		 */
+		NIdentifier& operator=(NIdentifier&& other) noexcept
 		{
-			dest[ind] = source[ind];
-			++ind;
+			m_Data = other.m_Data;
+			m_Size = other.m_Size;
+			m_Hash = other.m_Hash;
+
+			other.m_Data = nullptr;
+			other.m_Size = 0;
+			other.m_Hash = 0;
+
+			return *this;
 		}
 
-		if (appendNull)
-		{
-			dest[ind] = '\0';
-		}
-	}
+		/**
+		 * Returns the raw string that this Identifier represents
+		 */
+		const char* GetString() const { return m_Data; }
+
+		/**
+		 * Returns the length of the string
+		 */
+		const Size GetSize() const { return m_Size; }
+
+		/**
+		 * Returns the hash of the string
+		 */
+		const U32 GetHash() const { return m_Hash; }
+
+		/**
+		 * Comparison operator that uses hashes for speed
+		 */
+		friend bool operator==(const NIdentifier& lhs, const NIdentifier& rhs) { return lhs.GetHash() == rhs.GetHash(); }
+
+		/**
+		 * Comparison operator that uses hashes for speed
+		 */
+		friend bool operator!=(const NIdentifier& lhs, const NIdentifier& rhs) { return lhs.GetHash() != rhs.GetHash(); }
+
+	private:
+
+		// Original string
+		const char* m_Data;
+		// Length of the original string
+		Size m_Size;
+		// Hash of the string
+		U32 m_Hash;
+	};
 }
 
 // Uses some template magic to run the hash at compile time, only works on constants

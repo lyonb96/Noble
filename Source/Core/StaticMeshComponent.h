@@ -17,9 +17,10 @@ namespace Noble
 
 	class StaticMeshComponent : public Component
 	{
+		OBJECT_DECL(StaticMeshComponent, Component);
 	public:
 
-		StaticMeshComponent(const NIdentifier& name);
+		StaticMeshComponent();
 
 		static void TemporaryInit();
 		static void TemporaryDestroy();

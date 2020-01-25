@@ -2,9 +2,9 @@
 
 namespace Noble
 {
+	OBJECT_DEF(Component);
 
-	Component::Component(const NIdentifier& name)
-		: m_ComponentName(name)
+	Component::Component()
 	{
 		m_Owner = nullptr;
 		m_ParentComponent = nullptr;
