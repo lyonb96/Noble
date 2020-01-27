@@ -5,15 +5,45 @@
 namespace Noble
 {
 
+	/**
+	 * Wraps key/value pairs for Maps and MapIterators
+	 */
 	template <class KeyType, class ValueType >
 	struct KeyValuePair
 	{
+		/**
+		 * Container-friendly empty constructor
+		 */
 		KeyValuePair()
 			: Key(), Value()
 		{}
 
+		/**
+		 * Copies the key and value into the KVP
+		 */
 		KeyValuePair(const KeyType& key, const ValueType& value)
 			: Key(key), Value(value)
+		{}
+
+		/**
+		 * Copies and key and moves the value into the KVP
+		 */
+		KeyValuePair(const KeyType& key, ValueType&& value)
+			: Key(key), Value(std::move(value))
+		{}
+		
+		/**
+		 * Moves the key and copies the value into the KVP
+		 */
+		KeyValuePair(KeyType&& key, const ValueType& value)
+			: Key(std::move(key)), Value(value)
+		{}
+
+		/**
+		 * Moves the key and value into the KVP
+		 */
+		KeyValuePair(KeyType&& key, ValueType&& value)
+			: Key(std::move(key)), Value(std::move(value))
 		{}
 
 		KeyType Key;
@@ -35,9 +65,9 @@ namespace Noble
 		typedef KeyValuePair<KeyType, ValueType> Pair;
 		typedef ArrayBase<Pair, Allocator> PairContainer;
 
-		//typedef MapIterator<PairContainer, KeyType, ValueType> Iterator;
-		//typedef MapIterator<const PairContainer, const KeyType, const ValueType> ConstIterator;
-		
+		typedef IndexedContainerIterator<PairContainer, Pair> Iterator;
+		typedef IndexedContainerIterator<const PairContainer, const Pair> ConstIterator;
+
 		/**
 		 * Default constructor does not prepare the map for any entries
 		 */
@@ -109,7 +139,7 @@ namespace Noble
 			Size entry = GetKeyIndex(key);
 			if (entry == SizeMaxValue)
 			{
-				m_Array.Add( {key, std::move(value)} );
+				m_Array.Add({ key, std::move(value) });
 
 				return true;
 			}
@@ -229,11 +259,78 @@ namespace Noble
 			}
 		}
 
+	public:
+
+		// Iterators and Ranged For support
+
+		/**
+		 * Returns a const iterator pointing to the first key/value pair
+		 */
+		ConstIterator Start() const
+		{
+			return m_Array.Start();
+		}
+
+		/**
+		 * Returns an iterator pointing to the first key/value pair
+		 */
+		Iterator Start()
+		{
+			return m_Array.Start();
+		}
+
+		/**
+		 * Returns a const iterator pointing to the end of the array of key/value pairs
+		 */
+		ConstIterator End() const
+		{
+			return m_Array.End();
+		}
+
+		/**
+		 * Returns an iterator pointing to the end of the array of key/value pairs
+		 */
+		Iterator End()
+		{
+			return m_Array.End();
+		}
+
+		/**
+		 * Returns an iterator pointing to the first key/value pair
+		 */
+		Iterator begin()
+		{
+			return Start();
+		}
+
+		/**
+		 * Returns a const iterator pointing to the first key/value pair
+		 */
+		ConstIterator begin() const
+		{
+			return Start();
+		}
+
+		/**
+		 * Returns an iterator pointing to the end of the array of key/value pairs
+		 */
+		Iterator end()
+		{
+			return End();
+		}
+
+		/**
+		 * Returns a const iterator pointing to the end of the array of key/value pairs
+		 */
+		ConstIterator end() const
+		{
+			return End();
+		}
+
 	private:
 
 		// Container of key/value pairs
 		PairContainer m_Array;
-		//Array<KeyValuePair<KeyType, ValueType>> m_Array;
 
 	};
 

@@ -129,147 +129,166 @@ namespace Noble
 		return fs::file_size(p);
 	}
 
-	const char* GetModeString(FileMode mode, bool bin)
-	{
-		switch (mode)
-		{
-			case FileMode::READONLY:
-				return bin ? "rb" : "r";
-			case FileMode::READWRITE:
-				return bin ? "wb+" : "w+";
-			case FileMode::WRITE_APPEND:
-				return bin ? "ab" : "a";
-			case FileMode::READ_APPEND:
-				return bin ? "ab+" : "a+";
-			default:
-				return "";
-		}
-	}
+	// -----  File v3.0  -----
 
 	File::File()
 	{
-		m_Mode = FileMode::READONLY;
-		m_FileHandle = nullptr;
+		m_Handle = NULL;
+		m_FileSize = 0;
+		m_Mode = FileMode::FILE_READ;
 	}
 
-	File::File(const char* path, bool bin, FileMode mode)
+	File::File(const fs::path& path, FileMode mode, bool create)
 		: File()
 	{
-		OpenFile(path, bin, mode);
+		Open(path, mode, create);
 	}
 
-	bool File::OpenFile(const char* path, bool bin, FileMode mode)
+	File::File(File&& other) noexcept
 	{
-		// Close any existing open file
-		if (m_FileHandle)
-		{
-			CloseFile();
-		}
+		m_Handle = other.m_Handle;
+		m_FileSize = other.m_FileSize;
+		m_Mode = other.m_Mode;
 
-		// Open the new requested file
-		errno_t err = fopen_s(&m_FileHandle, path, GetModeString(mode, bin));
-		m_Mode = mode;
-
-		// Check for failure
-		if (!m_FileHandle)
-		{
-			return false;
-		}
-
-		return true;
+		other.m_Handle = NULL;
+		other.m_FileSize = 0;
+		other.m_Mode = FileMode::FILE_READ;
 	}
 
-	void File::CloseFile()
+	File& File::operator=(File&& other) noexcept
 	{
-		if (m_FileHandle)
-		{
-			fclose(m_FileHandle);
-			m_FileHandle = nullptr;
-		}
+		m_Handle = other.m_Handle;
+		m_FileSize = other.m_FileSize;
+		m_Mode = other.m_Mode;
+
+		other.m_Handle = NULL;
+		other.m_FileSize = 0;
+		other.m_Mode = FileMode::FILE_READ;
+
+		return *this;
 	}
 
 	File::~File()
 	{
-		CloseFile();
+		Close();
 	}
 
-	Size File::GetFileSize() const
+	void File::Open(const fs::path& path, FileMode mode, bool create)
 	{
-		if (m_FileHandle == nullptr)
+		// Skip if a file is already open
+		if (IsValid())
 		{
-			return -1;
-		}
-		I32 pos = ftell(m_FileHandle);
-
-		fseek(m_FileHandle, 0, SEEK_END);
-		Size fs = ftell(m_FileHandle);
-		fseek(m_FileHandle, pos, SEEK_SET);
-
-		// The above method was causing some bizarre behavior
-		// Essentially, a sample file would show as 2012 bytes
-		// but would actually trigger FEOF around 1937 bytes
-		// Windows also shows the file as 2012 bytes
-		// The issue turns out to be due to line ending normalization
-		// in functions like getc and fputc. When opened in text mode,
-		// getc converts a CRLF to a single LF, and fputc converts an
-		// LF to a CRLF. However, fseek() does not perform the same
-		// conversion, so each line ending counts as 2 bytes according
-		// to fseek() but only 1 byte according to getc(). This caused reads
-		// to hit EOF sooner than anticipated, causing several issues. 
-		// Solution is to just not bother with text files, all files will
-		// be opened as binary files so text mode support is being stripped.
-
-		return fs;
-	}
-
-	Size File::Read(U8* buffer, I32 maxRead) const
-	{
-		if (m_FileHandle == nullptr || buffer == nullptr)
-		{
-			return 0;
-		}
-
-		Size i;
-		for (i = 0; i < maxRead; ++i)
-		{
-			buffer[i] = getc(m_FileHandle);
-			if (feof(m_FileHandle))
-			{
-				return i;
-			}
-		}
-		return i;
-	}
-
-	bool File::ReadLine(U8* buffer, Size maxRead) const
-	{
-		if (m_FileHandle == nullptr || buffer == nullptr)
-		{
-			return false;
-		}
-
-		U8 c = getc(m_FileHandle);
-		Size i = 0;
-		while (c != '\n' || i < maxRead)
-		{
-			buffer[i++] = c;
-			c = getc(m_FileHandle);
-		}
-
-		return true;
-	}
-
-	void File::Write(const char* buffer, Size bufferSize) const
-	{
-		if (!m_FileHandle)
-		{
+			NE_LOG_WARNING("Attempted to open a file without closing the original - file %s will not be opened.", path.string().c_str());
 			return;
 		}
 
-		for (Size i = 0; i < bufferSize; ++i)
+		// Set up access params
+		m_Mode = mode;
+		DWORD dwAccess = 0;
+		DWORD dwShare = 0;
+		DWORD dwCreation = 0;
+
+		switch (mode)
 		{
-			fputc(buffer[i], m_FileHandle);
+			case FileMode::FILE_READ:
+				dwAccess = GENERIC_READ;
+				dwShare = FILE_SHARE_READ;
+				dwCreation = OPEN_EXISTING;
+				break;
+			case FileMode::FILE_WRITE_REPLACE:
+				dwAccess = GENERIC_WRITE;
+				dwShare = 0;
+				dwCreation = TRUNCATE_EXISTING;
+				break;
+			case FileMode::FILE_WRITE_APPEND:
+				dwAccess = GENERIC_WRITE;
+				dwShare = 0;
+				dwCreation = create ? OPEN_ALWAYS : OPEN_EXISTING;
+				break;
 		}
+
+		// Open the file and check for error
+		m_Handle = CreateFileW(path.c_str(), dwAccess, dwShare, NULL, dwCreation, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (m_Handle == INVALID_HANDLE_VALUE)
+		{
+			NE_LOG_WARNING("Failed to open file %s - Error Msg: %u", path.string().c_str(), GetLastError());
+			m_Handle = NULL;
+			return;
+		}
+
+		// Grab file size
+		LARGE_INTEGER result;
+		if (!GetFileSizeEx(m_Handle, &result))
+		{
+			NE_LOG_WARNING("Failed to find file size for file %s", path.string().c_str());
+			m_FileSize = 0;
+			return;
+		}
+		m_FileSize = static_cast<Size>(result.QuadPart);
+	}
+
+	void File::Close()
+	{
+		if (m_Handle)
+		{
+			CloseHandle(m_Handle);
+		}
+	}
+
+	Size File::Read(void* buffer, Size maxRead)
+	{
+		// Check for file validity
+		if (!IsValid())
+		{
+			NE_LOG_WARNING("Attempted to read from invalid File object");
+			return 0;
+		}
+
+		// Read from the file and store bytes read
+		DWORD bytesRead = 0;
+		BOOL result = ReadFile(m_Handle, buffer, maxRead, &bytesRead, NULL);
+
+		// Check for error and unexpected state
+		if (result == FALSE)
+		{
+			NE_LOG_WARNING("File read failed - Error Msg: %u", GetLastError());
+			return 0;
+		}
+
+		if (bytesRead != maxRead)
+		{
+			NE_LOG_INFO("Read %u bytes from file, which is different from requested %u bytes", bytesRead, maxRead);
+		}
+
+		return bytesRead;
+	}
+
+	Size File::Write(const void* data, Size maxWrite)
+	{
+		// Check for file validity
+		if (!IsValid())
+		{
+			NE_LOG_WARNING("Attempted to write to invalid File object");
+			return 0;
+		}
+
+		// Write to file and store bytes written
+		DWORD bytesWritten = 0;
+		BOOL result = WriteFile(m_Handle, data, maxWrite, &bytesWritten, NULL);
+
+		// Check for error and unexpected state
+		if (result == FALSE)
+		{
+			NE_LOG_WARNING("File write failed - Error Msg: %u", GetLastError());
+			return 0;
+		}
+
+		if (bytesWritten != maxWrite)
+		{
+			NE_LOG_INFO("Wrote %u bytes to file, which is different from requested %u bytes", bytesWritten, maxWrite);
+		}
+
+		return bytesWritten;
 	}
 
 	// ----- Mapped File -----

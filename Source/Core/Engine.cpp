@@ -137,10 +137,7 @@ namespace Noble
 
 		g_TestObject1 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
 		g_TestObject2 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
-		//g_TestObject3 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
-
-		void* testData = Memory::Malloc(sizeof(TestGameObject), alignof(TestGameObject));
-		g_TestObject3 = (TestGameObject*)Object::CreateInstance("TestGameObject", testData);
+		g_TestObject3 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
 		
 		return true;
 	}

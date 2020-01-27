@@ -83,90 +83,98 @@ namespace Noble
 	const Size CheckFileSize(const char* path);
 
 	/**
-	 * Describes different modes that files can be opened with
+	 * Supported modes for non-mapped files
 	 */
 	enum class FileMode
 	{
-		// Opens the file for reading only. Does not create the file if it doesn't exist.
-		READONLY,
-		// Opens the file for read/write. Will create the file if it does not exist. Overwrites existing content
-		READWRITE,
-		// Opens the file for write-only. Will create the file if it does not exist. Appends to existing content
-		WRITE_APPEND,
-		// Opens the file for read/write. Will create the file if it does not exist. Appends to existing content
-		READ_APPEND
+		// Opens the file for reading - requires that the file exist beforehand
+		FILE_READ,
+		// Opens the file for writing and overwrites existing content - requires that the file exist beforehand
+		FILE_WRITE_REPLACE,
+		// Opens the file for writing and appends new content to the end
+		FILE_WRITE_APPEND
 	};
 
 	/**
-	 * Converts a FileMode to an fopen() mode string
-	 */
-	const char* GetModeString(FileMode mode, bool bin);
-
-	/**
-	 * Wraps functionality for a file.
-	 *
-	 * The goal of this class is to provide access to reading and writing without any heap allocations.
-	 * The user provides memory they have allocated themselves to receive file data.
+	 * A wrapper providing buffered file I/O
 	 */
 	class File
 	{
 	public:
 
+		/**
+		 * Empty constructor
+		 */
 		File();
 
 		/**
-		 * Creates a File instance and opens the requested file immediately
+		 * Opens the file from the given path using the given mode
+		 * Optional param to create the file if it does not exist (default false)
 		 */
-		File(const char* path, bool bin = true, FileMode mode = FileMode::READONLY);
+		File(const fs::path& path, FileMode mode, bool create = false);
+
+		// No copy allowed
+		File(const File& other) = delete;
+		File& operator=(const File& other) = delete;
 
 		/**
-		 * Opens the requested file with the requested mode (default Read-Only)
-		 * Can also be specified to be a binary or text-based file (default is binary)
-		 * It will also close any existing file this instance is working on
+		 * Move constructor
 		 */
-		bool OpenFile(const char* path, bool bin = true, FileMode mode = FileMode::READONLY);
+		File(File&& other) noexcept;
 
 		/**
-		 * Closes any existing file this instance is working on
+		 * Move assignment
 		 */
-		void CloseFile();
+		File& operator=(File&& other) noexcept;
 
 		/**
-		 * Destructor, makes sure to close the file
+		 * Closes the open file, if there is one
 		 */
 		~File();
 
 	public:
 
 		/**
-		 * Returns total size of the file in bytes
+		 * Opens the file from the given path using the given mode
+		 * Optional param to create the file if it does not exist (default false)
 		 */
-		Size GetFileSize() const;
+		void Open(const fs::path& path, FileMode mode, bool create = false);
 
 		/**
-		 * Reads from the file into the given buffer
-		 * Returns the number of bytes read
+		 * Closes the open file, if there is one
 		 */
-		Size Read(U8* buffer, I32 maxRead) const;
+		void Close();
 
 		/**
-		 * Reads a single line into the buffer (or as much as will fit)
-		 * Returns false if the read fails
+		 * Reads the requested number of bytes into the given buffer
+		 * Returns the actual number of bytes read
 		 */
-		bool ReadLine(U8* buffer, Size maxRead) const;
+		Size Read(void* buffer, Size maxRead);
 
 		/**
-		 * Writes the requested buffer to the file
+		 * Writes the requested number of bytes from the given buffer
+		 * Returns the actual number of bytes written
 		 */
-		void Write(const char* buffer, Size bufferSize) const;
+		Size Write(const void* data, Size maxWrite);
+
+		/**
+		 * Returns true if a file is open
+		 */
+		bool IsValid() const { return m_Handle != nullptr; }
+
+		/**
+		 * Returns the size of the open file, or 0 if no file is open
+		 */
+		Size GetFileSize() const { return m_FileSize; }
 
 	private:
 
 		// Current file mode
 		FileMode m_Mode;
-		// Current file handle
-		FILE* m_FileHandle;
-
+		// Handle to the currently open file
+		void* m_Handle;
+		// Size of the currently open file
+		Size m_FileSize;
 	};
 
 	/**
@@ -284,9 +292,8 @@ namespace Noble
 		Size m_MappedSize;
 
 		// Platform specifics
-		typedef void* FileHandle;
 
-		FileHandle m_File;
+		void* m_File;
 		void* m_MappedFile;
 		void* m_MappedView;
 	};

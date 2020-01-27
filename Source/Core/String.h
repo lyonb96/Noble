@@ -262,14 +262,9 @@ namespace Noble
 		constexpr const Size GetSize() const { return m_Size; }
 
 		/**
-		 * Implicit const char* conversion
+		 * Returns the string represented by this Identifier
 		 */
-		constexpr operator const char*() const { return m_Data; }
-
-		/**
-		 * Implicit U32 conversion for hash
-		 */
-		constexpr operator const U32() const { return m_Hash; }
+		constexpr const char* GetString() const { return m_Data; }
 
 		/**
 		 * Returns the hash of the Identifier

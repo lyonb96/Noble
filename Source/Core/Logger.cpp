@@ -120,8 +120,7 @@ namespace Noble
 
 	void Logger::PrintLogInternal(const char* file)
 	{
-		File logFile;
-		logFile.OpenFile(file, false, FileMode::READWRITE);
+		File logFile(file, FileMode::FILE_WRITE_REPLACE, true);
 
 		logFile.Write(m_LogBuffer, m_LogBufferPos);
 	}

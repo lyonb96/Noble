@@ -44,8 +44,9 @@ namespace Noble
 		template <class T>
 		T* CreateGameObject()
 		{
-			// After the constructor call, the object and all its components are created
-			T* object = NE_NEW(m_GameMemory, T);
+			NClass* ncls = T::GetStaticClass();
+			void* data = NE_BUFFER_ALLOC(m_GameMemory, ncls->ObjectSize, ncls->ObjectAlign);
+			T* object = (T*)Object::CreateInstance<T>(data);
 			// If this is the first instance of this Object type created, fill out the fields
 			if (T::ComponentCount == -1)
 			{

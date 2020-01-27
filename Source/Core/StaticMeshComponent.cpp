@@ -36,8 +36,7 @@ namespace Noble
 
 		if (exists)
 		{
-			File shaderFile;
-			shaderFile.OpenFile(filePath);
+			File shaderFile(filePath, FileMode::FILE_READ);
 
 			Size fSize = shaderFile.GetFileSize();
 			const bgfx::Memory* mem = bgfx::alloc(fSize + 1);
