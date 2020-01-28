@@ -2,6 +2,8 @@
 
 #include <type_traits>
 
+#include "AreTypesEqual.h"
+#include "Class.h"
 #include "Functional.h"
 #include "Map.h"
 #include "String.h"
@@ -13,9 +15,6 @@ namespace Noble
 	// Provides some real-time class information
 	struct NClass;
 
-	// Pointer to a function that creates an object instance via placement new
-	typedef Function<Object*(void*)> ObjectCreator;
-
 	/**
 	 * The Object class provides facilities for runtime creation by ID,
 	 * and will provide network sync and replication features in the future
@@ -26,14 +25,17 @@ namespace Noble
 
 		/**
 		 * Root level of the IsA() comparison
-		 * Since any compatible object for this function is an Object derivative,
-		 * it always returns true.
 		 */
 		template <class T>
 		bool IsA() const
 		{
-			return true;
+			return ARE_TYPES_EQUAL(T, Object);
 		}
+
+		/**
+		 * Returns a pointer to the NClass that this Object is based on
+		 */
+		NClass* GetClass() const { return m_Class; }
 
 	private:
 
@@ -61,17 +63,12 @@ namespace Noble
 		/**
 		 * Creates an Object subclass of the NClass type
 		 */
-		static Object* CreateInstance(NClass* const type, void* ptr);
+		static Object* CreateInstance(NClass* type, void* ptr);
 
 		/**
 		 * Creates an Object subclass of the given ID, or returns nullptr if ID is invalid
 		 */
 		static Object* CreateInstance(const NImmutableIdentifier& id, void* ptr);
-
-		/**
-		 * Returns a pointer to the NClass that this Object is based on
-		 */
-		NClass* const GetClass() const { return m_Class; }
 
 	private:
 
@@ -81,70 +78,7 @@ namespace Noble
 		/**
 		 * Uses the given NClass instance to create a new Object subclass at the given address
 		 */
-		static Object* CreateInstanceFromClass(NClass& cls, void* ptr);
-
-	};
-
-	/**
-	 * Handles registration data for Object subclasses
-	 */
-	struct NClass
-	{
-	private:
-
-		/**
-		 * Fills out members and automatically adds the registration data to the map
-		 */
-		NClass(const NImmutableIdentifier& id, ObjectCreator fn, Size size, Size align, bool abstr)
-			: ObjectID(id), 
-			CreateInstance(fn), 
-			ObjectSize(size), 
-			ObjectAlign(align), 
-			IsAbstract(abstr)
-		{
-			// Make sure the registry doesn't already contain the key (avoid duplicates or hash collisions)
-			CHECK(!Object::ObjectRegistry.ContainsKey(id));
-			Object::ObjectRegistry.Insert(id, *this);
-		}
-
-	public:
-
-		/**
-		 * Empty-init so it can live in a map
-		 */
-		NClass()
-			: CreateInstance(nullptr), ObjectID()
-		{
-			ObjectSize = 0;
-			ObjectAlign = 0;
-			IsAbstract = false;
-		}
-
-		/**
-		 * Creates a registration based on the given Object subclass and automatically registers it
-		 */
-		template <class T>
-		static NClass RegisterNClass()
-		{
-			NClass reg(
-				T::ClassName,
-				&T::CreateInstance,
-				sizeof(T),
-				alignof(T),
-				std::is_abstract_v<T>);
-			return reg;
-		}
-
-		// Unique ID of the Object subclass
-		NIdentifier ObjectID;
-		// Function that uses placement new to create an instance of the Object subclass
-		ObjectCreator CreateInstance;
-		// Size of an instance of the Object subclass, in bytes
-		Size ObjectSize;
-		// Minimum alignment required by an instance of the Object subclass
-		Size ObjectAlign;
-		// Class type
-		bool IsAbstract;
+		static Object* CreateInstanceFromClass(NClass* cls, void* ptr);
 
 	};
 }
@@ -161,7 +95,7 @@ public:\
 	template <class T>\
 	bool IsA() const\
 	{\
-		if (T::ClassName == ClassName)\
+		if (::Noble::AreTypesEqual<T, CLASS_NAME>::Value)\
 		{\
 			return true;\
 		}\

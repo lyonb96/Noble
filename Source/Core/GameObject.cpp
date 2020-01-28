@@ -64,6 +64,4 @@ namespace Noble
 	{
 		m_Components.Add(comp);
 	}
-
-	// ...
 }

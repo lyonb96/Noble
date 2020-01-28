@@ -149,12 +149,9 @@ namespace Noble
 		template <class T>
 		T* GetComponent(const NImmutableIdentifier& name)
 		{
-			// TODO: figure out if using typeid() and RTTI is a good idea
-
-			const std::type_info& query = typeid(T);
 			for (Component* comp : m_Components)
 			{
-				if (comp && query == typeid(*comp))
+				if (*comp->GetClass() == *T::GetStaticClass())
 				{
 					if (comp->GetName() == name)
 					{
@@ -172,12 +169,9 @@ namespace Noble
 		template <class T>
 		T* GetComponent()
 		{
-			// TODO: figure out if using typeid() and RTTI is a good idea
-
-			const std::type_info& query = typeid(T);
 			for (Component* comp : m_Components)
 			{
-				if (comp && query == typeid(*comp))
+				if (*comp->GetClass() == *T::GetStaticClass())
 				{
 					return static_cast<T*>(comp);
 				}
@@ -229,6 +223,5 @@ namespace Noble
 		Array<Component*> m_Components;
 
 	private:
-
 	};
 }

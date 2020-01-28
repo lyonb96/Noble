@@ -39,7 +39,7 @@ namespace Noble
 			File shaderFile(filePath, FileMode::FILE_READ);
 
 			Size fSize = shaderFile.GetFileSize();
-			const bgfx::Memory* mem = bgfx::alloc(fSize + 1);
+			const bgfx::Memory* mem = bgfx::alloc(U32(fSize + 1));
 			
 			shaderFile.Read(mem->data, fSize);
 			mem->data[mem->size - 1] = '\0';

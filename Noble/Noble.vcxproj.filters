@@ -28,6 +28,15 @@
     <Filter Include="Header Files\Containers">
       <UniqueIdentifier>{b2d00fec-82ef-470e-ac84-da5ed65fc53b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Templates">
+      <UniqueIdentifier>{bcb4eea5-170d-481a-8d03-c2e24856767d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object">
+      <UniqueIdentifier>{f293a874-4d47-489c-818d-69fd962670fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Object">
+      <UniqueIdentifier>{2bda7940-5935-4fe7-b7f0-9d07e73ce621}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Engine.h">
@@ -99,8 +108,14 @@
     <ClInclude Include="..\Source\Core\Map.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\AreTypesEqual.h">
+      <Filter>Header Files\Templates</Filter>
+    </ClInclude>
     <ClInclude Include="..\Source\Core\Object.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Class.h">
+      <Filter>Header Files\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -153,7 +168,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Core\Object.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Class.cpp">
+      <Filter>Source Files\Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

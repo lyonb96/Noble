@@ -74,7 +74,8 @@ namespace Noble
 		{
 			CHECK(owner);
 
-			T* comp = NE_NEW(m_GameMemory, T);
+			void* data = NE_BUFFER_ALLOC(m_GameMemory, T::GetStaticClass()->ObjectSize, T::GetStaticClass()->ObjectAlign);
+			T* comp = (T*)Object::CreateInstance<T>(data);
 			comp->SetOwningObject(owner);
 			comp->SetComponentName(name);
 			m_Components.Add(comp);

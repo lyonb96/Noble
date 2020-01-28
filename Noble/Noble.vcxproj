@@ -156,7 +156,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\Core\AreTypesEqual.h" />
     <ClInclude Include="..\Source\Core\Array.h" />
+    <ClInclude Include="..\Source\Core\Class.h" />
     <ClInclude Include="..\Source\Core\Component.h" />
     <ClInclude Include="..\Source\Core\Config.h" />
     <ClInclude Include="..\Source\Core\FileSystem.h" />
@@ -182,6 +184,7 @@
     <ClInclude Include="..\Source\Core\World.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Core\Class.cpp" />
     <ClCompile Include="..\Source\Core\Component.cpp" />
     <ClCompile Include="..\Source\Core\Config.cpp" />
     <ClCompile Include="..\Source\Core\FileSystem.cpp" />

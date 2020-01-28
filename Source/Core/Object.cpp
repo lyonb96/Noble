@@ -10,7 +10,7 @@ namespace Noble
 	{
 		CHECK(type && ptr);
 
-		return CreateInstanceFromClass(*type, ptr);
+		return CreateInstanceFromClass(type, ptr);
 	}
 
 	Object* Object::CreateInstance(const NImmutableIdentifier& id, void* ptr)
@@ -18,7 +18,7 @@ namespace Noble
 		CHECK(ptr);
 		if (ObjectRegistry.ContainsKey(id))
 		{
-			return CreateInstanceFromClass(ObjectRegistry[id], ptr);
+			return CreateInstanceFromClass(&ObjectRegistry[id], ptr);
 		}
 
 		NE_LOG_ERROR("Requested class %s is not registered!", id.GetString());
@@ -26,19 +26,19 @@ namespace Noble
 		return nullptr;
 	}
 
-	Object* Object::CreateInstanceFromClass(NClass& cls, void* ptr)
+	Object* Object::CreateInstanceFromClass(NClass* cls, void* ptr)
 	{
 		CHECK(ptr);
 
-		if (cls.IsAbstract)
+		if (cls->IsAbstract)
 		{
-			NE_LOG_ERROR("Cannot create instance of abstract type %s", cls.ObjectID.GetString());
+			NE_LOG_ERROR("Cannot create instance of abstract type %s", cls->ObjectID.GetString());
 			return nullptr;
 		}
 
-		Object* inst = cls.CreateInstance(ptr);
-		inst->m_Class = &cls;
+		Object* inst = cls->CreateInstance(ptr);
+		inst->m_Class = cls;
 
-		return cls.CreateInstance(ptr);
+		return cls->CreateInstance(ptr);
 	}
 }
