@@ -37,6 +37,12 @@
     <Filter Include="Source Files\Object">
       <UniqueIdentifier>{2bda7940-5935-4fe7-b7f0-9d07e73ce621}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\AssetManager">
+      <UniqueIdentifier>{47d5030c-a340-4c8f-9e36-ffbace8dbc97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AssetManager">
+      <UniqueIdentifier>{52524333-8449-47bf-938d-28b77fcfa5b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Engine.h">
@@ -117,6 +123,18 @@
     <ClInclude Include="..\Source\Core\Class.h">
       <Filter>Header Files\Object</Filter>
     </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>Header Files\AssetManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Asset.h">
+      <Filter>Header Files\AssetManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\StaticMesh.h">
+      <Filter>Header Files\AssetManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\BitStream.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -172,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Class.cpp">
       <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\StaticMesh.cpp">
+      <Filter>Source Files\AssetManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

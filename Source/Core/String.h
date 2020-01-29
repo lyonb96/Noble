@@ -219,6 +219,11 @@ namespace Noble
 		return HashString(in);
 	}
 
+	constexpr const Size operator "" _len(char const* in, Size len)
+	{
+		return len;
+	}
+
 	/**
 	 * Little bit of voodoo template magic that may or may not be necessary
 	 */
@@ -246,6 +251,10 @@ namespace Noble
 		template <Size N>
 		constexpr NImmutableIdentifier(const char(&in)[N])
 			: m_Data(in), m_Size(N), m_Hash(HashString(in))
+		{}
+
+		constexpr NImmutableIdentifier(const char* str, const Size len, const U32 hash)
+			: m_Data(str), m_Size(len), m_Hash(hash)
 		{}
 
 		/**
@@ -409,3 +418,6 @@ namespace Noble
 
 // Runs the hash at runtime, be careful with this one!
 #define HASH(x) ::Noble::HashString(x)
+
+// Creates an NImmutableIdentifier at compile time
+#define ID(x) ::Noble::NImmutableIdentifier(x, x##_len, SID(x))

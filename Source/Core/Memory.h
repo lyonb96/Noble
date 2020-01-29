@@ -194,6 +194,9 @@ namespace Noble
 	{
 	public:
 
+		/**
+		 * Empty initializes the allocator
+		 */
 		FORCEINLINE DefaultContainerAllocator()
 			: m_Data(nullptr), m_AllocSize(0), m_ElemCount(0), m_ElemSize(0), m_ElemAlign(0)
 		{

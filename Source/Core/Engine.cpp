@@ -259,7 +259,7 @@ namespace Noble
 		g_TestObject2->GetSecondMesh()->TestDraw();
 		//g_TestObject3->GetSecondMesh()->TestDraw();
 
-		StaticMeshComponent* sm4 = g_TestObject3->GetComponent<StaticMeshComponent>("Submesh");
+		StaticMeshComponent* sm4 = g_TestObject3->GetComponent<StaticMeshComponent>(ID("Submesh"));
 		if (sm4)
 		{
 			sm4->TestDraw();
