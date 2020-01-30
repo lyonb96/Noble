@@ -346,6 +346,22 @@ namespace Noble
 		}
 
 		/**
+		 * Resets the allocator to an empty state, freeing any memory it holds
+		 */
+		FORCEINLINE void Reset()
+		{
+			if (m_Data)
+			{
+				Memory::Free(m_Data);
+			}
+			m_Data = nullptr;
+			m_AllocSize = 0;
+			m_ElemCount = 0;
+			m_ElemSize = 0;
+			m_ElemAlign = 0;
+		}
+
+		/**
 		 * Returns the total amount of memory allocated by this allocator
 		 */
 		FORCEINLINE Size GetAllocationSize() const

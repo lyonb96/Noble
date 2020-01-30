@@ -185,7 +185,6 @@
     <ClInclude Include="..\Source\Core\Types.h" />
     <ClInclude Include="..\Source\Core\WindowsMinimal.h" />
     <ClInclude Include="..\Source\Core\World.h" />
-    <ClInclude Include="AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Class.cpp" />

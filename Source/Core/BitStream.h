@@ -192,9 +192,36 @@ namespace Noble
 		{
 			CHECK(m_ReaderPos + sizeof(T) <= m_StoredBytes);
 
-			Size read = m_ReaderPos;
+			Size readPos = m_ReaderPos;
 			m_ReaderPos += sizeof(T);
-			return (T) *(GetData() + m_ReaderPos);
+			return *((T*)(GetData() + readPos));
+		}
+		
+		/**
+		 * Reads the requested number of bytes into the given buffer
+		 * Returns the number of bytes actually read
+		 */
+		Size ReadBytes(Byte* data, const Size count)
+		{
+			Size bytesToRead = glm::min(count, m_StoredBytes - m_ReaderPos);
+
+			for (U32 i = 0; i < bytesToRead; ++i)
+			{
+				data[i] = GetData()[m_ReaderPos++];
+			}
+
+			return bytesToRead;
+		}
+
+		/**
+		 * Resets the BitStream to an empty state
+		 */
+		void Reset()
+		{
+			m_Allocator.Reset();
+			m_StoredBytes = 0;
+			m_MaxBytes = 0;
+			m_ReaderPos = 0;
 		}
 
 	private:

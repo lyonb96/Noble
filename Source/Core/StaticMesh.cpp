@@ -9,7 +9,7 @@ namespace Noble
 		CHECK(m_VertexCount > 0);
 
 		// Allocate vertex buffer
-		//m_Vertices = NE_BUFFER_ALLOC(SomeArenaSomewhere, sizeof(StaticVertex) * m_VertexCount);
+		//m_Vertices = NE_BUFFER_ALLOC(SomeArenaSomewhere, sizeof(Vertex) * m_VertexCount);
 
 		// Read in vertices
 		for (U32 i = 0; i < m_VertexCount; ++i)

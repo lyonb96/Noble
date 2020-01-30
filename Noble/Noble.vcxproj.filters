@@ -123,9 +123,6 @@
     <ClInclude Include="..\Source\Core\Class.h">
       <Filter>Header Files\Object</Filter>
     </ClInclude>
-    <ClInclude Include="AssetManager.h">
-      <Filter>Header Files\AssetManager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Asset.h">
       <Filter>Header Files\AssetManager</Filter>
     </ClInclude>

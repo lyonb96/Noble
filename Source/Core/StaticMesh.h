@@ -14,13 +14,11 @@ namespace Noble
 	{
 	public:
 
-	protected:
-
 		/**
 		 * Describes a simple StaticMesh vertex format
 		 * Vertex size is 32 bytes
 		 */
-		struct StaticVertex
+		struct Vertex
 		{
 			// Position + extra float for padding
 			Vector4f Position; // (16 bytes)
@@ -30,7 +28,30 @@ namespace Noble
 			HalfQuaternion TangentSpace; // (8 bytes)
 		};
 
+		// Indices are stored as unsigned 32-bit ints
 		typedef U32 Index;
+
+		/**
+		 * Returns the number of vertices in the StaticMesh
+		 */
+		const U32 GetVertexCount() const { return m_VertexCount; }
+
+		/**
+		 * Returns an array of vertices for drawing this StaticMesh
+		 */
+		const Vertex* GetVertices() const { return m_Vertices; }
+
+		/**
+		 * Returns the number of indices in the StaticMesh
+		 */
+		const U32 GetIndexCount() const { return m_IndexCount; }
+
+		/**
+		 * Returns an array of indices for drawing this StaticMesh
+		 */
+		const Index* GetIndices() const { return m_Indices; }
+
+	protected:
 
 		/**
 		 * Fills out the StaticMesh instance from the given buffer
@@ -40,7 +61,7 @@ namespace Noble
 	private:
 
 		// Vertex array
-		StaticVertex* m_Vertices;
+		Vertex* m_Vertices;
 		// Number of vertices
 		U32 m_VertexCount;
 		// Index array
