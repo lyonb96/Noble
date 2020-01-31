@@ -55,6 +55,10 @@ namespace Noble
 	typedef glm::vec<3, F64> Vector3d;
 	typedef glm::vec<4, F64> Vector4d;
 
+	typedef glm::vec<2, F16> Vector2h;
+	typedef glm::vec<3, F16> Vector3h;
+	typedef glm::vec<4, F16> Vector4h;
+
 	typedef glm::mat<3, 3, F32> Matrix3x3f;
 	typedef glm::mat<4, 4, F32> Matrix4x4f;
 

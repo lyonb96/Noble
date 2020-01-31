@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "StaticMesh.h"
 #include "Types.h"
 
 #include <bgfx/bgfx.h>
@@ -15,12 +16,22 @@ namespace Noble
 		U32 vColor;
 	};
 
+	/**
+	 * This Component is used to render static (i.e. not rigged or animated) meshes
+	 * Allows the mesh and material to be changed, and it can also have a relative offset
+	 * from its parent Component
+	 */
 	class StaticMeshComponent : public Component
 	{
 		OBJECT_DECL(StaticMeshComponent, Component);
 	public:
 
 		StaticMeshComponent();
+
+		/**
+		 * Changes the StaticMesh rendered by this Component
+		 */
+		void SetMesh(StaticMesh* mesh);
 
 		static void TemporaryInit();
 		static void TemporaryDestroy();
@@ -30,6 +41,9 @@ namespace Noble
 		void TestDraw();
 
 	private:
+
+		// The mesh to draw
+		StaticMesh* m_Mesh;
 
 		// Mesh class
 		static bgfx::VertexLayout m_Layout;

@@ -30,7 +30,7 @@ namespace Noble
 		 */
 		const NIdentifier& GetAssetID() const { return m_AssetID; }
 
-	protected:
+	public:
 
 		/**
 		 * Overridden in each Asset type to build an instance from a buffer

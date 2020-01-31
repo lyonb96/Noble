@@ -263,6 +263,26 @@ namespace Noble
 		return bytesRead;
 	}
 
+	Size File::Read(BitStream& buffer, Size maxRead)
+	{
+		// Update max read value
+		maxRead = maxRead == 0 ? GetFileSize() : maxRead;
+
+		// Check if buffer needs resizing
+		if ((buffer.GetMaxBytes() - buffer.GetStoredBytes()) < maxRead)
+		{
+			buffer.Resize(maxRead);
+		}
+
+		// Perform the read directly into the buffer
+		Size bytesRead = Read(buffer.GetData(), maxRead);
+		
+		// Update the buffer's "stored bytes" value
+		buffer.UpdateStoredBytes(bytesRead);
+
+		return bytesRead;
+	}
+
 	Size File::Write(const void* data, Size maxWrite)
 	{
 		// Check for file validity

@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include "Array.h"
+#include "BitStream.h"
 #include "Memory.h"
 #include "Types.h"
 
@@ -150,6 +151,13 @@ namespace Noble
 		 * Returns the actual number of bytes read
 		 */
 		Size Read(void* buffer, Size maxRead);
+
+		/**
+		 * Reads the requested number of bytes into the given BitStream
+		 * If no number of bytes is requested explicitly, it will attempt
+		 * to read the entire file content into the BitStream.
+		 */
+		Size Read(BitStream& buffer, Size maxRead = 0);
 
 		/**
 		 * Writes the requested number of bytes from the given buffer

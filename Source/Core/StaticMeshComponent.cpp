@@ -91,7 +91,14 @@ namespace Noble
 
 	StaticMeshComponent::StaticMeshComponent()
 		: Component()
-	{}
+	{
+		m_Mesh = nullptr;
+	}
+
+	void StaticMeshComponent::SetMesh(StaticMesh* mesh)
+	{
+		m_Mesh = mesh;
+	}
 
 	void StaticMeshComponent::TemporaryInit()
 	{
@@ -126,9 +133,12 @@ namespace Noble
 
 		bgfx::setTransform(&transform);
 
-		bgfx::setVertexBuffer(0, m_VBuff);
-		bgfx::setIndexBuffer(m_IBuff);
-		bgfx::setState(state);
-		bgfx::submit(0, m_Prog);
+		if (m_Mesh)
+		{
+			bgfx::setVertexBuffer(0, m_Mesh->GetVertexBuffer());
+			bgfx::setIndexBuffer(m_Mesh->GetIndexBuffer());
+			bgfx::setState(state);
+			bgfx::submit(0, m_Prog);
+		}
 	}
 }

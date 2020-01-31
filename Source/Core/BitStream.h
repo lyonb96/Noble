@@ -144,6 +144,23 @@ namespace Noble
 		}
 
 		/**
+		 * Returns the number of bytes stored in the BitStream
+		 */
+		const Size GetStoredBytes() const
+		{
+			return m_StoredBytes;
+		}
+
+		/**
+		 * Returns the max number of bytes the BitStream can store
+		 * Note that this can and often will change depending on the allocator
+		 */
+		const Size GetMaxBytes() const
+		{
+			return m_MaxBytes;
+		}
+
+		/**
 		 * Writes an arbitrary type to the BitStream
 		 */
 		template <typename T>
@@ -155,10 +172,10 @@ namespace Noble
 			// Use a union to make a Byte[] alias of the type
 			union
 			{
-				T as_T;
-				Byte as_byte_array[sizeof(T)];
+				T* as_T;
+				Byte* as_byte_array;
 			};
-			as_T = value;
+			as_T = &value;
 
 			// Write the data
 			for (I32 i = 0; i < sizeof(T); ++i)
@@ -203,6 +220,7 @@ namespace Noble
 		 */
 		Size ReadBytes(Byte* data, const Size count)
 		{
+			// Don't read beyond the end of the buffer
 			Size bytesToRead = glm::min(count, m_StoredBytes - m_ReaderPos);
 
 			for (U32 i = 0; i < bytesToRead; ++i)
@@ -222,6 +240,16 @@ namespace Noble
 			m_StoredBytes = 0;
 			m_MaxBytes = 0;
 			m_ReaderPos = 0;
+		}
+
+		/**
+		 * Called from various external read functions to notify the BitStream
+		 * that bytes were manually placed in its buffer. This probably is not
+		 * the function you're looking for.
+		 */
+		void UpdateStoredBytes(const Size bytes)
+		{
+			m_StoredBytes = bytes;
 		}
 
 	private:

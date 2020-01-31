@@ -18,6 +18,8 @@
 #include "Array.h"
 #include "Freelist.h"
 #include "FileSystem.h"
+#include "BitStream.h"
+#include "StaticMesh.h"
 
 #ifndef MAX_FIXED_STEPS_PER_FRAME
 #define MAX_FIXED_STEPS_PER_FRAME 5 // limit fixed steps per frame to avoid spiraling
@@ -61,6 +63,9 @@ namespace Noble
 		TestGameObject* g_TestObject1;
 		TestGameObject* g_TestObject2;
 		TestGameObject* g_TestObject3;
+
+		StaticMesh g_TestMesh;
+		StaticMesh g_TestMesh2;
 	}
 
 	int LaunchEngine()
@@ -134,11 +139,36 @@ namespace Noble
 
 		// Testing stuff
 		StaticMeshComponent::TemporaryInit();
+		StaticVertex::Init();
 
 		g_TestObject1 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
 		g_TestObject2 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
 		g_TestObject3 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
-		
+
+		{
+			// Test mesh load
+			File testMeshFile("Content/TestMesh.txt", FileMode::FILE_READ);
+			BitStream stream;
+			testMeshFile.Read(stream);
+
+			g_TestMesh.CreateFromBuffer(stream);
+		}
+		{
+			File test2("Content/TestMesh2.txt", FileMode::FILE_READ);
+			BitStream stream;
+			test2.Read(stream);
+
+			g_TestMesh2.CreateFromBuffer(stream);
+		}
+
+		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMesh(&g_TestMesh);
+		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetMesh(&g_TestMesh);
+		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMesh(&g_TestMesh);
+
+		g_TestObject1->GetSecondMesh()->SetMesh(&g_TestMesh2);
+		g_TestObject2->GetSecondMesh()->SetMesh(&g_TestMesh2);
+		g_TestObject3->GetSecondMesh()->SetMesh(&g_TestMesh2);
+
 		return true;
 	}
 
