@@ -93,15 +93,15 @@ public:\
 	static constexpr ::Noble::NImmutableIdentifier ClassName = #CLASS_NAME;\
 	static ::Noble::NClass* GetStaticClass() { return &StaticClass; }\
 	template <class T>\
-	bool IsA() const\
+	T* IsA()\
 	{\
-		if (::Noble::AreTypesEqual<T, CLASS_NAME>::Value)\
+		if (GetClass()->ObjectID == T::GetStaticClass()->ObjectID)\
 		{\
-			return true;\
+			return static_cast<T*>(this);\
 		}\
 		else\
 		{\
-			return Super::IsA<T>();\
+			return nullptr;\
 		}\
 	}\
 private:\

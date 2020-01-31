@@ -151,11 +151,12 @@ namespace Noble
 		{
 			for (Component* comp : m_Components)
 			{
-				if (*comp->GetClass() == *T::GetStaticClass())
+				T* reqComp = comp->IsA<T>();
+				if (reqComp)
 				{
 					if (comp->GetName() == name)
 					{
-						return static_cast<T*>(comp);
+						return reqComp;
 					}
 				}
 			}
@@ -171,9 +172,10 @@ namespace Noble
 		{
 			for (Component* comp : m_Components)
 			{
-				if (*comp->GetClass() == *T::GetStaticClass())
+				T* reqComp = comp->IsA<T>();
+				if (reqComp)
 				{
-					return static_cast<T*>(comp);
+					return reqComp;
 				}
 			}
 
