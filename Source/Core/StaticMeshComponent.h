@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Component.h"
+#include "SceneComponent.h"
 #include "StaticMesh.h"
 #include "Types.h"
 
@@ -21,9 +21,9 @@ namespace Noble
 	 * Allows the mesh and material to be changed, and it can also have a relative offset
 	 * from its parent Component
 	 */
-	class StaticMeshComponent : public Component
+	class StaticMeshComponent : public SceneComponent
 	{
-		OBJECT_DECL(StaticMeshComponent, Component);
+		OBJECT_DECL(StaticMeshComponent, SceneComponent);
 	public:
 
 		StaticMeshComponent();
@@ -38,7 +38,7 @@ namespace Noble
 
 	public:
 
-		void TestDraw();
+		virtual void Draw() override;
 
 	private:
 

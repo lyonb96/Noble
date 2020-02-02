@@ -43,6 +43,9 @@
     <Filter Include="Source Files\AssetManager">
       <UniqueIdentifier>{52524333-8449-47bf-938d-28b77fcfa5b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Platform">
+      <UniqueIdentifier>{aec7d64d-b0ed-4e8d-9dbb-b9af44c7a707}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Engine.h">
@@ -61,9 +64,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\WindowsMinimal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Functional.h">
@@ -132,6 +132,12 @@
     <ClInclude Include="..\Source\Core\BitStream.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\WindowsMinimal.h">
+      <Filter>Header Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\SceneComponent.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -190,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\StaticMesh.cpp">
       <Filter>Source Files\AssetManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\SceneComponent.cpp">
+      <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

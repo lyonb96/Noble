@@ -95,6 +95,8 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;bxDebug.lib;bimgDebug.lib;bimg_decodeDebug.lib;bgfxDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -111,6 +113,8 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;bxDebug.lib;bimgDebug.lib;bimg_decodeDebug.lib;bgfxDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -128,6 +132,8 @@
       <AdditionalIncludeDirectories>C:\Projects\Noble\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -147,6 +153,8 @@
       <AdditionalIncludeDirectories>C:\Projects\Noble\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -171,6 +179,7 @@
     <ClInclude Include="..\Source\Core\Memory.h" />
     <ClInclude Include="..\Source\Core\Object.h" />
     <ClInclude Include="..\Source\Core\Renderer.h" />
+    <ClInclude Include="..\Source\Core\SceneComponent.h" />
     <ClInclude Include="..\Source\Core\StaticMesh.h" />
     <ClInclude Include="..\Source\Core\StaticMeshComponent.h" />
     <ClInclude Include="..\Source\Core\TestGameObject.h" />
@@ -196,6 +205,7 @@
     <ClCompile Include="..\Source\Core\Memory.cpp" />
     <ClCompile Include="..\Source\Core\Object.cpp" />
     <ClCompile Include="..\Source\Core\Renderer.cpp" />
+    <ClCompile Include="..\Source\Core\SceneComponent.cpp" />
     <ClCompile Include="..\Source\Core\StaticMesh.cpp" />
     <ClCompile Include="..\Source\Core\StaticMeshComponent.cpp" />
     <ClCompile Include="..\Source\Core\TestGameObject.cpp" />

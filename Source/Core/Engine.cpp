@@ -13,10 +13,8 @@
 
 // for testing
 #include "StaticMeshComponent.h"
-#include "World.h"
 #include "TestGameObject.h"
 #include "Array.h"
-#include "Freelist.h"
 #include "FileSystem.h"
 #include "BitStream.h"
 #include "StaticMesh.h"
@@ -44,7 +42,6 @@ namespace Noble
 
 	namespace
 	{
-		World g_TestWorld;
 		TestGameObject* g_TestObject1;
 		TestGameObject* g_TestObject2;
 		TestGameObject* g_TestObject3;
@@ -97,6 +94,7 @@ namespace Noble
 
 		// Set global engine pointer
 		g_Engine = this;
+		g_World = &m_World;
 
 		// Initialize the logger
 		NE_LOG_INFO("Noble Engine %s - %s", NOBLE_VERSION, __DATE__);
@@ -126,9 +124,9 @@ namespace Noble
 		StaticMeshComponent::TemporaryInit();
 		StaticVertex::Init();
 
-		g_TestObject1 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
-		g_TestObject2 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
-		g_TestObject3 = g_TestWorld.CreateAndSpawnGameObject<TestGameObject>();
+		g_TestObject1 = GetWorld()->SpawnGameObject<TestGameObject>();
+		g_TestObject2 = GetWorld()->SpawnGameObject<TestGameObject>();
+		g_TestObject3 = GetWorld()->SpawnGameObject<TestGameObject>();
 
 		{
 			// Test mesh load
@@ -235,11 +233,13 @@ namespace Noble
 
 	void Engine::FixedUpdate()
 	{
-
+		m_World.FixedUpdate();
 	}
 
 	void Engine::Update(float tpf)
 	{
+		m_World.Update();
+
 		Sleep(1); // short sleep to keep the loop from running super fast during testing
 
 		static float test = 0.0F;
@@ -261,24 +261,6 @@ namespace Noble
 		g_TestObject2->SetScale(Vector3f(2, 2, 2));
 		g_TestObject3->SetRotation(glm::angleAxis(x, Vector3f(1, 0, 0)));
 		g_TestObject3->SetPosition(Vector3f(5, y * 5.0F, 0));
-
-		StaticMeshComponent* sm1 = (StaticMeshComponent*) g_TestObject1->GetRootComponent();
-		StaticMeshComponent* sm2 = (StaticMeshComponent*) g_TestObject2->GetRootComponent();
-		StaticMeshComponent* sm3 = (StaticMeshComponent*) g_TestObject3->GetRootComponent();
-
-		sm1->TestDraw();
-		sm2->TestDraw();
-		sm3->TestDraw();
-
-		g_TestObject1->GetSecondMesh()->TestDraw();
-		g_TestObject2->GetSecondMesh()->TestDraw();
-		//g_TestObject3->GetSecondMesh()->TestDraw();
-
-		StaticMeshComponent* sm4 = g_TestObject3->GetComponent<StaticMeshComponent>(ID("Submesh"));
-		if (sm4)
-		{
-			sm4->TestDraw();
-		}
 	}
 }
 

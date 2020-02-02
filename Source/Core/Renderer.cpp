@@ -1,9 +1,10 @@
 #include "Renderer.h"
 
 #include "Config.h"
-// Needed to pass input messages
-#include "Input.h"
+#include "Globals.h"
+#include "Input.h" // Needed to pass input messages
 #include "Logger.h"
+#include "World.h"
 
 #include <bgfx/bgfx.h>
 #include <json/json.hpp>
@@ -167,6 +168,11 @@ namespace Noble
 
 	void Renderer::Frame()
 	{
+		for (SceneComponent* sc : GetWorld()->m_SceneComponents)
+		{
+			sc->Draw();
+		}
+
 		bgfx::touch(0);
 		bgfx::frame();
 	}

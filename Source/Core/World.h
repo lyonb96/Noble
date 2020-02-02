@@ -5,6 +5,7 @@
 #include "Array.h"
 #include "GameObject.h"
 #include "Logger.h"
+#include "SceneComponent.h"
 
 namespace Noble
 {
@@ -23,26 +24,17 @@ namespace Noble
 	public:
 
 		friend class GameObject;
+		// Renderer is friend to access list of SceneComponents
+		friend class Renderer;
 
 		World();
 
 		/**
-		 * Creates and spawns a new GameObject of the specified type
+		 * Spawns a new GameObject of the specified type
 		 * Optionally takes a location at which to spawn the GameObject
 		 */
 		template <class T>
-		T* CreateAndSpawnGameObject(Vector3f spawnPos = Vector3f(0))
-		{
-			T* object = CreateGameObject<T>();
-
-			object->SetPosition(spawnPos);
-			object->OnSpawn();
-
-			return object;
-		}
-
-		template <class T>
-		T* CreateGameObject()
+		T* SpawnGameObject(Vector3f spawnPos = Vector3f(0.0F))
 		{
 			NClass* ncls = T::GetStaticClass();
 			void* data = NE_BUFFER_ALLOC(m_GameMemory, ncls->ObjectSize, ncls->ObjectAlign);
@@ -63,6 +55,9 @@ namespace Noble
 
 			m_GameObjects.Add(object);
 
+			object->OnSpawn();
+			object->SetPosition(spawnPos);
+
 			return object;
 		}
 
@@ -78,13 +73,29 @@ namespace Noble
 			T* comp = (T*)Object::CreateInstance<T>(data);
 			comp->SetOwningObject(owner);
 			comp->SetComponentName(name);
-			m_Components.Add(comp);
+
+			if (comp->IsA<SceneComponent>())
+			{
+				m_SceneComponents.Add(comp);
+			}
 
 			owner->AddComponent(comp);
 			++m_CreatedComponentCount;
 
 			return comp;
 		}
+
+		/**
+		 * Called each frame - runs logic updates on all spawned GameObjects and Components
+		 * The ordering is to call update on a GameObject, then on all of its Components immediately after
+		 */
+		void Update();
+
+		/**
+		 * Called at a fixed rate - runs logic updates on all spawned GameObjects and Components
+		 * The ordering is to call update on a GameObject, then on all of its Components immediately after
+		 */
+		void FixedUpdate();
 
 	private:
 
@@ -94,8 +105,8 @@ namespace Noble
 		GameMemoryArena m_GameMemory;
 		// Array of all currently spawned GameObjects
 		Array<GameObject*> m_GameObjects;
-		// Array of all Components in the game
-		Array<Component*> m_Components;
+		// Array of all renderable Components in the game
+		Array<SceneComponent*> m_SceneComponents;
 
 	};
 }

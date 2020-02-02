@@ -33,4 +33,12 @@ namespace Noble
 	void TestGameObject::OnSpawn()
 	{
 	}
+
+	void TestGameObject::Update(float tpf)
+	{
+		static float test = 0.0F;
+		test += tpf * 0.2F;
+
+		GetRootComponent()->SetRotation(glm::angleAxis(test, Vector3f(1.0F, 0.0F, 0.0F)));
+	}
 }

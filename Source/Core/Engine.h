@@ -4,6 +4,7 @@
 
 #include "Time.h"
 #include "Renderer.h"
+#include "World.h"
 
 namespace Noble
 {
@@ -54,6 +55,9 @@ namespace Noble
 
 	private:
 
+		// Handles drawing the scene
 		Renderer m_Renderer;
+		// Handles the gameplay side of the engine
+		World m_World;
 	};
 }

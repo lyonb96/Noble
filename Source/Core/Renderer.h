@@ -13,9 +13,11 @@ namespace Noble
 	{
 	public:
 
-		// Copy constructors deleted
+		// Copy/Move deleted
 		Renderer(const Renderer&) = delete;
-		Renderer(const Renderer&&) = delete;
+		Renderer(Renderer&&) = delete;
+		Renderer& operator=(const Renderer&) = delete;
+		Renderer& operator=(Renderer&&) = delete;
 
 		// Default constructor to init members
 		Renderer();
@@ -34,6 +36,8 @@ namespace Noble
 		 * Placeholder for advancing the frame
 		 */
 		void Frame();
+
+	public:
 
 		/**
 		 * Returns the handle for the game's window

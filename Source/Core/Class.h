@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AreTypesEqual.h"
 #include "Functional.h"
 #include "HelperMacros.h"
 #include "String.h"
@@ -39,6 +40,7 @@ namespace Noble
 			ObjectSize = 0;
 			ObjectAlign = 0;
 			IsAbstract = false;
+			Parent = nullptr;
 		}
 
 		/**
@@ -55,6 +57,8 @@ namespace Noble
 				alignof(T),
 				std::is_abstract_v<T>);
 
+			reg.Parent = T::Super::GetStaticClass();
+
 			return reg;
 		}
 
@@ -68,6 +72,8 @@ namespace Noble
 		 */
 		FORCEINLINE friend bool operator!=(const NClass& rhs, const NClass& lhs) { return rhs.ObjectID != lhs.ObjectID; }
 
+		// Parent class
+		NClass* Parent;
 		// Unique ID of the Object subclass
 		NIdentifier ObjectID;
 		// Function that uses placement new to create an instance of the Object subclass

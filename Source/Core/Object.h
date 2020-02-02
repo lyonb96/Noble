@@ -33,20 +33,30 @@ namespace Noble
 		template <class T>
 		T* IsA()
 		{
-			if (GetClass()->ObjectID == T::GetStaticClass()->ObjectID)
+			NClass* Tclass = T::GetStaticClass();
+			NClass* myClass = GetClass();
+
+			while (myClass)
 			{
-				return static_cast<T*>(this); 
+				if (*myClass == *Tclass)
+				{
+					return static_cast<T*>(this);
+				}
+				myClass = myClass->Parent;
 			}
-			else
-			{
-				return nullptr; 
-			}
+
+			return nullptr;
 		}
 
 		/**
 		 * Returns a pointer to the NClass that this Object is based on
 		 */
 		NClass* GetClass() const { return m_Class; }
+
+		/**
+		 * Here to act as an end-point for iterating through parent classes
+		 */
+		static Noble::NClass* GetStaticClass() { return nullptr; }
 
 	private:
 

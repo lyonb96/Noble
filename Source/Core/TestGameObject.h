@@ -22,5 +22,7 @@ namespace Noble
 		StaticMeshComponent* GetSecondMesh() { return m_SecondMesh; }
 
 		virtual void OnSpawn() override;
+
+		virtual void Update(float tpf) override;
 	};
 }
