@@ -29,21 +29,6 @@
 #define FIXED_STEP_RATE (1.0F / 60.0F)
 #endif
 
-struct TestStruct1
-{
-	char Data[128];
-};
-
-struct TestStruct2
-{
-	char Data[96];
-};
-
-struct TestStruct3
-{
-	char Data[144];
-};
-
 namespace Noble
 {
 	using json = nlohmann::json;

@@ -4,7 +4,7 @@
 
 namespace Noble
 {
-	NClass::NClass(const NImmutableIdentifier& id, ObjectCreator fn, Size size, Size align, bool abstr)
+	NClass::NClass(const NIdentifier& id, ObjectCreator fn, Size size, Size align, bool abstr)
 		: ObjectID(id),
 		CreateInstance(fn),
 		ObjectSize(size),

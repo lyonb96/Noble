@@ -4,6 +4,8 @@
 #include "Types.h"
 #include "Memory.h"
 
+#include <type_traits>
+
 namespace Noble
 {
 	// String character typedef, in case I want to jump up to 16-bit chars eventually
@@ -205,20 +207,24 @@ namespace Noble
 	 *
 	 * FNV-1a is decently collision-averse, and likely will work fine moving forward
 	 */
-
 	constexpr U32 val32 =   0x811C9DC5;
 	constexpr U32 prime32 = 0x01000193;
-
 	constexpr const U32 HashString(const char* in, const U32 value = val32)
 	{
 		return (in[0] == '\0') ? value : HashString(&in[1], static_cast<U32>((value ^ U32(in[0])) * static_cast<U64>(prime32)));
 	}
 
-	constexpr const U32 operator "" _hash(char const* in, Size)
+	/**
+	 * Returns a hash of a string literal, can be computed at compile time if possible
+	 */
+	constexpr const U32 operator "" _hash(const char* in, Size)
 	{
 		return HashString(in);
 	}
 
+	/**
+	 * Returns the length of a string literal
+	 */
 	constexpr const Size operator "" _len(char const* in, Size len)
 	{
 		return len;
@@ -234,70 +240,12 @@ namespace Noble
 	};
 
 	/**
-	 * Compile-time String class used for immutable strings such as identifiers
-	 * Also contains a compile-time hash that can accelerate comparisons
-	 * This class is great for automatically hashing a string constant in a function parameter
-	 * However, it falls flat when said function parameter needs to be stored at all
-	 */
-	class NImmutableIdentifier
-	{
-		friend class NIdentifier;
-
-	public:
-
-		/**
-		 * Constructs the Identifier and computes the hash at compile time, if possible
-		 */
-		template <Size N>
-		constexpr NImmutableIdentifier(const char(&in)[N])
-			: m_Data(in), m_Size(N), m_Hash(HashString(in))
-		{}
-
-		constexpr NImmutableIdentifier(const char* str, const Size len, const U32 hash)
-			: m_Data(str), m_Size(len), m_Hash(hash)
-		{}
-
-		/**
-		 * Allows access to characters in the string, clamped at the length of the string
-		 */
-		constexpr char operator[](Size index) const
-		{
-			return index < m_Size ? m_Data[index] : m_Data[m_Size - 1];
-		}
-
-		/**
-		 * Returns the length of the string
-		 */
-		constexpr const Size GetSize() const { return m_Size; }
-
-		/**
-		 * Returns the string represented by this Identifier
-		 */
-		constexpr const char* GetString() const { return m_Data; }
-
-		/**
-		 * Returns the hash of the Identifier
-		 */
-		constexpr const U32 GetHash() const { return m_Hash; }
-
-		/**
-		 * Comparison operators use only the hash for fast comparisons
-		 */
-		friend bool operator==(const NImmutableIdentifier& lhs, const NImmutableIdentifier& rhs) { return lhs.m_Hash == rhs.m_Hash; }
-		friend bool operator!=(const NImmutableIdentifier& lhs, const NImmutableIdentifier& rhs) { return lhs.m_Hash != rhs.m_Hash; }
-
-	private:
-
-		// Original string
-		const char* m_Data;
-		// Length of the original string
-		const Size m_Size;
-		// Hashed string
-		const U32 m_Hash;
-	};
-
-	/**
-	 * Still immutable, but copy- and move-able version of NImmutableIdentifier
+	 * An identifier that includes a hash of the string it represents
+	 * Comparisons of NIdentifiers are based on the hash instead of a string comparison
+	 *
+	 * Originally this could be implicitly created from a string literal, but that proved
+	 * to be a challenge for ensuring compile-time computation of its members. Now, generally,
+	 * an NIdentifier must be created via the ID() macro.
 	 */
 	class NIdentifier
 	{
@@ -311,20 +259,12 @@ namespace Noble
 		{}
 
 		/**
-		 * Allow copy straight from an immutable instance
+		 * Constexpr constructor to allow compile-time construction of the type
 		 */
-		NIdentifier(const NImmutableIdentifier& init)
-			: m_Data(init.m_Data), m_Size(init.m_Size), m_Hash(init.m_Hash)
-		{}
-
-		/**
-		 * Allow construction from a string literal
-		 * Note that this runs the hash at runtime, so don't do this
-		 */
-		template <Size N>
-		NIdentifier(const char(&in)[N])
-			: m_Data(in), m_Size(N), m_Hash(HashString(in))
-		{}
+		constexpr NIdentifier(const char* const str, const Size len, const U32 hash)
+			: m_Data(str), m_Size(len), m_Hash(hash)
+		{
+		}
 
 		/**
 		 * Copy constructor
@@ -413,11 +353,17 @@ namespace Noble
 	};
 }
 
-// Uses some template magic to run the hash at compile time, only works on constants
-#define SID(x) ::Noble::HashStruct<::Noble::HashString(x)>::value
+/**
+ * The below macros provide a simplified approach to hashing, particularly with 
+ * regards to guaranteeing compile-time computation when possible. The use of
+ * a lambda allows me to make certain the variable is marked constexpr regardless
+ * of the state of the variable into which it is being read - this means that even
+ * a non-const or non-constexpr variable or function argument can have a compile-time
+ * hash as long as the argument to the hash is a literal or can be deduced at compile time.
+ */
 
-// Runs the hash at runtime, be careful with this one!
-#define HASH(x) ::Noble::HashString(x)
+// Returns a hash (of type U32) of the given string
+#define HASH(x) ([&] { return ::Noble::HashString(x); }())
 
-// Creates an NImmutableIdentifier at compile time
-#define ID(x) ::Noble::NImmutableIdentifier(x, x##_len, SID(x))
+// Creates an NIdentifier from the given string literal
+#define ID(x) ([] { constexpr ::Noble::Size len = x##_len; constexpr ::Noble::U32 hash = x##_hash; return ::Noble::NIdentifier(x, len, hash); }())

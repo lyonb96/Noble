@@ -70,7 +70,7 @@ namespace Noble
 		 * Creates a new Component that is part of the given GameObject
 		 */
 		template <class T>
-		T* CreateComponent(GameObject* owner, const NImmutableIdentifier& name = "")
+		T* CreateComponent(GameObject* owner, const NIdentifier& name = "")
 		{
 			CHECK(owner);
 

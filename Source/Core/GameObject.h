@@ -147,7 +147,7 @@ namespace Noble
 		 * whose name matches the given parameter
 		 */
 		template <class T>
-		T* GetComponent(const NImmutableIdentifier& name)
+		T* GetComponent(const NIdentifier& name)
 		{
 			for (Component* comp : m_Components)
 			{
@@ -199,7 +199,7 @@ namespace Noble
 		 * This function can only be called from the constructor!
 		 */
 		template <class T>
-		T* CreateChildComponent(const NImmutableIdentifier& name = "")
+		T* CreateChildComponent(const NIdentifier& name = ID(""))
 		{
 			return GetWorld()->CreateComponent<T>(this, name);
 		}

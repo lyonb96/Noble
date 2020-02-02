@@ -10,14 +10,16 @@ namespace Noble
 	{
 		// Sample
 
-		StaticMeshComponent* meshComp = CreateChildComponent<StaticMeshComponent>("Main Mesh");
+		StaticMeshComponent* meshComp = CreateChildComponent<StaticMeshComponent>(ID("Main Mesh"));
 		m_RootComponent = meshComp;
 
-		m_SecondMesh = CreateChildComponent<StaticMeshComponent>("Submesh");
+		m_SecondMesh = CreateChildComponent<StaticMeshComponent>(ID("Submesh"));
 		meshComp->AttachChildComponent(m_SecondMesh);
 
 		m_SecondMesh->SetPosition(Vector3f(0, 2, 0));
 		m_SecondMesh->SetScale(Vector3f(0.5F));
+
+		StaticMeshComponent* test = CreateChildComponent<StaticMeshComponent>();
 		/*
 		MeshHandle mesh = ResourceHandler::GetMeshHandle("barrel"); // or whatever this will look like
 

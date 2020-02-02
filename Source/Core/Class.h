@@ -26,7 +26,7 @@ namespace Noble
 		/**
 		 * Fills out members and automatically adds the registration data to the map
 		 */
-		NClass(const NImmutableIdentifier& id, ObjectCreator fn, Size size, Size align, bool abstr);
+		NClass(const NIdentifier& id, ObjectCreator fn, Size size, Size align, bool abstr);
 
 	public:
 

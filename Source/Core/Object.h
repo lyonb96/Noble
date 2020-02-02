@@ -24,12 +24,23 @@ namespace Noble
 	public:
 
 		/**
-		 * Root level of the IsA() comparison
+		 * Checks if this Object is an instance of the given type
+		 * Returns the Object casted to the given type if true,
+		 * or nullptr if false
+		 *
+		 * Template argument must be a registered subclass of Object
 		 */
 		template <class T>
-		bool IsA() const
+		T* IsA()
 		{
-			return ARE_TYPES_EQUAL(T, Object);
+			if (GetClass()->ObjectID == T::GetStaticClass()->ObjectID)
+			{
+				return static_cast<T*>(this); 
+			}
+			else
+			{
+				return nullptr; 
+			}
 		}
 
 		/**
@@ -68,7 +79,7 @@ namespace Noble
 		/**
 		 * Creates an Object subclass of the given ID, or returns nullptr if ID is invalid
 		 */
-		static Object* CreateInstance(const NImmutableIdentifier& id, void* ptr);
+		static Object* CreateInstance(const NIdentifier& id, void* ptr);
 
 	private:
 
@@ -90,20 +101,8 @@ namespace Noble
 public:\
 	friend struct NClass;\
 	typedef PARENT_NAME Super;\
-	static constexpr ::Noble::NImmutableIdentifier ClassName = #CLASS_NAME;\
+	static constexpr ::Noble::NIdentifier ClassName = ID(#CLASS_NAME);\
 	static ::Noble::NClass* GetStaticClass() { return &StaticClass; }\
-	template <class T>\
-	T* IsA()\
-	{\
-		if (GetClass()->ObjectID == T::GetStaticClass()->ObjectID)\
-		{\
-			return static_cast<T*>(this);\
-		}\
-		else\
-		{\
-			return nullptr;\
-		}\
-	}\
 private:\
 	static ::Noble::Object* CreateInstance(void* ptr);\
 	static ::Noble::NClass StaticClass;

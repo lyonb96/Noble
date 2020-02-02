@@ -13,7 +13,7 @@ namespace Noble
 		return CreateInstanceFromClass(type, ptr);
 	}
 
-	Object* Object::CreateInstance(const NImmutableIdentifier& id, void* ptr)
+	Object* Object::CreateInstance(const NIdentifier& id, void* ptr)
 	{
 		CHECK(ptr);
 		if (ObjectRegistry.ContainsKey(id))
@@ -39,6 +39,6 @@ namespace Noble
 		Object* inst = cls->CreateInstance(ptr);
 		inst->m_Class = cls;
 
-		return cls->CreateInstance(ptr);
+		return inst;
 	}
 }
