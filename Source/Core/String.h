@@ -109,6 +109,40 @@ namespace Noble
 			NStringBase tmp(*this);
 			return tmp += other;
 		}
+		
+		/**
+		 * Removes the given number of characters from the beginning of the string
+		 */
+		NStringBase& TrimStart(const Size count)
+		{
+			if (count >= GetLength())
+			{
+				// If trying to trim the length of the string or more, just empty the string
+				Reset();
+				return *this;
+			}
+			m_Array.RemoveMultiple(0, count);
+			return *this;
+		}
+
+		/**
+		 * Removes the given number of characters from the end of the string
+		 */
+		NStringBase& TrimEnd(const Size count)
+		{
+			if (count >= GetLength())
+			{
+				// If trying to trim the length of the string or more, just empty the string
+				Reset();
+				return *this;
+			}
+			// Add 1 to the count to account for null terminator in the starting index
+			// but do not add 1 to the count to remove
+			// this ensures that removemultiple just shifts the null terminator down
+			m_Array.RemoveMultiple(m_Array.GetCount() - (count + 1), count);
+
+			return *this;
+		}
 
 		/**
 		 * Allows access to string characters via [] operator
@@ -127,6 +161,88 @@ namespace Noble
 		}
 
 	public:
+
+		/**
+		 * Returns true if this string starts with the given query
+		 */
+		bool StartsWith(const s_char* query)
+		{
+			CHECK(query);
+			const Size len = std::strlen(query);
+
+			return StartsWith(query, len);
+		}
+
+		/**
+		 * Returns true if this string starts with the given query
+		 */
+		bool StartsWith(const NStringBase& query)
+		{
+			return StartsWith(query.GetCharArray(), query.GetLength());
+		}
+
+		/**
+		 * Returns true if this string starts with the given query
+		 */
+		bool StartsWith(const s_char* query, Size len)
+		{
+			if (len > GetLength())
+			{
+				// String is not long enough to even contain the query, let alone start with it
+				return false;
+			}
+
+			for (Size i = 0; i < len; ++i)
+			{
+				if (m_Array[i] != query[i])
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		/**
+		 * Returns true if this string ends with the given query
+		 */
+		bool EndsWith(const s_char* query)
+		{
+			CHECK(query);
+			const Size len = std::strlen(query);
+
+			return EndsWith(query, len);
+		}
+
+		/**
+		 * Returns true if this string ends with the given query
+		 */
+		bool EndsWith(const NStringBase& query)
+		{
+			return EndsWith(query.GetCharArray(), query.GetLength());
+		}
+
+		/**
+		 * Returns true if this string ends with the given query
+		 */
+		bool EndsWith(const s_char* query, Size len)
+		{
+			if (len > GetLength())
+			{
+				// String is not long enough to even contain the query, let alone end with it
+				return false;
+			}
+
+			for (Size i = 0; i < len; ++i)
+			{
+				if (m_Array[GetLength() - i] != query[len - i])
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 
 		/**
 		 * Returns the length of the string
@@ -160,6 +276,15 @@ namespace Noble
 		operator const s_char* () const
 		{
 			return m_Array.GetData();
+		}
+
+		/**
+		 * Resets the string to an empty state
+		 */
+		void Reset()
+		{
+			m_Array.Reset();
+			m_Array.Add('\0');
 		}
 
 	private:

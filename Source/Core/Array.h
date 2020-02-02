@@ -383,6 +383,22 @@ namespace Noble
 		}
 
 		/**
+		 * Removes the requested number of elements, starting with the given index
+		 */
+		void RemoveMultiple(const Size startIndex, const Size count)
+		{
+			CHECK(CheckIndex(startIndex) && count > 0 && startIndex + count <= GetCount());
+			
+			Size itemsToMove = GetCount() - (startIndex + count);
+			for (Size i = 0; i < itemsToMove; ++i)
+			{
+				MoveElement(startIndex + count + i, startIndex + i);
+			}
+
+			m_ArrayCount -= count;
+		}
+
+		/**
 		 * Checks to see if the element is in this Array and returns its index if so
 		 * If it is not in the array, it returns Size's max value
 		 */
@@ -456,6 +472,16 @@ namespace Noble
 		{
 			if ((m_ArrayCount < m_ArrayMax) || m_ArrayCount == 0)
 				Resize(glm::max(Size(1), m_ArrayCount));
+		}
+
+		/**
+		 * Resets the array to an empty state with no stored elements
+		 */
+		void Reset()
+		{
+			m_Allocator.Reset();
+			m_ArrayCount = 0;
+			m_ArrayMax = 0;
 		}
 
 		/**

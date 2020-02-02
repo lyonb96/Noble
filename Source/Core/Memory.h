@@ -527,7 +527,7 @@ namespace Noble
 		const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount = 0) { return N; }
 
 		/**
-		 * Fixed Allocator - does not resize the array, just returns the existing data ptr
+		 * Fixed Allocator - allocates the fixed-size array if it hasn't already been, and returns N
 		 */
 		Size Resize(const Size& elementSize, Size newMax, Size align = NOBLE_DEFAULT_ALIGN)
 		{
@@ -541,6 +541,11 @@ namespace Noble
 
 			return N;
 		}
+
+		/**
+		 * Fixed allocator - doesn't need to do anything
+		 */
+		void Reset() {}
 
 		/**
 		 * Returns the total amount of memory allocated by this allocator
