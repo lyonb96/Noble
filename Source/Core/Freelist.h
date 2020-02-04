@@ -168,7 +168,7 @@ namespace Noble
 			CHECK(newMax >= m_CurrentEntries);
 
 			Size oldMax = m_MaxEntries;
-			m_MaxEntries = m_Allocator.Resize(EntrySize, newMax, EntryAlign);
+			m_MaxEntries = m_Allocator.Resize(newMax);
 
 			if (m_MaxEntries > oldMax)
 			{
@@ -333,7 +333,7 @@ namespace Noble
 			Size freeCount = m_MaxEntries - m_CurrentEntries;
 			if (freeCount == 0)
 			{
-				Size grow = m_Allocator.CalculateGrowSize(EntrySize);
+				Size grow = m_Allocator.CalculateGrowSize();
 				Resize(grow);
 			}
 		}
@@ -467,5 +467,5 @@ namespace Noble
 	};
 
 	template <typename T>
-	using LinkedList = LinkedListBase<T, DefaultContainerAllocator>;
+	using LinkedList = LinkedListBase<T, DefaultContainerAllocator<T>>;
 }

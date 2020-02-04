@@ -335,5 +335,5 @@ namespace Noble
 	};
 
 	template <typename KeyType, typename ValueType>
-	using Map = MapBase<KeyType, ValueType, DefaultContainerAllocator>;
+	using Map = MapBase<KeyType, ValueType, DefaultContainerAllocator<KeyValuePair<KeyType, ValueType>>>;
 }

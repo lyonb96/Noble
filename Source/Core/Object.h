@@ -54,6 +54,11 @@ namespace Noble
 		NClass* GetClass() const { return m_Class; }
 
 		/**
+		 * Returns the Unique ID assigned to this Object instance
+		 */
+		const U64 GetUID() const { return m_UID; }
+
+		/**
 		 * Here to act as an end-point for iterating through parent classes
 		 */
 		static Noble::NClass* GetStaticClass() { return nullptr; }
@@ -62,6 +67,10 @@ namespace Noble
 
 		// Class that this Object instance is based on
 		NClass* m_Class;
+		// The Unique ID assigned to this Object instance
+		U64 m_UID;
+
+
 
 	public:
 

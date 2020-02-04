@@ -460,7 +460,7 @@ namespace Noble
 		{
 			CHECK(newCount >= m_ArrayCount);
 
-			m_ArrayMax = m_Allocator.Resize(sizeof(ElementType), newCount, alignof(ElementType));
+			m_ArrayMax = m_Allocator.Resize(newCount);
 			ConstructDefaults(m_ArrayCount);
 		}
 
@@ -655,7 +655,7 @@ namespace Noble
 		 */
 		void Grow(Size minNew = 0)
 		{
-			Size grow = m_Allocator.CalculateGrowSize(sizeof(ElementType), minNew);
+			Size grow = m_Allocator.CalculateGrowSize(minNew);
 
 			Resize(grow);
 		}
@@ -732,8 +732,8 @@ namespace Noble
 	 * Array that uses the default heap allocator
 	 */
 	template <typename T>
-	using Array = ArrayBase<T, DefaultContainerAllocator>;
+	using Array = ArrayBase<T, DefaultContainerAllocator<T>>;
 
 	template <typename T, Size N>
-	using FixedArray = ArrayBase<T, FixedContainerAllocator<N>>;
+	using FixedArray = ArrayBase<T, FixedContainerAllocator<T, N>>;
 }

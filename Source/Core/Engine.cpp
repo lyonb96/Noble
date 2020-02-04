@@ -261,6 +261,16 @@ namespace Noble
 		g_TestObject2->SetScale(Vector3f(2, 2, 2));
 		g_TestObject3->SetRotation(glm::angleAxis(x, Vector3f(1, 0, 0)));
 		g_TestObject3->SetPosition(Vector3f(5, y * 5.0F, 0));
+
+		if (Input::IsJustPressed(Input::KEY_P))
+		{
+			BENCHMARK(ObjectCreation);
+			// spawn another object
+			auto newObj = GetWorld()->SpawnGameObject<TestGameObject>(Vector3f(0, -5, 0));
+			newObj->SetScale(Vector3f(2.0F));
+			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(&g_TestMesh);
+			newObj->GetSecondMesh()->SetMesh(&g_TestMesh2);
+		}
 	}
 }
 

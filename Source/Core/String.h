@@ -316,7 +316,7 @@ namespace Noble
 	/**
 	 * Standard growable string implementation
 	 */
-	typedef NStringBase<DefaultContainerAllocator> NString;
+	typedef NStringBase<DefaultContainerAllocator<s_char>> NString;
 
 	/**
 	 * Fixed-length version of NString, cannot grow past the specified size
@@ -324,7 +324,7 @@ namespace Noble
 	 * hold 31 characters + 1 null terminator.
 	 */
 	template <Size N>
-	using NStringFixed = NStringBase<FixedContainerAllocator<N>>;
+	using NStringFixed = NStringBase<FixedContainerAllocator<s_char, N>>;
 
 	/**
 	 * FNV1a C++11 Compile Time Hash Function by UnderscoreDiscovery on Github

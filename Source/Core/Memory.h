@@ -72,7 +72,7 @@ namespace Noble
 			return memset(dst, val, size);
 		}
 
-		FORCEINLINE static void* Memcpy(void* dst, void* src, Size size)
+		FORCEINLINE static void* Memcpy(void* dst, const void* src, Size size)
 		{
 			return memcpy(dst, src, size);
 		}
@@ -190,6 +190,7 @@ namespace Noble
 	/**
 	 * Most basic implementation of a container allocator; uses Malloc/Realloc/Free
 	 */
+	template <typename ElementType>
 	class DefaultContainerAllocator
 	{
 	public:
@@ -197,8 +198,8 @@ namespace Noble
 		/**
 		 * Empty initializes the allocator
 		 */
-		FORCEINLINE DefaultContainerAllocator()
-			: m_Data(nullptr), m_AllocSize(0), m_ElemCount(0), m_ElemSize(0), m_ElemAlign(0)
+		DefaultContainerAllocator()
+			: m_Data(nullptr), m_AllocSize(0), m_ElemCount(0)
 		{
 		}
 
@@ -206,17 +207,15 @@ namespace Noble
 		 * Deep copies the allocator - fully reallocates the storage
 		 * This is slow and should be avoided if at all possible
 		 */
-		FORCEINLINE DefaultContainerAllocator(const DefaultContainerAllocator& other)
+		DefaultContainerAllocator(const DefaultContainerAllocator& other)
 		{
 			if (other.m_ElemCount > 0)
 			{
 				m_ElemCount = 0;
-				m_ElemSize = 0;
-				m_ElemAlign = 0;
 				m_AllocSize = 0;
 				m_Data = nullptr;
 				// Resize to make room for the copy
-				Resize(other.m_ElemSize, other.m_ElemCount, other.m_ElemAlign);
+				Resize(other.m_ElemCount);
 				// Copy all of the elements
 				Memory::Memcpy(m_Data, other.m_Data, m_AllocSize);
 			}
@@ -225,33 +224,27 @@ namespace Noble
 				m_ElemCount = other.m_ElemCount;
 				m_AllocSize = other.m_AllocSize;
 				m_Data = nullptr;
-				m_ElemSize = other.m_ElemSize;
-				m_ElemAlign = other.m_ElemAlign;
 			}
 		}
 
 		/**
 		 * Moves the data from "other" to this one, leaving "other" in a clean state
 		 */
-		FORCEINLINE DefaultContainerAllocator(DefaultContainerAllocator&& other) noexcept
+		DefaultContainerAllocator(DefaultContainerAllocator&& other) noexcept
 		{
 			m_ElemCount = other.m_ElemCount;
 			m_AllocSize = other.m_AllocSize;
 			m_Data = other.m_Data;
-			m_ElemSize = other.m_ElemSize;
-			m_ElemAlign = other.m_ElemAlign;
 
 			other.m_ElemCount = 0;
 			other.m_AllocSize = 0;
 			other.m_Data = nullptr;
-			other.m_ElemSize = 0;
-			other.m_ElemAlign = 0;
 		}
 
 		/**
 		 * Copy assignment
 		 */
-		FORCEINLINE DefaultContainerAllocator& operator=(const DefaultContainerAllocator& other)
+		DefaultContainerAllocator& operator=(const DefaultContainerAllocator& other)
 		{
 			if (this == &other)
 			{
@@ -266,12 +259,10 @@ namespace Noble
 			if (other.m_ElemCount > 0)
 			{
 				m_ElemCount = 0;
-				m_ElemSize = 0;
-				m_ElemAlign = 0;
 				m_AllocSize = 0;
 				m_Data = nullptr;
 				// Resize to make room for the copy
-				Resize(other.m_ElemSize, other.m_ElemCount, other.m_ElemAlign);
+				Resize(other.m_ElemCount);
 				// Copy all of the elements
 				Memory::Memcpy(m_Data, other.m_Data, m_AllocSize);
 			}
@@ -280,8 +271,6 @@ namespace Noble
 				m_ElemCount = other.m_ElemCount;
 				m_AllocSize = other.m_AllocSize;
 				m_Data = nullptr;
-				m_ElemSize = other.m_ElemSize;
-				m_ElemAlign = other.m_ElemAlign;
 			}
 
 			return *this;
@@ -290,7 +279,7 @@ namespace Noble
 		/**
 		 * Move assignment
 		 */
-		FORCEINLINE DefaultContainerAllocator& operator=(DefaultContainerAllocator&& other) noexcept
+		DefaultContainerAllocator& operator=(DefaultContainerAllocator&& other) noexcept
 		{
 			if (m_Data)
 			{
@@ -300,20 +289,16 @@ namespace Noble
 			m_ElemCount = other.m_ElemCount;
 			m_AllocSize = other.m_AllocSize;
 			m_Data = other.m_Data;
-			m_ElemSize = other.m_ElemSize;
-			m_ElemAlign = other.m_ElemAlign;
 
 			other.m_ElemCount = 0;
 			other.m_AllocSize = 0;
 			other.m_Data = nullptr;
-			other.m_ElemSize = 0;
-			other.m_ElemAlign = 0;
 		}
 
 		/**
 		 * Calculates a suitable new max size
 		 */
-		FORCEINLINE const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount = 0)
+		const Size CalculateGrowSize(const Size& requestedCount = 0)
 		{
 			if (requestedCount > m_ElemCount)
 			{
@@ -326,21 +311,19 @@ namespace Noble
 		}
 
 		/**
-		 * Resizes the array to fit @newMax elements of size @elementSize
+		 * Resizes the array to fit @newMax elements
 		 * Returns the element count
 		 */
-		FORCEINLINE Size Resize(const Size& elementSize, Size newMax, Size align = NOBLE_DEFAULT_ALIGN)
+		Size Resize(Size newMax)
 		{
-			CHECK(elementSize > 0 && newMax > m_ElemCount);
+			CHECK(newMax > m_ElemCount);
 
-			Size newAllocSize = elementSize * newMax;
-			void* newBuffer = Memory::Realloc(m_Data, newAllocSize, align);
+			Size newAllocSize = sizeof(ElementType) * newMax;
+			void* newBuffer = Memory::Realloc(m_Data, newAllocSize, alignof(ElementType));
 
 			m_Data = newBuffer;
 			m_AllocSize = newAllocSize;
 			m_ElemCount = newMax;
-			m_ElemSize = elementSize;
-			m_ElemAlign = align;
 
 			return m_ElemCount;
 		}
@@ -348,7 +331,7 @@ namespace Noble
 		/**
 		 * Resets the allocator to an empty state, freeing any memory it holds
 		 */
-		FORCEINLINE void Reset()
+		void Reset()
 		{
 			if (m_Data)
 			{
@@ -357,195 +340,7 @@ namespace Noble
 			m_Data = nullptr;
 			m_AllocSize = 0;
 			m_ElemCount = 0;
-			m_ElemSize = 0;
-			m_ElemAlign = 0;
 		}
-
-		/**
-		 * Returns the total amount of memory allocated by this allocator
-		 */
-		FORCEINLINE Size GetAllocationSize() const
-		{
-			return m_AllocSize;
-		}
-
-		/**
-		 * Returns a pointer to the allocated data
-		 */
-		FORCEINLINE void* GetData()
-		{
-			return m_Data;
-		}
-
-		/**
-		 * Returns a pointer to the allocated data (const version of above)
-		 */
-		FORCEINLINE const void* GetData() const
-		{
-			return m_Data;
-		}
-
-		/**
-		 * Returns true if this allocator has made any heap allocations
-		 */
-		FORCEINLINE bool HasAllocated() const
-		{
-			return m_Data != nullptr;
-		}
-
-		/**
-		 * Destructor frees memory if necessary
-		 */
-		FORCEINLINE virtual ~DefaultContainerAllocator()
-		{
-			if (m_Data)
-			{
-				Memory::Free(m_Data);
-			}
-		}
-
-	private:
-
-		// Pointer to raw data
-		void* m_Data;
-		// Total allocated memory in bytes
-		Size m_AllocSize;
-		// Total number of "elements"
-		Size m_ElemCount;
-		// Size of an element
-		Size m_ElemSize;
-		// Alignment of the element
-		Size m_ElemAlign;
-
-	};
-
-	/**
-	 * A container allocator that only holds a fixed number of elements and cannot be resized
-	 */
-	template <Size N>
-	class FixedContainerAllocator
-	{
-	public:
-
-		FixedContainerAllocator()
-			: m_Data(nullptr), m_AllocSize(0), m_ElemSize(0), m_ElemAlign(0)
-		{
-		}
-
-		/**
-		 * Copies the elements from the given allocator to this one
-		 */
-		FixedContainerAllocator(const FixedContainerAllocator& other)
-		{
-			m_Data = nullptr;
-			m_AllocSize = 0;
-			m_ElemSize = 0;
-			m_ElemAlign = 0;
-			if (other.m_Data)
-			{
-				// Resize - in the case of the fixed, the requested max doesn't matter
-				Resize(other.m_ElemSize, 0, other.m_ElemAlign);
-				// Copy elements
-				Memory::Memcpy(m_Data, other.m_Data, m_AllocSize);
-			}
-		}
-
-		/**
-		 * Moves the elements from the given allocator to this one, invalidating the original
-		 */
-		FixedContainerAllocator(FixedContainerAllocator&& other)
-		{
-			m_Data = other.m_Data;
-			m_AllocSize = other.m_AllocSize;
-			m_ElemSize = other.m_ElemSize;
-			m_ElemAlign = other.m_ElemAlign;
-
-			other.m_Data = nullptr;
-			other.m_AllocSize = 0;
-			other.m_ElemSize = 0;
-			other.m_ElemAlign = 0;
-		}
-
-		/**
-		 * Copies the elements from the given allocator to this one
-		 * Also frees any memory that is currently in this allocator!
-		 */
-		FixedContainerAllocator& operator=(const FixedContainerAllocator& other)
-		{
-			if (this == &other)
-			{
-				return *this;
-			}
-
-			if (m_Data)
-			{
-				Memory::Free(m_Data);
-			}
-
-			m_Data = nullptr;
-			m_AllocSize = 0;
-			m_ElemSize = 0;
-			m_ElemAlign = 0;
-			if (other.m_Data)
-			{
-				// Resize - in the case of the fixed, the requested max doesn't matter
-				Resize(other.m_ElemSize, 0, other.m_ElemAlign);
-				// Copy elements
-				Memory::Memcpy(m_Data, other.m_Data, m_AllocSize);
-			}
-
-			return *this;
-		}
-
-		/**
-		 * Moves the elements from the given allocator to this one, invalidating the original
-		 * Also frees any memory that is currently in this allocator!
-		 */
-		FixedContainerAllocator& operator=(FixedContainerAllocator&& other)
-		{
-			if (m_Data)
-			{
-				Memory::Free(m_Data);
-			}
-
-			m_Data = other.m_Data;
-			m_AllocSize = other.m_AllocSize;
-			m_ElemSize = other.m_ElemSize;
-			m_ElemAlign = other.m_ElemAlign;
-
-			other.m_Data = nullptr;
-			other.m_AllocSize = 0;
-			other.m_ElemSize = 0;
-			other.m_ElemAlign = 0;
-
-			return *this;
-		}
-
-		/**
-		 * Fixed Allocator - just returns the fixed size
-		 */
-		const Size CalculateGrowSize(const Size& elementSize, const Size& requestedCount = 0) { return N; }
-
-		/**
-		 * Fixed Allocator - allocates the fixed-size array if it hasn't already been, and returns N
-		 */
-		Size Resize(const Size& elementSize, Size newMax, Size align = NOBLE_DEFAULT_ALIGN)
-		{
-			if (!m_Data)
-			{
-				m_ElemSize = elementSize;
-				m_ElemAlign = align;
-				m_AllocSize = elementSize * N;
-				m_Data = Memory::Malloc(m_AllocSize, align);
-			}
-
-			return N;
-		}
-
-		/**
-		 * Fixed allocator - doesn't need to do anything
-		 */
-		void Reset() {}
 
 		/**
 		 * Returns the total amount of memory allocated by this allocator
@@ -554,7 +349,6 @@ namespace Noble
 		{
 			return m_AllocSize;
 		}
-
 
 		/**
 		 * Returns a pointer to the allocated data
@@ -583,7 +377,7 @@ namespace Noble
 		/**
 		 * Destructor frees memory if necessary
 		 */
-		virtual ~FixedContainerAllocator()
+		virtual ~DefaultContainerAllocator()
 		{
 			if (m_Data)
 			{
@@ -593,14 +387,146 @@ namespace Noble
 
 	private:
 
-		// Raw Data
+		// Pointer to raw data
 		void* m_Data;
-		// Total allocated size
+		// Total allocated memory in bytes
 		Size m_AllocSize;
-		// Element size
-		Size m_ElemSize;
-		// Element align
-		Size m_ElemAlign;
+		// Total number of "elements"
+		Size m_ElemCount;
+
+	};
+
+	/**
+	 * A container allocator that only holds a fixed number of elements and cannot be resized
+	 */
+	template <typename ElementType, Size N>
+	class FixedContainerAllocator
+	{
+	public:
+
+		FixedContainerAllocator()
+		{
+			Memory::Memset(GetData(), 0, sizeof(m_Data));
+		}
+
+		/**
+		 * Copies the elements from the given allocator to this one
+		 */
+		FixedContainerAllocator(const FixedContainerAllocator& other)
+		{
+			// Copy elements
+			Memory::Memcpy(GetData(), other.GetData(), sizeof(m_Data));
+		}
+
+		/**
+		 * Moves the elements from the given allocator to this one, invalidating the original
+		 */
+		FixedContainerAllocator(FixedContainerAllocator&& other)
+		{
+			// Copy the data
+			Memory::Memcpy(GetData(), other.GetData(), sizeof(m_Data));
+			// Then clear the other to 0
+			Memory::Memset(other.GetData(), 0, sizeof(other.m_Data));
+		}
+
+		/**
+		 * Copies the elements from the given allocator to this one
+		 * Also frees any memory that is currently in this allocator!
+		 */
+		FixedContainerAllocator& operator=(const FixedContainerAllocator& other)
+		{
+			if (this == &other)
+			{
+				return *this;
+			}
+
+			// Copy elements
+			Memory::Memcpy(GetData(), other.GetData(), sizeof(m_Data));
+
+			return *this;
+		}
+
+		/**
+		 * Moves the elements from the given allocator to this one, invalidating the original
+		 * Also frees any memory that is currently in this allocator!
+		 */
+		FixedContainerAllocator& operator=(FixedContainerAllocator&& other)
+		{
+			// Copy the data
+			Memory::Memcpy(GetData(), other.GetData(), sizeof(m_Data));
+			// Then clear the other to 0
+			Memory::Memset(other.GetData(), 0, sizeof(other.m_Data));
+
+			return *this;
+		}
+
+		/**
+		 * Fixed Allocator - just returns the fixed size
+		 */
+		const Size CalculateGrowSize(const Size& requestedCount = 0) { return N; }
+
+		/**
+		 * Fixed Allocator - just returns the fixed count since the data is not heap allocated
+		 */
+		Size Resize(Size newMax)
+		{
+			return N;
+		}
+
+		/**
+		 * Fixed allocator - doesn't need to do anything
+		 */
+		void Reset() {}
+
+		/**
+		 * Returns the total amount of memory allocated by this allocator
+		 */
+		Size GetAllocationSize() const
+		{
+			return sizeof(m_Data);
+		}
+
+
+		/**
+		 * Returns a pointer to the allocated data
+		 */
+		void* GetData()
+		{
+			return &m_Data[0];
+		}
+
+		/**
+		 * Returns a pointer to the allocated data (const version of above)
+		 */
+		const void* GetData() const
+		{
+			return &m_Data[0];
+		}
+
+		/**
+		 * Returns true if this allocator has allocated elements
+		 */
+		bool HasAllocated() const
+		{
+			return true;
+		}
+
+		/**
+		 * Destructor - does nothing since memory is not heap alloc
+		 */
+		virtual ~FixedContainerAllocator()
+		{
+		}
+
+	private:
+
+		STATIC_CHECK(sizeof(ElementType) % alignof(ElementType) == 0, "Alignment should be a multiple of size");
+
+		// Raw Data
+		// Rather than storing as array of ElementType, store as array of Byte
+		// This avoids default construction happening in the allocator, which
+		// should remain as agnostic to the function of the elements as possible
+		Byte m_Data[N * sizeof(ElementType)];
 	};
 
 	/**

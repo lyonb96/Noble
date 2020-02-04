@@ -110,7 +110,7 @@ namespace Noble
 		{
 			CHECK(newBytes >= m_StoredBytes);
 
-			Size newMax = m_Allocator.Resize(1, newBytes);
+			Size newMax = m_Allocator.Resize(newBytes);
 
 			m_MaxBytes = newMax;
 		}
@@ -264,7 +264,7 @@ namespace Noble
 			Size requiredMax = m_StoredBytes + bytes;
 			if (requiredMax > m_MaxBytes)
 			{
-				Size calcMax = m_Allocator.CalculateGrowSize(1, requiredMax);
+				Size calcMax = m_Allocator.CalculateGrowSize(requiredMax);
 				Resize(calcMax);
 			}
 		}
@@ -281,5 +281,5 @@ namespace Noble
 		Allocator m_Allocator;
 	};
 
-	typedef BitStreamBase<DefaultContainerAllocator> BitStream;
+	typedef BitStreamBase<DefaultContainerAllocator<Byte>> BitStream;
 }
