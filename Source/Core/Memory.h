@@ -530,16 +530,6 @@ namespace Noble
 	};
 
 	/**
-	 * Based on Epic's InlineAllocator. Allocates @Count @Elements on the stack.
-	 * If requirements exceed this point, the second allocator is used.
-	 */
-	template <class Element, U32 Count, class Allocator>
-	class InlineAllocator
-	{
-		
-	};
-
-	/**
 	 * Not to be used; just shows the proper structure of an Allocator
 	 */
 	class AllocatorInterface
@@ -563,6 +553,47 @@ namespace Noble
 		 * Returns true if this allocator has made any heap allocs
 		 */
 		bool HasAllocated() const { return false; }
+	};
+
+	/**
+	 * Very simple allocator, just wraps calls to Malloc/Free
+	 */
+	class BasicAllocator
+	{
+	public:
+
+		/**
+		 * Default constructor
+		 */
+		BasicAllocator()
+			: m_TotalAllocSize(0)
+		{}
+
+		/**
+		 * Returns memory allocated via "Malloc"
+		 */
+		void* Allocate(Size allocSize, Size align, Size offset = 0);
+
+		/**
+		 * Frees memory using "Free"
+		 */
+		void Free(void* ptr);
+
+		/**
+		 * Returns the total number of bytes allocated but not freed
+		 */
+		Size GetAllocatedSize() const { return m_TotalAllocSize; }
+
+		/**
+		 * Returns true if there are unfreed allocations
+		 */
+		bool HasAllocated() const { return m_TotalAllocSize > 0; }
+
+	private:
+
+		// Keeps track of how many bytes have been alloc'd and not free'd
+		Size m_TotalAllocSize;
+
 	};
 
 	/**
@@ -722,6 +753,12 @@ namespace Noble
 		 */
 		FORCEINLINE const bool HasAllocs() const { return m_Count > 0; }
 	};
+
+#ifdef NOBLE_DEBUG
+	typedef SimpleTrackingPolicy DefaultTracking;
+#else
+	typedef NoTrackingPolicy DefaultTracking;
+#endif
 
 	/**
 	 * Memory arenas wrap an allocator and some tracking/debugging tools

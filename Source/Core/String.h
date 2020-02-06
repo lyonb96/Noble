@@ -20,6 +20,8 @@ namespace Noble
 	{
 	public:
 
+		typedef s_char CharType;
+
 		NStringBase()
 		{
 			m_Array.Add(s_char(0));
@@ -50,6 +52,17 @@ namespace Noble
 	public:
 
 		/**
+		 * Makes sure the string is prepared to hold the requested number of characters
+		 */
+		void Reserve(const Size amt)
+		{
+			if (amt > GetLength())
+			{
+				m_Array.Resize(amt);
+			}
+		}
+
+		/**
 		 * Copy assignment
 		 */
 		NStringBase& operator=(const NStringBase other)
@@ -78,6 +91,16 @@ namespace Noble
 		NStringBase& operator+=(const s_char* val)
 		{
 			AppendString(val, std::strlen(val));
+
+			return *this;
+		}
+
+		/**
+		 * Appends the character to the end of the string
+		 */
+		NStringBase& operator+=(const s_char val)
+		{
+			AppendChar(val);
 
 			return *this;
 		}
@@ -165,7 +188,7 @@ namespace Noble
 		/**
 		 * Returns true if this string starts with the given query
 		 */
-		bool StartsWith(const s_char* query)
+		bool StartsWith(const s_char* query) const
 		{
 			CHECK(query);
 			const Size len = std::strlen(query);
@@ -176,7 +199,7 @@ namespace Noble
 		/**
 		 * Returns true if this string starts with the given query
 		 */
-		bool StartsWith(const NStringBase& query)
+		bool StartsWith(const NStringBase& query) const
 		{
 			return StartsWith(query.GetCharArray(), query.GetLength());
 		}
@@ -184,7 +207,7 @@ namespace Noble
 		/**
 		 * Returns true if this string starts with the given query
 		 */
-		bool StartsWith(const s_char* query, Size len)
+		bool StartsWith(const s_char* query, Size len) const
 		{
 			if (len > GetLength())
 			{
@@ -206,7 +229,7 @@ namespace Noble
 		/**
 		 * Returns true if this string ends with the given query
 		 */
-		bool EndsWith(const s_char* query)
+		bool EndsWith(const s_char* query) const
 		{
 			CHECK(query);
 			const Size len = std::strlen(query);
@@ -217,7 +240,7 @@ namespace Noble
 		/**
 		 * Returns true if this string ends with the given query
 		 */
-		bool EndsWith(const NStringBase& query)
+		bool EndsWith(const NStringBase& query) const
 		{
 			return EndsWith(query.GetCharArray(), query.GetLength());
 		}
@@ -225,7 +248,7 @@ namespace Noble
 		/**
 		 * Returns true if this string ends with the given query
 		 */
-		bool EndsWith(const s_char* query, Size len)
+		bool EndsWith(const s_char* query, Size len) const
 		{
 			if (len > GetLength())
 			{
@@ -304,6 +327,20 @@ namespace Noble
 			// Special case for fixed allocator: Reset the final character to null terminator manually
 			// This is in case AddMultiple runs over the final character and clears it, and it won't
 			// break non-fixed allocation methods
+			m_Array[GetLength()] = '\0';
+		}
+
+		void AppendChar(const s_char val)
+		{
+			CHECK(val != '\0');
+
+			// Change final character to val
+			m_Array[GetLength()] = val;
+			// Re-add null term
+			m_Array.Add('\0');
+			// Special case required for fixed allocator: reset final char to null terminator manually
+			// the call above to "add" may fail if the allocator is full, and if that's the case, it
+			// won't write the null terminator
 			m_Array[GetLength()] = '\0';
 		}
 

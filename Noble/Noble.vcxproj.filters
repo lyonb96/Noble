@@ -138,6 +138,9 @@
     <ClInclude Include="..\Source\Core\SceneComponent.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\AssetManager.h">
+      <Filter>Header Files\AssetManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -199,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\SceneComponent.cpp">
       <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\AssetManager.cpp">
+      <Filter>Source Files\AssetManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

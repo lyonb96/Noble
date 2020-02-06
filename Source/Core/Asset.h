@@ -30,12 +30,22 @@ namespace Noble
 		 */
 		const NIdentifier& GetAssetID() const { return m_AssetID; }
 
-	public:
+		/**
+		 * Returns the derived type of this asset
+		 */
+		virtual const AssetType GetType() const = 0;
+
+	protected:
 
 		/**
 		 * Overridden in each Asset type to build an instance from a buffer
 		 */
 		virtual void CreateFromBuffer(BitStream& data) = 0;
+
+		/**
+		 * Overridden in each Asset type to free memory and release any resources
+		 */
+		virtual void Destroy() = 0;
 
 	protected:
 

@@ -46,8 +46,8 @@ namespace Noble
 		TestGameObject* g_TestObject2;
 		TestGameObject* g_TestObject3;
 
-		StaticMesh g_TestMesh;
-		StaticMesh g_TestMesh2;
+		StaticMesh* g_TestMesh;
+		StaticMesh* g_TestMesh2;
 	}
 
 	int LaunchEngine()
@@ -128,29 +128,20 @@ namespace Noble
 		g_TestObject2 = GetWorld()->SpawnGameObject<TestGameObject>();
 		g_TestObject3 = GetWorld()->SpawnGameObject<TestGameObject>();
 
-		{
-			// Test mesh load
-			File testMeshFile("Content/TestMesh.txt", FileMode::FILE_READ);
-			BitStream stream;
-			testMeshFile.Read(stream);
+		// Test registration
+		m_AssetManager.RegisterAsset(ID("CubeMesh"), "Content/TestMesh.txt", AssetType::AT_STATIC_MESH);
+		m_AssetManager.RegisterAsset(ID("TriangleMesh"), "Content/TestMesh2.txt", AssetType::AT_STATIC_MESH);
 
-			g_TestMesh.CreateFromBuffer(stream);
-		}
-		{
-			File test2("Content/TestMesh2.txt", FileMode::FILE_READ);
-			BitStream stream;
-			test2.Read(stream);
+		g_TestMesh = m_AssetManager.GetStaticMesh(ID("CubeMesh"));
+		g_TestMesh2 = m_AssetManager.GetStaticMesh(ID("TriangleMesh"));
 
-			g_TestMesh2.CreateFromBuffer(stream);
-		}
+		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMesh(g_TestMesh);
+		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetMesh(g_TestMesh);
+		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMesh(g_TestMesh);
 
-		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMesh(&g_TestMesh);
-		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetMesh(&g_TestMesh);
-		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMesh(&g_TestMesh);
-
-		g_TestObject1->GetSecondMesh()->SetMesh(&g_TestMesh2);
-		g_TestObject2->GetSecondMesh()->SetMesh(&g_TestMesh2);
-		g_TestObject3->GetSecondMesh()->SetMesh(&g_TestMesh2);
+		g_TestObject1->GetSecondMesh()->SetMesh(g_TestMesh2);
+		g_TestObject2->GetSecondMesh()->SetMesh(g_TestMesh2);
+		g_TestObject3->GetSecondMesh()->SetMesh(g_TestMesh2);
 
 		return true;
 	}
@@ -219,6 +210,9 @@ namespace Noble
 
 		StaticMeshComponent::TemporaryDestroy();
 
+		// Unload assets
+		m_AssetManager.UnloadAllAssets();
+
 		// Save config changes
 		Config::SaveConfig();
 
@@ -268,8 +262,8 @@ namespace Noble
 			// spawn another object
 			auto newObj = GetWorld()->SpawnGameObject<TestGameObject>(Vector3f(0, -5, 0));
 			newObj->SetScale(Vector3f(2.0F));
-			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(&g_TestMesh);
-			newObj->GetSecondMesh()->SetMesh(&g_TestMesh2);
+			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(g_TestMesh);
+			newObj->GetSecondMesh()->SetMesh(g_TestMesh2);
 		}
 	}
 }

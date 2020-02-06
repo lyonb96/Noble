@@ -9,7 +9,8 @@ namespace Noble
 		CreateInstance(fn),
 		ObjectSize(size),
 		ObjectAlign(align),
-		IsAbstract(abstr)
+		IsAbstract(abstr),
+		Parent(nullptr)
 	{
 		// Make sure the registry doesn't already contain the key (avoid duplicates or hash collisions)
 		CHECK(!Object::ObjectRegistry.ContainsKey(id));

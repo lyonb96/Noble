@@ -30,6 +30,16 @@ namespace Noble
 
 	// -----------------------------------------------------
 
+	void* BasicAllocator::Allocate(Size allocSize, Size align, Size offset)
+	{
+		return _aligned_offset_malloc(allocSize, align, offset);
+	}
+
+	void BasicAllocator::Free(void* ptr)
+	{
+		_aligned_free(ptr);
+	}
+
 	BlockAllocator::BlockAllocator()
 		: BlockAllocator(DefaultBlockSize)
 	{}

@@ -2,6 +2,7 @@
 
 #define NOBLE_VERSION "Early Dev"
 
+#include "AssetManager.h"
 #include "Time.h"
 #include "Renderer.h"
 #include "World.h"
@@ -59,5 +60,7 @@ namespace Noble
 		Renderer m_Renderer;
 		// Handles the gameplay side of the engine
 		World m_World;
+		// Handles asset loading and unloading
+		AssetManager m_AssetManager;
 	};
 }

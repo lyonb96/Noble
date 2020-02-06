@@ -12,23 +12,23 @@ namespace Noble
 	{
 		char filePath[512];
 
-		const char* shaderPath = "???";
+		//const char* shaderPath = "???";
 
-		switch (bgfx::getRendererType())
-		{
-			case bgfx::RendererType::Noop:
-			case bgfx::RendererType::Direct3D9:  shaderPath = "Content/shaders/dx9/";   break;
-			case bgfx::RendererType::Direct3D11:
-			case bgfx::RendererType::Direct3D12: shaderPath = "Content/shaders/dx11/";  break;
-			case bgfx::RendererType::Gnm:        shaderPath = "Content/shaders/pssl/";  break;
-			case bgfx::RendererType::Metal:      shaderPath = "Content/shaders/metal/"; break;
-			case bgfx::RendererType::Nvn:        shaderPath = "Content/shaders/nvn/";   break;
-			case bgfx::RendererType::OpenGL:     shaderPath = "Content/shaders/glsl/";  break;
-			case bgfx::RendererType::OpenGLES:   shaderPath = "Content/shaders/essl/";  break;
-			case bgfx::RendererType::Vulkan:     shaderPath = "Content/shaders/spirv/"; break;
-		}
+		//switch (bgfx::getRendererType())
+		//{
+		//	case bgfx::RendererType::Noop:
+		//	case bgfx::RendererType::Direct3D9:  shaderPath = "Content/shaders/dx9/";   break;
+		//	case bgfx::RendererType::Direct3D11:
+		//	case bgfx::RendererType::Direct3D12: shaderPath = "Content/shaders/dx11/";  break;
+		//	case bgfx::RendererType::Gnm:        shaderPath = "Content/shaders/pssl/";  break;
+		//	case bgfx::RendererType::Metal:      shaderPath = "Content/shaders/metal/"; break;
+		//	case bgfx::RendererType::Nvn:        shaderPath = "Content/shaders/nvn/";   break;
+		//	case bgfx::RendererType::OpenGL:     shaderPath = "Content/shaders/glsl/";  break;
+		//	case bgfx::RendererType::OpenGLES:   shaderPath = "Content/shaders/essl/";  break;
+		//	case bgfx::RendererType::Vulkan:     shaderPath = "Content/shaders/spirv/"; break;
+		//}
 
-		strcpy_s(filePath, shaderPath);
+		strcpy_s(filePath, "Content/shaders/test/");
 		strcat_s(filePath, name);
 		strcat_s(filePath, ".bin");
 
@@ -110,8 +110,8 @@ namespace Noble
 		m_VBuff = bgfx::createVertexBuffer(bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices)), m_Layout);
 		m_IBuff = bgfx::createIndexBuffer(bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList)));
 
-		m_VS = CreateShader("vs_cubes");
-		m_PS = CreateShader("fs_cubes");
+		m_VS = CreateShader("test");
+		m_PS = CreateShader("testfs");
 		m_Prog = bgfx::createProgram(m_VS, m_PS, true);
 	}
 

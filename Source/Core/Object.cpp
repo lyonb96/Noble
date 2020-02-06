@@ -5,6 +5,7 @@
 namespace Noble
 {
 	Map<NIdentifier, NClass> Object::ObjectRegistry;
+	U64 Object::ObjectCount = 0;
 
 	Object* Object::CreateInstance(NClass* const type, void* ptr)
 	{
@@ -38,6 +39,7 @@ namespace Noble
 
 		Object* inst = cls->CreateInstance(ptr);
 		inst->m_Class = cls;
+		inst->m_UID = ObjectCount++;
 
 		return inst;
 	}

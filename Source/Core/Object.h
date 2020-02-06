@@ -110,6 +110,8 @@ namespace Noble
 		 */
 		static Object* CreateInstanceFromClass(NClass* cls, void* ptr);
 
+		static U64 ObjectCount;
+
 	};
 }
 

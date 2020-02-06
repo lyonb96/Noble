@@ -76,12 +76,23 @@ namespace Noble
 		 */
 		bgfx::IndexBufferHandle& GetIndexBuffer() { return m_IndexBuffer; }
 
-	public:
+		/**
+		 * Returns the type specifier for Static Mesh
+		 */
+		virtual const AssetType GetType() const override { return AssetType::AT_STATIC_MESH; }
+
+	protected:
 
 		/**
 		 * Fills out the StaticMesh instance from the given buffer
 		 */
 		virtual void CreateFromBuffer(BitStream& data) override;
+
+		/**
+		 * Frees the memory from the vertex and index buffers and releases
+		 * the bgfx stuff
+		 */
+		virtual void Destroy() override;
 
 	private:
 

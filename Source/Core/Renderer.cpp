@@ -153,6 +153,9 @@ namespace Noble
 		initData.resolution.height = m_RenderHeight;
 		initData.resolution.reset = BGFX_RESET_VSYNC;
 		initData.platformData.nwh = m_WindowHandle;
+#ifdef NOBLE_DEBUG
+		initData.debug = true;
+#endif
 
 		result = bgfx::init(initData);
 		if (!result)
