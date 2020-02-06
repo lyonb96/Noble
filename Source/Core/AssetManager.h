@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "Memory.h"
 
+#include "Shader.h"
 #include "StaticMesh.h"
 
 /**
@@ -69,6 +70,12 @@ namespace Noble
 		 * Will load the asset if it's not yet loaded
 		 */
 		StaticMesh* GetStaticMesh(const NIdentifier& id);
+
+		/**
+		 * Returns a pointer to the Shader of the given ID
+		 * Will load the asset if it's not yet loaded
+		 */
+		Shader* GetShader(const NIdentifier& id);
 
 		/**
 		 * Loads the requested asset, if it has not already been

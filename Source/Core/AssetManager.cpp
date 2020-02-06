@@ -64,6 +64,27 @@ namespace Noble
 		return nullptr;
 	}
 
+	Shader* AssetManager::GetShader(const NIdentifier& id)
+	{
+		if (m_LoadedAssets.ContainsKey(id))
+		{
+			Asset* sh = m_LoadedAssets[id];
+			CHECK(sh->GetType() == AssetType::AT_SHADER);
+			return static_cast<Shader*>(sh);
+		}
+		else
+		{
+			Asset* newLoad = LoadAsset(id);
+			if (newLoad)
+			{
+				CHECK(newLoad->GetType() == AssetType::AT_SHADER);
+				return static_cast<Shader*>(newLoad);
+			}
+		}
+
+		return nullptr;
+	}
+
 	Asset* AssetManager::LoadAsset(const NIdentifier& id)
 	{
 		for (auto reg : m_Registry)
@@ -101,12 +122,15 @@ namespace Noble
 		// Create the asset instance
 		switch (reg.Type)
 		{
-		case AssetType::AT_STATIC_MESH:
-			result = NE_NEW(m_AssetAlloc, StaticMesh);
-			break;
-		default:
-			NE_LOG_WARNING("Unknown asset type of ID %u", (U8)reg.Type);
-			break;
+			case AssetType::AT_STATIC_MESH:
+				result = NE_NEW(m_AssetAlloc, StaticMesh);
+				break;
+			case AssetType::AT_SHADER:
+				result = NE_NEW(m_AssetAlloc, Shader);
+				break;
+			default:
+				NE_LOG_WARNING("Unknown asset type of ID %u", (U8)reg.Type);
+				break;
 		}
 
 		if (result)

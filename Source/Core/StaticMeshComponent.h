@@ -2,20 +2,13 @@
 
 #include "SceneComponent.h"
 #include "StaticMesh.h"
+#include "Shader.h"
 #include "Types.h"
 
 #include <bgfx/bgfx.h>
 
 namespace Noble
 {
-	struct Vertex
-	{
-		float X;
-		float Y;
-		float Z;
-		U32 vColor;
-	};
-
 	/**
 	 * This Component is used to render static (i.e. not rigged or animated) meshes
 	 * Allows the mesh and material to be changed, and it can also have a relative offset
@@ -33,6 +26,11 @@ namespace Noble
 		 */
 		void SetMesh(StaticMesh* mesh);
 
+		/**
+		 * TEMP - sets the shader to draw with
+		 */
+		void SetShader(Shader* shader) { m_Shader = shader; }
+
 		static void TemporaryInit();
 		static void TemporaryDestroy();
 
@@ -45,10 +43,8 @@ namespace Noble
 		// The mesh to draw
 		StaticMesh* m_Mesh;
 
-		// Mesh class
-		static bgfx::VertexLayout m_Layout;
-		static bgfx::VertexBufferHandle m_VBuff;
-		static bgfx::IndexBufferHandle m_IBuff;
+		// TEMP - shader to draw with
+		Shader* m_Shader;
 
 		// Material class
 		static bgfx::ProgramHandle m_Prog;

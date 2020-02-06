@@ -18,6 +18,7 @@
 #include "FileSystem.h"
 #include "BitStream.h"
 #include "StaticMesh.h"
+#include "Shader.h"
 
 #ifndef MAX_FIXED_STEPS_PER_FRAME
 #define MAX_FIXED_STEPS_PER_FRAME 5 // limit fixed steps per frame to avoid spiraling
@@ -48,6 +49,8 @@ namespace Noble
 
 		StaticMesh* g_TestMesh;
 		StaticMesh* g_TestMesh2;
+
+		Shader* g_TestShader;
 	}
 
 	int LaunchEngine()
@@ -131,17 +134,27 @@ namespace Noble
 		// Test registration
 		m_AssetManager.RegisterAsset(ID("CubeMesh"), "Content/TestMesh.txt", AssetType::AT_STATIC_MESH);
 		m_AssetManager.RegisterAsset(ID("TriangleMesh"), "Content/TestMesh2.txt", AssetType::AT_STATIC_MESH);
+		m_AssetManager.RegisterAsset(ID("TestShader"), "Content/shaders/test/TestShader.shd", AssetType::AT_SHADER);
 
 		g_TestMesh = m_AssetManager.GetStaticMesh(ID("CubeMesh"));
 		g_TestMesh2 = m_AssetManager.GetStaticMesh(ID("TriangleMesh"));
 
+		// Test shader loading
+		g_TestShader = m_AssetManager.GetShader(ID("TestShader"));
+
 		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMesh(g_TestMesh);
+		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetShader(g_TestShader);
 		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetMesh(g_TestMesh);
+		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetShader(g_TestShader);
 		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMesh(g_TestMesh);
+		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetShader(g_TestShader);
 
 		g_TestObject1->GetSecondMesh()->SetMesh(g_TestMesh2);
+		g_TestObject1->GetSecondMesh()->SetShader(g_TestShader);
 		g_TestObject2->GetSecondMesh()->SetMesh(g_TestMesh2);
+		g_TestObject2->GetSecondMesh()->SetShader(g_TestShader);
 		g_TestObject3->GetSecondMesh()->SetMesh(g_TestMesh2);
+		g_TestObject3->GetSecondMesh()->SetShader(g_TestShader);
 
 		return true;
 	}
@@ -263,7 +276,9 @@ namespace Noble
 			auto newObj = GetWorld()->SpawnGameObject<TestGameObject>(Vector3f(0, -5, 0));
 			newObj->SetScale(Vector3f(2.0F));
 			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(g_TestMesh);
+			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetShader(g_TestShader);
 			newObj->GetSecondMesh()->SetMesh(g_TestMesh2);
+			newObj->GetSecondMesh()->SetShader(g_TestShader);
 		}
 	}
 }

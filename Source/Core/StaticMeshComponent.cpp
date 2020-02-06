@@ -53,38 +53,6 @@ namespace Noble
 		return BGFX_INVALID_HANDLE;
 	}
 
-	static Vertex s_cubeVertices[] =
-	{
-		{-1.0f,  1.0f,  1.0f, 0xff000000 },
-		{ 1.0f,  1.0f,  1.0f, 0xff0000ff },
-		{-1.0f, -1.0f,  1.0f, 0xff00ff00 },
-		{ 1.0f, -1.0f,  1.0f, 0xff00ffff },
-		{-1.0f,  1.0f, -1.0f, 0xffff0000 },
-		{ 1.0f,  1.0f, -1.0f, 0xffff00ff },
-		{-1.0f, -1.0f, -1.0f, 0xffffff00 },
-		{ 1.0f, -1.0f, -1.0f, 0xffffffff },
-	};
-
-	static const U16 s_cubeTriList[] =
-	{
-		0, 1, 2, // 0
-		1, 3, 2,
-		4, 6, 5, // 2
-		5, 6, 7,
-		0, 2, 4, // 4
-		4, 2, 6,
-		1, 5, 3, // 6
-		5, 7, 3,
-		0, 4, 1, // 8
-		4, 5, 1,
-		2, 3, 6, // 10
-		6, 3, 7,
-	};
-
-	bgfx::VertexLayout StaticMeshComponent::m_Layout;
-	bgfx::VertexBufferHandle StaticMeshComponent::m_VBuff;
-	bgfx::IndexBufferHandle StaticMeshComponent::m_IBuff;
-
 	bgfx::ProgramHandle StaticMeshComponent::m_Prog;
 	bgfx::ShaderHandle StaticMeshComponent::m_VS;
 	bgfx::ShaderHandle StaticMeshComponent::m_PS;
@@ -93,6 +61,7 @@ namespace Noble
 		: SceneComponent()
 	{
 		m_Mesh = nullptr;
+		m_Shader = nullptr;
 	}
 
 	void StaticMeshComponent::SetMesh(StaticMesh* mesh)
@@ -102,14 +71,6 @@ namespace Noble
 
 	void StaticMeshComponent::TemporaryInit()
 	{
-		m_Layout.begin()
-			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-			.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-			.end();
-
-		m_VBuff = bgfx::createVertexBuffer(bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices)), m_Layout);
-		m_IBuff = bgfx::createIndexBuffer(bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList)));
-
 		m_VS = CreateShader("test");
 		m_PS = CreateShader("testfs");
 		m_Prog = bgfx::createProgram(m_VS, m_PS, true);
@@ -117,8 +78,6 @@ namespace Noble
 
 	void StaticMeshComponent::TemporaryDestroy()
 	{
-		bgfx::destroy(m_VBuff);
-		bgfx::destroy(m_IBuff);
 		bgfx::destroy(m_VS);
 		bgfx::destroy(m_PS);
 		bgfx::destroy(m_Prog);
@@ -133,12 +92,12 @@ namespace Noble
 
 		bgfx::setTransform(&transform);
 
-		if (m_Mesh)
+		if (m_Mesh && m_Shader)
 		{
 			bgfx::setVertexBuffer(0, m_Mesh->GetVertexBuffer());
 			bgfx::setIndexBuffer(m_Mesh->GetIndexBuffer());
 			bgfx::setState(state);
-			bgfx::submit(0, m_Prog);
+			bgfx::submit(0, m_Shader->GetProgram());
 		}
 	}
 }

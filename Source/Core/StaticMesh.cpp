@@ -56,20 +56,16 @@ namespace Noble
 		}
 
 		// Create buffers
-		m_VertexBuffer = bgfx::createVertexBuffer(bgfx::makeRef(m_Vertices, sizeof(StaticVertex) * m_VertexCount), StaticVertex::Layout);
-		m_IndexBuffer = bgfx::createIndexBuffer(bgfx::makeRef(m_Indices, sizeof(Index) * m_IndexCount), BGFX_BUFFER_INDEX32);
+		m_VertexBuffer = bgfx::createVertexBuffer(
+			bgfx::makeRef(m_Vertices, sizeof(StaticVertex) * m_VertexCount, [] (void* data, void*) -> void { delete[] data; }),
+			StaticVertex::Layout);
+		m_IndexBuffer = bgfx::createIndexBuffer(
+			bgfx::makeRef(m_Indices, sizeof(Index) * m_IndexCount, [] (void* data, void*) -> void { delete[] data; }),
+			BGFX_BUFFER_INDEX32);
 	}
 
 	void StaticMesh::Destroy()
 	{
-		if (m_Vertices)
-		{
-			delete[] m_Vertices;
-		}
-		if (m_Indices)
-		{
-			delete[] m_Indices;
-		}
 		bgfx::destroy(m_VertexBuffer);
 		bgfx::destroy(m_IndexBuffer);
 	}

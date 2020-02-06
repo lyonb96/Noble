@@ -218,7 +218,7 @@ namespace Noble
 		 * Reads the requested number of bytes into the given buffer
 		 * Returns the number of bytes actually read
 		 */
-		Size ReadBytes(Byte* data, const Size count)
+		Size ReadBytes(UByte* data, const Size count)
 		{
 			// Don't read beyond the end of the buffer
 			Size bytesToRead = glm::min(count, m_StoredBytes - m_ReaderPos);

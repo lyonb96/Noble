@@ -181,6 +181,7 @@
     <ClInclude Include="..\Source\Core\Object.h" />
     <ClInclude Include="..\Source\Core\Renderer.h" />
     <ClInclude Include="..\Source\Core\SceneComponent.h" />
+    <ClInclude Include="..\Source\Core\Shader.h" />
     <ClInclude Include="..\Source\Core\StaticMesh.h" />
     <ClInclude Include="..\Source\Core\StaticMeshComponent.h" />
     <ClInclude Include="..\Source\Core\TestGameObject.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="..\Source\Core\Object.cpp" />
     <ClCompile Include="..\Source\Core\Renderer.cpp" />
     <ClCompile Include="..\Source\Core\SceneComponent.cpp" />
+    <ClCompile Include="..\Source\Core\Shader.cpp" />
     <ClCompile Include="..\Source\Core\StaticMesh.cpp" />
     <ClCompile Include="..\Source\Core\StaticMeshComponent.cpp" />
     <ClCompile Include="..\Source\Core\TestGameObject.cpp" />

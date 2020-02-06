@@ -13,6 +13,8 @@ namespace Noble
 	{
 		// Static mesh - non-rigged triangular mesh asset
 		AT_STATIC_MESH = 0,
+		// Shader
+		AT_SHADER = 1
 	};
 
 	/**
