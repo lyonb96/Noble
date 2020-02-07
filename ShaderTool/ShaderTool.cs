@@ -18,6 +18,19 @@ namespace ShaderTool
 		private string FragShaderFile;
 		private string VaryingDefFile;
 
+		private string AttributeName;
+		private int SelectedAttributeType;
+		private int AttributeCount;
+
+		struct ShaderAttribute
+		{
+			public string AttributeName;
+			public int AttributeType;
+			public int AttributeCount;
+		}
+
+		private List<ShaderAttribute> Attributes;
+
 		public ShaderTool()
 		{
 			InitializeComponent();
@@ -28,6 +41,8 @@ namespace ShaderTool
 			VertShaderFile = "";
 			FragShaderFile = "";
 			VaryingDefFile = "";
+			SelectedAttributeType = 0;
+			Attributes = new List<ShaderAttribute>();
 		}
 
 		private void SelectVS_Click(object sender, EventArgs e)
@@ -122,7 +137,26 @@ namespace ShaderTool
 					BinaryReader fsBin = new BinaryReader(File.Open("FSOutput.bin", FileMode.Open));
 					FileInfo fsInfo = new FileInfo("FSOutput.bin");
 
-					BinaryWriter finalOutput = new BinaryWriter(File.Open(outFilePath, FileMode.Truncate));
+					FileMode mode;
+					if (File.Exists(outFilePath))
+					{
+						mode = FileMode.Truncate;
+					}
+					else
+					{
+						mode = FileMode.Create;
+					}
+
+					BinaryWriter finalOutput = new BinaryWriter(File.Open(outFilePath, mode));
+
+					// Write attributes
+					finalOutput.Write(Attributes.Count);
+					foreach (ShaderAttribute attr in Attributes)
+					{
+						finalOutput.Write(attr.AttributeName);
+						finalOutput.Write((uint)attr.AttributeType);
+						finalOutput.Write((uint)attr.AttributeCount);
+					}
 
 					// Write VS
 					finalOutput.Write((uint)vsInfo.Length);
@@ -138,6 +172,17 @@ namespace ShaderTool
 					finalOutput.Close();
 
 					OutputBox.Text = "Compilation successful";
+
+					// Clear input states
+					VertShaderFile = "";
+					VertShaderPath.Text = "";
+					FragShaderFile = "";
+					FragShaderPath.Text = "";
+					VaryingDefFile = "";
+					VaryingPath.Text = "";
+
+					Attributes.Clear();
+					AttributeList.Items.Clear();
 				}
 			}
 		}
@@ -145,6 +190,75 @@ namespace ShaderTool
 		private void VertShaderPath_TextChanged(object sender, EventArgs e)
 		{
 
+		}
+
+		/**
+		 * Attribute designation
+		 */
+
+		private void AttributeList_SelectedIndexChanged(object sender, EventArgs e)
+		{
+		}
+
+		private void DeleteAttribute_Click(object sender, EventArgs e)
+		{
+			int index = AttributeList.SelectedIndex;
+			AttributeList.Items.RemoveAt(index);
+			Attributes.RemoveAt(index);
+		}
+
+		private void AddAttribute_Click(object sender, EventArgs e)
+		{
+			if (TypeComboBox.SelectedItem != null && AttributeCount != 0 && AttributeName.Length > 0)
+			{
+				ShaderAttribute attr;
+				attr.AttributeName = AttributeName;
+				attr.AttributeType = SelectedAttributeType;
+				attr.AttributeCount = AttributeCount;
+
+				Attributes.Add(attr);
+
+				// Add to the attribute list
+				AttributeList.Items.Add(AttributeName);
+
+				// Reset params
+				AttributeNameBox.Text = "";
+				TypeComboBox.SelectedItem = null;
+				AttributeCountBox.Text = "";
+			}
+		}
+
+		private void AttributeNameBox_TextChanged(object sender, EventArgs e)
+		{
+			AttributeName = AttributeNameBox.Text;
+		}
+
+		private void TypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			SelectedAttributeType = TypeComboBox.SelectedIndex;
+		}
+
+		private void AttributeCountBox_TextChanged(object sender, EventArgs e)
+		{
+			if (AttributeCountBox.TextLength == 0)
+			{
+				return;
+			}
+			try
+			{
+				AttributeCount = int.Parse(AttributeCountBox.Text);
+			}
+			catch (Exception)
+			{
+				AttributeCount = 0;
+				OutputBox.Text = "Attribute Count must be an integer value";
+			}
+
+			if (AttributeCount > 4 || AttributeCount < 1)
+			{
+				OutputBox.Text = "Attribute Count cannot be greater than 4 or less than 1";
+				AttributeCount = 0;
+			}
 		}
 	}
 }

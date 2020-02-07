@@ -6,12 +6,18 @@
 
 namespace Noble
 {
+	/**
+	 * Shader Uniforms describe a uniform and help set new values
+	 * for shaders to read
+	 */
 	struct ShaderUniform
 	{
 		// Name of the uniform
 		NIdentifier UniformName;
 		// Type of the uniform
 		bgfx::UniformType::Enum UniformType;
+		// Number of elements in the uniform array
+		U32 UniformCount;
 		// Handle to the uniform
 		bgfx::UniformHandle UniformHandle;
 	};
@@ -29,16 +35,6 @@ namespace Noble
 		 * Default constructor
 		 */
 		Shader();
-
-		/**
-		 * Returns the handle to this Shader's vertex shader
-		 */
-		bgfx::ShaderHandle& GetVertexShader() { return m_VertexShader; }
-
-		/**
-		 * Returns the handle to this Shader's frag shader
-		 */
-		bgfx::ShaderHandle& GetFragShader() { return m_FragShader; }
 
 		/**
 		 * Returns the handle to this Shader's program
@@ -64,10 +60,8 @@ namespace Noble
 
 	private:
 
-		// Vertex shader handle
-		bgfx::ShaderHandle m_VertexShader;
-		// Pixel shader handle
-		bgfx::ShaderHandle m_FragShader;
+		// Attribute list
+		Array<ShaderUniform> m_Uniforms;
 		// Program handle
 		bgfx::ProgramHandle m_Program;
 	};
