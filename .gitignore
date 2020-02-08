@@ -360,3 +360,6 @@ Include/
 Library/
 JSON Test - Backup.txt
 Tools/
+Content/TestMesh.mtl
+Content/TestTex.dds
+Content/TestMesh3.bin

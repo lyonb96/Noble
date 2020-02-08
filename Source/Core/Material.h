@@ -20,6 +20,16 @@ namespace Noble
 		Material();
 
 		/**
+		 * Allow copy creation to clone mats
+		 */
+		Material(const Material& other);
+
+		/**
+		 * Allow copy creation to clone mats
+		 */
+		Material& operator=(const Material& other);
+
+		/**
 		 * Returns the shader set for this Material
 		 */
 		Shader* GetShader() const { return m_Shader; }

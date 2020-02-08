@@ -16,7 +16,9 @@ namespace Noble
 		// Shader
 		AT_SHADER = 1,
 		// Material
-		AT_MATERIAL = 2
+		AT_MATERIAL = 2,
+		// 2D Texture
+		AT_TEXTURE2D = 3
 	};
 
 	/**

@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "StaticMesh.h"
 #include "Material.h"
+#include "Texture2D.h"
 
 /**
  * The Asset Management subsystem of the engine handles registering/unregistering
@@ -103,11 +104,24 @@ namespace Noble
 		Material* GetMaterial(const U32 id);
 
 		/**
-		 * Creates a new Material and registers it with the given ID
-		 * The returned instance is uninitialized and needs to be
-		 * setup by the caller.
+		 * Returns a pointer to the Texture2D of the given ID
+		 * Will load the asset if it's not yet loaded
 		 */
-		Material* CreateMaterial(const NIdentifier& id);
+		Texture2D* GetTexture2D(const NIdentifier& id);
+
+		/**
+		 * Returns a pointer to the Texture2D of the given ID
+		 * Will load the asset if it's not yet loaded
+		 */
+		Texture2D* GetTexture2D(const U32 id);
+
+		/**
+		 * Creates a new Material, optionally cloning an existing Material
+		 * If the Material is not cloned from an existing Material, the 
+		 * returned instance is uninitialized and needs to be setup by the 
+		 * caller.
+		 */
+		Material* CreateMaterial(Material* copy = nullptr);
 
 		/**
 		 * Loads the requested asset, if it has not already been

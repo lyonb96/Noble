@@ -46,6 +46,9 @@
     <Filter Include="Header Files\Platform">
       <UniqueIdentifier>{aec7d64d-b0ed-4e8d-9dbb-b9af44c7a707}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{b95d9c7c-8926-4711-8406-9bdd614729b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Engine.h">
@@ -147,6 +150,12 @@
     <ClInclude Include="..\Source\Core\Material.h">
       <Filter>Header Files\AssetManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Texture2D.h">
+      <Filter>Header Files\AssetManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\PrintFormat.h">
+      <Filter>Header Files\Templates</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -218,5 +227,19 @@
     <ClCompile Include="..\Source\Core\Material.cpp">
       <Filter>Source Files\AssetManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Core\Texture2D.cpp">
+      <Filter>Source Files\AssetManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Content\shaders\vs_simple_light.sc">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\Content\shaders\simple_light_vdef.sc">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\Content\shaders\fs_simple_light.sc">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

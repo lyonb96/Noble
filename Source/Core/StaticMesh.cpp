@@ -19,9 +19,9 @@ namespace Noble
 	{
 		Layout.begin()
 			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-			.add(bgfx::Attrib::Weight, 1, bgfx::AttribType::Float)
 			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-			.add(bgfx::Attrib::Normal, 4, bgfx::AttribType::Half)
+			.add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::Tangent, 3, bgfx::AttribType::Float)
 			.end();
 	}
 
@@ -37,9 +37,10 @@ namespace Noble
 		// Read in vertices
 		for (U32 i = 0; i < m_VertexCount; ++i)
 		{
-			m_Vertices[i].Position =	 data.Read<Vector4f>();
-			m_Vertices[i].TexCoord =	 data.Read<Vector2f>();
-			m_Vertices[i].TangentSpace = data.Read<Vector4h>();
+			m_Vertices[i].Position =	data.Read<Vector3f>();
+			m_Vertices[i].TexCoord =	data.Read<Vector2f>();
+			m_Vertices[i].Normal =		data.Read<Vector3f>();
+			m_Vertices[i].Tangent =		data.Read<Vector3f>();
 		}
 
 		// Read in number of indices

@@ -49,13 +49,22 @@
 			this.DeleteAttribute = new System.Windows.Forms.Button();
 			this.AddAttribute = new System.Windows.Forms.Button();
 			this.AttributeList = new System.Windows.Forms.ListBox();
+			this.ToolTab = new System.Windows.Forms.TabControl();
+			this.ShaderToolPage = new System.Windows.Forms.TabPage();
+			this.MeshToolPage = new System.Windows.Forms.TabPage();
+			this.MeshSelectButton = new System.Windows.Forms.Button();
+			this.MeshBox = new System.Windows.Forms.TextBox();
+			this.ConvertMeshButton = new System.Windows.Forms.Button();
 			this.OutputWindow.SuspendLayout();
 			this.AttributeBox.SuspendLayout();
+			this.ToolTab.SuspendLayout();
+			this.ShaderToolPage.SuspendLayout();
+			this.MeshToolPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// SelectVS
 			// 
-			this.SelectVS.Location = new System.Drawing.Point(12, 12);
+			this.SelectVS.Location = new System.Drawing.Point(6, 6);
 			this.SelectVS.Name = "SelectVS";
 			this.SelectVS.Size = new System.Drawing.Size(153, 29);
 			this.SelectVS.TabIndex = 0;
@@ -65,7 +74,7 @@
 			// 
 			// SelectFS
 			// 
-			this.SelectFS.Location = new System.Drawing.Point(12, 47);
+			this.SelectFS.Location = new System.Drawing.Point(6, 41);
 			this.SelectFS.Name = "SelectFS";
 			this.SelectFS.Size = new System.Drawing.Size(153, 29);
 			this.SelectFS.TabIndex = 1;
@@ -75,7 +84,7 @@
 			// 
 			// SelectVD
 			// 
-			this.SelectVD.Location = new System.Drawing.Point(12, 82);
+			this.SelectVD.Location = new System.Drawing.Point(6, 76);
 			this.SelectVD.Name = "SelectVD";
 			this.SelectVD.Size = new System.Drawing.Size(153, 29);
 			this.SelectVD.TabIndex = 2;
@@ -85,7 +94,7 @@
 			// 
 			// CompileButton
 			// 
-			this.CompileButton.Location = new System.Drawing.Point(12, 117);
+			this.CompileButton.Location = new System.Drawing.Point(6, 111);
 			this.CompileButton.Name = "CompileButton";
 			this.CompileButton.Size = new System.Drawing.Size(153, 29);
 			this.CompileButton.TabIndex = 5;
@@ -96,7 +105,7 @@
 			// OutputWindow
 			// 
 			this.OutputWindow.Controls.Add(this.OutputBox);
-			this.OutputWindow.Location = new System.Drawing.Point(12, 152);
+			this.OutputWindow.Location = new System.Drawing.Point(6, 146);
 			this.OutputWindow.Name = "OutputWindow";
 			this.OutputWindow.Size = new System.Drawing.Size(432, 263);
 			this.OutputWindow.TabIndex = 6;
@@ -117,7 +126,7 @@
 			// 
 			// VertShaderPath
 			// 
-			this.VertShaderPath.Location = new System.Drawing.Point(171, 17);
+			this.VertShaderPath.Location = new System.Drawing.Point(165, 11);
 			this.VertShaderPath.Name = "VertShaderPath";
 			this.VertShaderPath.ReadOnly = true;
 			this.VertShaderPath.Size = new System.Drawing.Size(273, 20);
@@ -126,7 +135,7 @@
 			// 
 			// FragShaderPath
 			// 
-			this.FragShaderPath.Location = new System.Drawing.Point(171, 52);
+			this.FragShaderPath.Location = new System.Drawing.Point(165, 46);
 			this.FragShaderPath.Name = "FragShaderPath";
 			this.FragShaderPath.ReadOnly = true;
 			this.FragShaderPath.Size = new System.Drawing.Size(273, 20);
@@ -134,7 +143,7 @@
 			// 
 			// VaryingPath
 			// 
-			this.VaryingPath.Location = new System.Drawing.Point(171, 87);
+			this.VaryingPath.Location = new System.Drawing.Point(165, 81);
 			this.VaryingPath.Name = "VaryingPath";
 			this.VaryingPath.ReadOnly = true;
 			this.VaryingPath.Size = new System.Drawing.Size(273, 20);
@@ -160,7 +169,7 @@
 			this.AttributeBox.Controls.Add(this.DeleteAttribute);
 			this.AttributeBox.Controls.Add(this.AddAttribute);
 			this.AttributeBox.Controls.Add(this.AttributeList);
-			this.AttributeBox.Location = new System.Drawing.Point(451, 12);
+			this.AttributeBox.Location = new System.Drawing.Point(449, 6);
 			this.AttributeBox.Name = "AttributeBox";
 			this.AttributeBox.Size = new System.Drawing.Size(262, 403);
 			this.AttributeBox.TabIndex = 10;
@@ -254,20 +263,82 @@
 			this.AttributeList.TabIndex = 0;
 			this.AttributeList.SelectedIndexChanged += new System.EventHandler(this.AttributeList_SelectedIndexChanged);
 			// 
+			// ToolTab
+			// 
+			this.ToolTab.Controls.Add(this.ShaderToolPage);
+			this.ToolTab.Controls.Add(this.MeshToolPage);
+			this.ToolTab.Location = new System.Drawing.Point(12, 12);
+			this.ToolTab.Name = "ToolTab";
+			this.ToolTab.SelectedIndex = 0;
+			this.ToolTab.Size = new System.Drawing.Size(725, 446);
+			this.ToolTab.TabIndex = 11;
+			// 
+			// ShaderToolPage
+			// 
+			this.ShaderToolPage.Controls.Add(this.SelectVS);
+			this.ShaderToolPage.Controls.Add(this.AttributeBox);
+			this.ShaderToolPage.Controls.Add(this.VertShaderPath);
+			this.ShaderToolPage.Controls.Add(this.OutputWindow);
+			this.ShaderToolPage.Controls.Add(this.VaryingPath);
+			this.ShaderToolPage.Controls.Add(this.CompileButton);
+			this.ShaderToolPage.Controls.Add(this.SelectFS);
+			this.ShaderToolPage.Controls.Add(this.FragShaderPath);
+			this.ShaderToolPage.Controls.Add(this.SelectVD);
+			this.ShaderToolPage.Location = new System.Drawing.Point(4, 22);
+			this.ShaderToolPage.Name = "ShaderToolPage";
+			this.ShaderToolPage.Padding = new System.Windows.Forms.Padding(3);
+			this.ShaderToolPage.Size = new System.Drawing.Size(717, 420);
+			this.ShaderToolPage.TabIndex = 0;
+			this.ShaderToolPage.Text = "Shader Tool";
+			this.ShaderToolPage.UseVisualStyleBackColor = true;
+			// 
+			// MeshToolPage
+			// 
+			this.MeshToolPage.Controls.Add(this.ConvertMeshButton);
+			this.MeshToolPage.Controls.Add(this.MeshBox);
+			this.MeshToolPage.Controls.Add(this.MeshSelectButton);
+			this.MeshToolPage.Location = new System.Drawing.Point(4, 22);
+			this.MeshToolPage.Name = "MeshToolPage";
+			this.MeshToolPage.Padding = new System.Windows.Forms.Padding(3);
+			this.MeshToolPage.Size = new System.Drawing.Size(717, 420);
+			this.MeshToolPage.TabIndex = 1;
+			this.MeshToolPage.Text = "Mesh Tool";
+			this.MeshToolPage.UseVisualStyleBackColor = true;
+			// 
+			// MeshSelectButton
+			// 
+			this.MeshSelectButton.Location = new System.Drawing.Point(7, 117);
+			this.MeshSelectButton.Name = "MeshSelectButton";
+			this.MeshSelectButton.Size = new System.Drawing.Size(153, 29);
+			this.MeshSelectButton.TabIndex = 0;
+			this.MeshSelectButton.Text = "Select Mesh";
+			this.MeshSelectButton.UseVisualStyleBackColor = true;
+			this.MeshSelectButton.Click += new System.EventHandler(this.MeshSelectButton_Click);
+			// 
+			// MeshBox
+			// 
+			this.MeshBox.Location = new System.Drawing.Point(166, 122);
+			this.MeshBox.Name = "MeshBox";
+			this.MeshBox.ReadOnly = true;
+			this.MeshBox.Size = new System.Drawing.Size(545, 20);
+			this.MeshBox.TabIndex = 8;
+			// 
+			// ConvertMeshButton
+			// 
+			this.ConvertMeshButton.Location = new System.Drawing.Point(286, 196);
+			this.ConvertMeshButton.Name = "ConvertMeshButton";
+			this.ConvertMeshButton.Size = new System.Drawing.Size(153, 29);
+			this.ConvertMeshButton.TabIndex = 9;
+			this.ConvertMeshButton.Text = "Convert Mesh";
+			this.ConvertMeshButton.UseVisualStyleBackColor = true;
+			this.ConvertMeshButton.Click += new System.EventHandler(this.ConvertMeshButton_Click);
+			// 
 			// ShaderTool
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(725, 427);
-			this.Controls.Add(this.AttributeBox);
-			this.Controls.Add(this.VaryingPath);
-			this.Controls.Add(this.FragShaderPath);
-			this.Controls.Add(this.VertShaderPath);
-			this.Controls.Add(this.OutputWindow);
-			this.Controls.Add(this.CompileButton);
-			this.Controls.Add(this.SelectVD);
-			this.Controls.Add(this.SelectFS);
-			this.Controls.Add(this.SelectVS);
+			this.ClientSize = new System.Drawing.Size(747, 469);
+			this.Controls.Add(this.ToolTab);
 			this.MaximizeBox = false;
 			this.Name = "ShaderTool";
 			this.Text = "Noble Shader Tool";
@@ -276,8 +347,12 @@
 			this.OutputWindow.PerformLayout();
 			this.AttributeBox.ResumeLayout(false);
 			this.AttributeBox.PerformLayout();
+			this.ToolTab.ResumeLayout(false);
+			this.ShaderToolPage.ResumeLayout(false);
+			this.ShaderToolPage.PerformLayout();
+			this.MeshToolPage.ResumeLayout(false);
+			this.MeshToolPage.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
@@ -304,6 +379,12 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox AttributeCountBox;
 		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.TabControl ToolTab;
+		private System.Windows.Forms.TabPage ShaderToolPage;
+		private System.Windows.Forms.TabPage MeshToolPage;
+		private System.Windows.Forms.Button ConvertMeshButton;
+		private System.Windows.Forms.TextBox MeshBox;
+		private System.Windows.Forms.Button MeshSelectButton;
 	}
 }
 

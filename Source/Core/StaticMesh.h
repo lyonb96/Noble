@@ -8,20 +8,22 @@ namespace Noble
 {
 	/**
 	 * Describes a simple StaticMesh vertex format
-	 * Vertex size is 32 bytes
+	 * Total size is 44 bytes per vertex
 	 */
 	struct StaticVertex
 	{
 		StaticVertex()
-			: Position(0), TexCoord(0), TangentSpace(F16(0))
+			: Position(0), TexCoord(0), Normal(0), Tangent(0)
 		{}
 
 		// Position + extra float for padding
-		Vector4f Position; // (16 bytes)
+		Vector3f Position; // (12 bytes)
 		// Texture coordinates
 		Vector2f TexCoord; // (8 bytes)
-		// Half-precision quaternion describing tangent space of vertex
-		Vector4h TangentSpace; // (8 bytes)
+		// Vertex normal
+		Vector3f Normal; // (12 bytes)
+		// Vertex tangent
+		Vector3f Tangent; // (12 bytes)
 
 		// BGFX
 		static bgfx::VertexLayout Layout;

@@ -69,6 +69,8 @@ namespace Noble
 			su.UniformCount = count;
 			su.UniformHandle = bgfx::createUniform(su.UniformName.GetString(), su.UniformType, su.UniformCount);
 
+			CHECK(bgfx::isValid(su.UniformHandle));
+
 			m_Uniforms.Add(su);
 		}
 
@@ -84,7 +86,7 @@ namespace Noble
 		data.ReadBytes(fsMem->data, fsShaderSize);
 		fsMem->data[fsMem->size - 1] = '\0';
 
-		// Build shaderse and create shader program
+		// Build shaders and create shader program
 		bgfx::ShaderHandle vs = bgfx::createShader(vsMem);
 		bgfx::ShaderHandle fs = bgfx::createShader(fsMem);
 		m_Program = bgfx::createProgram(vs, fs, true);
@@ -106,7 +108,7 @@ namespace Noble
 		U32 out = 0;
 		for (auto uniform : m_Uniforms)
 		{
-			out += GetUniformTypeSize(uniform.UniformType);
+			out += GetUniformTypeSize(uniform.UniformType) * uniform.UniformCount;
 		}
 
 		return out;

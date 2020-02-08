@@ -180,12 +180,14 @@
     <ClInclude Include="..\Source\Core\Material.h" />
     <ClInclude Include="..\Source\Core\Memory.h" />
     <ClInclude Include="..\Source\Core\Object.h" />
+    <ClInclude Include="..\Source\Core\PrintFormat.h" />
     <ClInclude Include="..\Source\Core\Renderer.h" />
     <ClInclude Include="..\Source\Core\SceneComponent.h" />
     <ClInclude Include="..\Source\Core\Shader.h" />
     <ClInclude Include="..\Source\Core\StaticMesh.h" />
     <ClInclude Include="..\Source\Core\StaticMeshComponent.h" />
     <ClInclude Include="..\Source\Core\TestGameObject.h" />
+    <ClInclude Include="..\Source\Core\Texture2D.h" />
     <ClInclude Include="..\Source\Core\Time.h" />
     <ClInclude Include="..\Source\Core\Engine.h" />
     <ClInclude Include="..\Source\Core\Functional.h" />
@@ -215,6 +217,7 @@
     <ClCompile Include="..\Source\Core\StaticMesh.cpp" />
     <ClCompile Include="..\Source\Core\StaticMeshComponent.cpp" />
     <ClCompile Include="..\Source\Core\TestGameObject.cpp" />
+    <ClCompile Include="..\Source\Core\Texture2D.cpp" />
     <ClCompile Include="..\Source\Core\Time.cpp" />
     <ClCompile Include="..\Source\Core\Engine.cpp" />
     <ClCompile Include="..\Source\Core\GameInput.cpp" />
@@ -222,6 +225,11 @@
     <ClCompile Include="..\Source\Core\Input.cpp" />
     <ClCompile Include="..\Source\Core\Logger.cpp" />
     <ClCompile Include="..\Source\Core\World.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Content\shaders\fs_simple_light.sc" />
+    <None Include="..\Content\shaders\simple_light_vdef.sc" />
+    <None Include="..\Content\shaders\vs_simple_light.sc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

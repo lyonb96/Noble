@@ -48,7 +48,7 @@ namespace Noble
 		TestGameObject* g_TestObject3;
 
 		StaticMesh* g_TestMesh;
-		StaticMesh* g_TestMesh2;
+		//StaticMesh* g_TestMesh2;
 
 		Shader* g_TestShader;
 		Material* g_TestMat;
@@ -135,17 +135,27 @@ namespace Noble
 		// Test registration
 		m_AssetManager.RegisterAsset(ID("CubeMesh"), "Content/TestMesh.txt", AssetType::AT_STATIC_MESH);
 		m_AssetManager.RegisterAsset(ID("TriangleMesh"), "Content/TestMesh2.txt", AssetType::AT_STATIC_MESH);
-		m_AssetManager.RegisterAsset(ID("TestShader"), "Content/shaders/test/TestShader.shd", AssetType::AT_SHADER);
+		m_AssetManager.RegisterAsset(ID("TestShader"), "Content/shaders/simple_light.shd", AssetType::AT_SHADER);
 		m_AssetManager.RegisterAsset(ID("TestMaterial"), "Content/TestMat.bin", AssetType::AT_MATERIAL);
+		m_AssetManager.RegisterAsset(ID("TestTex"), "Content/TestTex.dds", AssetType::AT_TEXTURE2D);
+		m_AssetManager.RegisterAsset(ID("TestMesh3"), "Content/TestMesh3.bin", AssetType::AT_STATIC_MESH);
 
-		g_TestMesh = m_AssetManager.GetStaticMesh(ID("CubeMesh"));
-		g_TestMesh2 = m_AssetManager.GetStaticMesh(ID("TriangleMesh"));
+		g_TestMesh = m_AssetManager.GetStaticMesh(ID("TestMesh3"));
+		//g_TestMesh2 = m_AssetManager.GetStaticMesh(ID("TriangleMesh"));
 
 		// Test shader loading
 		g_TestShader = m_AssetManager.GetShader(ID("TestShader"));
 
+		// Test texture loading
+		Texture2D* tex = GetAssetManager()->GetTexture2D(ID("TestTex"));
+
 		// Test material loading
-		g_TestMat = m_AssetManager.GetMaterial(ID("TestMaterial"));
+		g_TestMat = m_AssetManager.CreateMaterial();
+		g_TestMat->SetShader(g_TestShader);
+		g_TestMat->SetUniform(ID("DiffuseTex"), tex);
+		g_TestMat->SetUniform(ID("NormalTex"), nullptr);
+		//Material* mat2 = GetAssetManager()->CreateMaterial(g_TestMat);
+		//Material* mat3 = GetAssetManager()->CreateMaterial(g_TestMat);
 
 		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMesh(g_TestMesh);
 		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMaterial(g_TestMat);
@@ -154,11 +164,11 @@ namespace Noble
 		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMesh(g_TestMesh);
 		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMaterial(g_TestMat);
 
-		g_TestObject1->GetSecondMesh()->SetMesh(g_TestMesh2);
+		g_TestObject1->GetSecondMesh()->SetMesh(g_TestMesh);
 		g_TestObject1->GetSecondMesh()->SetMaterial(g_TestMat);
-		g_TestObject2->GetSecondMesh()->SetMesh(g_TestMesh2);
+		g_TestObject2->GetSecondMesh()->SetMesh(g_TestMesh);
 		g_TestObject2->GetSecondMesh()->SetMaterial(g_TestMat);
-		g_TestObject3->GetSecondMesh()->SetMesh(g_TestMesh2);
+		g_TestObject3->GetSecondMesh()->SetMesh(g_TestMesh);
 		g_TestObject3->GetSecondMesh()->SetMaterial(g_TestMat);
 
 		//{
@@ -284,18 +294,16 @@ namespace Noble
 
 		if (Input::IsJustPressed(Input::KEY_P))
 		{
-			Material* newMat = GetAssetManager()->CreateMaterial(ID("TestMat2"));
-			newMat->SetShader(GetAssetManager()->GetShader(ID("TestShader")));
-			newMat->SetUniform(ID("u_color"), Vector4f(1.0F, 0.0F, 1.0F, 1.0F));
+			//Material* newMat = GetAssetManager()->CreateMaterial(g_TestMat);
 
 			BENCHMARK(ObjectCreation);
 			// spawn another object
 			auto newObj = GetWorld()->SpawnGameObject<TestGameObject>(Vector3f(0, -5, 0));
 			newObj->SetScale(Vector3f(2.0F));
 			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(g_TestMesh);
-			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMaterial(newMat);
-			newObj->GetSecondMesh()->SetMesh(g_TestMesh2);
-			newObj->GetSecondMesh()->SetMaterial(newMat);
+			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMaterial(g_TestMat);
+			newObj->GetSecondMesh()->SetMesh(g_TestMesh);
+			newObj->GetSecondMesh()->SetMaterial(g_TestMat);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Array.h"
+#include "PrintFormat.h"
 #include "Types.h"
 #include "Memory.h"
 
@@ -131,6 +132,47 @@ namespace Noble
 		{
 			NStringBase tmp(*this);
 			return tmp += other;
+		}
+
+		/**
+		 * Appends the value to this type
+		 */
+		template <typename T>
+		NStringBase& operator+=(const T& value)
+		{
+			const char* fmt = GetPrintFormat<T>();
+			return Append<T>(fmt, value);
+		}
+
+		/**
+		 * Returns a new NString with the given value appended to it
+		 */
+		template <typename T>
+		NStringBase operator+(const T& value)
+		{
+			NStringBase tmp(*this);
+			return tmp += value;
+		}
+
+		/**
+		 * Appends the requested value to the string with the given
+		 * printf-style format
+		 */
+		template <typename T>
+		NStringBase& Append(const char* fmt, const T& append)
+		{
+			// Figure out how many bytes the stringized T will be
+			I32 retLen = snprintf(nullptr, 0, fmt, append);
+			// alloc a buffer, on the stack preferably
+			char* buffer = (char*)_malloca(retLen); // hmm...
+			// Write the stringized T to the buffer
+			snprintf(buffer, retLen, fmt, append);
+			// Append the buffer to this string
+			AppendString(buffer, retLen);
+			// Free the buffer
+			_freea(buffer);
+
+			return *this;
 		}
 		
 		/**

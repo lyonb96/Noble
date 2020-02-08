@@ -144,38 +144,56 @@ namespace Noble
 		return nullptr;
 	}
 
-	Material* AssetManager::CreateMaterial(const NIdentifier& id)
+	Texture2D* AssetManager::GetTexture2D(const NIdentifier& id)
 	{
-#ifdef NOBLE_DEBUG
-		// First, verify that the ID does not correspond to any registered asset
-		for (auto reg : m_Registry)
-		{
-			if (reg.AssetID == id)
-			{
-				if (reg.Type != AssetType::AT_MATERIAL)
-				{
-					NE_LOG_WARNING("Material of id %s is already registered - cannot create new instance.");
-					return nullptr;
-				}
-				else
-				{
-					NE_LOG_WARNING("Asset of id %s is registered as a type other than Material!");
-					return nullptr;
-				}
-			}
-		}
-#endif
-
-		// Check to make sure a Material of this ID doesn't already exist
 		if (m_LoadedAssets.ContainsKey(id))
 		{
-			if (m_LoadedAssets[id]->GetType() == AssetType::AT_MATERIAL)
+			Asset* sh = m_LoadedAssets[id];
+			CHECK(sh->GetType() == AssetType::AT_TEXTURE2D);
+			return static_cast<Texture2D*>(sh);
+		}
+		else
+		{
+			Asset* newLoad = LoadAsset(id);
+			if (newLoad)
 			{
-				return static_cast<Material*>(m_LoadedAssets[id]);
+				CHECK(newLoad->GetType() == AssetType::AT_TEXTURE2D);
+				return static_cast<Texture2D*>(newLoad);
 			}
 		}
 
-		Material* newMat = NE_NEW(m_AssetAlloc, Material);
+		return nullptr;
+	}
+
+	Texture2D* AssetManager::GetTexture2D(const U32 id)
+	{
+		for (auto reg : m_Registry)
+		{
+			if (reg.AssetID.GetHash() == id)
+			{
+				return GetTexture2D(reg.AssetID);
+			}
+		}
+
+		return nullptr;
+	}
+
+	Material* AssetManager::CreateMaterial(Material* copy)
+	{
+		Material* newMat;
+		if (copy)
+		{
+			newMat = NE_NEW(m_AssetAlloc, Material)(*copy);
+		}
+		else
+		{
+			newMat = NE_NEW(m_AssetAlloc, Material);
+		}
+
+		NString uid = "Material";
+		uid += newMat;
+
+		NIdentifier id(uid.GetCharArray(), uid.GetLength(), HASH(uid.GetCharArray()));
 		m_LoadedAssets.Insert(id, newMat);
 
 		return newMat;
@@ -227,6 +245,9 @@ namespace Noble
 			case AssetType::AT_MATERIAL:
 				result = NE_NEW(m_AssetAlloc, Material);
 				break;
+			case AssetType::AT_TEXTURE2D:
+				result = NE_NEW(m_AssetAlloc, Texture2D);
+				break;
 			default:
 				NE_LOG_WARNING("Unknown asset type of ID %u", (U8)reg.Type);
 				break;
@@ -236,6 +257,8 @@ namespace Noble
 		{
 			// Load the asset from the buffer
 			result->CreateFromBuffer(data);
+			// Set its ID
+			result->m_AssetID = reg.AssetID;
 			// Update the registration
 			reg.LoadedAsset = result;
 			// Store the loaded asset in the map

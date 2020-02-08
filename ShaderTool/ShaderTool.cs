@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using Assimp;
+using Assimp.Configs;
+
 using System.IO;
 
 namespace ShaderTool
@@ -258,6 +261,96 @@ namespace ShaderTool
 			{
 				OutputBox.Text = "Attribute Count cannot be greater than 4 or less than 1";
 				AttributeCount = 0;
+			}
+		}
+
+		/**
+		 * Mesh conversion
+		 */
+
+		private string SelectedMeshFile = "";
+
+		private void MeshSelectButton_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog.Filter = "Supported Mesh Files (OBJ, 3DS)|*.OBJ;*.3DS";
+			if (OpenFileDialog.ShowDialog() == DialogResult.OK)
+			{
+				SelectedMeshFile = OpenFileDialog.FileName;
+				MeshBox.Text = SelectedMeshFile;
+			}
+			OpenFileDialog.Filter = "";
+		}
+
+		private void ConvertMeshButton_Click(object sender, EventArgs e)
+		{
+			if (SelectedMeshFile.Length > 0)
+			{
+				// Prompt user to save mesh to a file
+				if (SaveFileDialog.ShowDialog() == DialogResult.OK)
+				{
+					string resultFile = SaveFileDialog.FileName;
+
+					FileMode mode;
+					if (File.Exists(resultFile))
+					{
+						mode = FileMode.Truncate;
+					}
+					else
+					{
+						mode = FileMode.Create;
+					}
+
+					BinaryWriter fileOut = new BinaryWriter(File.Open(resultFile, mode));
+
+					// Load the mesh with Assimp.NET and convert to proprietary format
+					AssimpContext importer = new AssimpContext();
+					importer.SetConfig(new NormalSmoothingAngleConfig(66.0F));
+					importer.SetConfig(new RemoveDegeneratePrimitivesConfig(true));
+
+					PostProcessSteps post = 
+						PostProcessSteps.CalculateTangentSpace |
+						PostProcessSteps.Triangulate |
+						PostProcessSteps.ImproveCacheLocality |
+						PostProcessSteps.OptimizeMeshes |
+						PostProcessSteps.OptimizeGraph |
+						PostProcessSteps.FlipWindingOrder;
+					Scene mesh = importer.ImportFile(SelectedMeshFile, post);
+
+					if (mesh.HasMeshes)
+					{
+						Mesh m = mesh.Meshes[0];
+						fileOut.Write((uint)m.VertexCount);
+						for (int i = 0; i < m.VertexCount; ++i)
+						{
+							// Vertex pos
+							fileOut.Write(m.Vertices[i].X);
+							fileOut.Write(m.Vertices[i].Y);
+							fileOut.Write(m.Vertices[i].Z);
+
+							// Texture coordinates
+							fileOut.Write(m.TextureCoordinateChannels[0][i].X);
+							fileOut.Write(m.TextureCoordinateChannels[0][i].Y);
+
+							// Normals
+							fileOut.Write(m.Normals[i].X);
+							fileOut.Write(m.Normals[i].Y);
+							fileOut.Write(m.Normals[i].Z);
+
+							// Tangents
+							fileOut.Write(m.Tangents[i].X);
+							fileOut.Write(m.Tangents[i].Y);
+							fileOut.Write(m.Tangents[i].Z);
+						}
+
+						fileOut.Write((uint)m.GetUnsignedIndices().Length);
+						for (int i = 0; i < m.GetUnsignedIndices().Length; ++i)
+						{
+							fileOut.Write((uint)m.GetUnsignedIndices()[i]);
+						}
+
+						fileOut.Close();
+					}
+				}
 			}
 		}
 	}
