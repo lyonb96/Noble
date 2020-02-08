@@ -284,16 +284,18 @@ namespace Noble
 
 		if (Input::IsJustPressed(Input::KEY_P))
 		{
-			g_TestMat->SetUniform(ID("u_color"), Vector4f(0.0F, 1.0F, 1.0F, 1.0F));
+			Material* newMat = GetAssetManager()->CreateMaterial(ID("TestMat2"));
+			newMat->SetShader(GetAssetManager()->GetShader(ID("TestShader")));
+			newMat->SetUniform(ID("u_color"), Vector4f(1.0F, 0.0F, 1.0F, 1.0F));
 
 			BENCHMARK(ObjectCreation);
 			// spawn another object
 			auto newObj = GetWorld()->SpawnGameObject<TestGameObject>(Vector3f(0, -5, 0));
 			newObj->SetScale(Vector3f(2.0F));
 			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(g_TestMesh);
-			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMaterial(g_TestMat);
+			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMaterial(newMat);
 			newObj->GetSecondMesh()->SetMesh(g_TestMesh2);
-			newObj->GetSecondMesh()->SetMaterial(g_TestMat);
+			newObj->GetSecondMesh()->SetMaterial(newMat);
 		}
 	}
 }

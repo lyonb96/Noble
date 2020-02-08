@@ -103,6 +103,13 @@ namespace Noble
 		Material* GetMaterial(const U32 id);
 
 		/**
+		 * Creates a new Material and registers it with the given ID
+		 * The returned instance is uninitialized and needs to be
+		 * setup by the caller.
+		 */
+		Material* CreateMaterial(const NIdentifier& id);
+
+		/**
 		 * Loads the requested asset, if it has not already been
 		 * Returns a pointer to the requested asset
 		 */

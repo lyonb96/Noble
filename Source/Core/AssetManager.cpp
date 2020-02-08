@@ -144,6 +144,43 @@ namespace Noble
 		return nullptr;
 	}
 
+	Material* AssetManager::CreateMaterial(const NIdentifier& id)
+	{
+#ifdef NOBLE_DEBUG
+		// First, verify that the ID does not correspond to any registered asset
+		for (auto reg : m_Registry)
+		{
+			if (reg.AssetID == id)
+			{
+				if (reg.Type != AssetType::AT_MATERIAL)
+				{
+					NE_LOG_WARNING("Material of id %s is already registered - cannot create new instance.");
+					return nullptr;
+				}
+				else
+				{
+					NE_LOG_WARNING("Asset of id %s is registered as a type other than Material!");
+					return nullptr;
+				}
+			}
+		}
+#endif
+
+		// Check to make sure a Material of this ID doesn't already exist
+		if (m_LoadedAssets.ContainsKey(id))
+		{
+			if (m_LoadedAssets[id]->GetType() == AssetType::AT_MATERIAL)
+			{
+				return static_cast<Material*>(m_LoadedAssets[id]);
+			}
+		}
+
+		Material* newMat = NE_NEW(m_AssetAlloc, Material);
+		m_LoadedAssets.Insert(id, newMat);
+
+		return newMat;
+	}
+
 	Asset* AssetManager::LoadAsset(const NIdentifier& id)
 	{
 		for (auto reg : m_Registry)
