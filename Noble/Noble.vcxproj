@@ -177,6 +177,7 @@
     <ClInclude Include="..\Source\Core\GameObject.h" />
     <ClInclude Include="..\Source\Core\HelperMacros.h" />
     <ClInclude Include="..\Source\Core\Map.h" />
+    <ClInclude Include="..\Source\Core\Material.h" />
     <ClInclude Include="..\Source\Core\Memory.h" />
     <ClInclude Include="..\Source\Core\Object.h" />
     <ClInclude Include="..\Source\Core\Renderer.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="..\Source\Core\FileSystem.cpp" />
     <ClCompile Include="..\Source\Core\GameObject.cpp" />
     <ClCompile Include="..\Source\Core\HelperMacros.cpp" />
+    <ClCompile Include="..\Source\Core\Material.cpp" />
     <ClCompile Include="..\Source\Core\Memory.cpp" />
     <ClCompile Include="..\Source\Core\Object.cpp" />
     <ClCompile Include="..\Source\Core\Renderer.cpp" />

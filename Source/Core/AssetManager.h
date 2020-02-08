@@ -7,6 +7,7 @@
 
 #include "Shader.h"
 #include "StaticMesh.h"
+#include "Material.h"
 
 /**
  * The Asset Management subsystem of the engine handles registering/unregistering
@@ -72,10 +73,34 @@ namespace Noble
 		StaticMesh* GetStaticMesh(const NIdentifier& id);
 
 		/**
+		 * Returns a pointer to the StaticMesh of the given ID
+		 * Will load the asset if it's not yet loaded
+		 */
+		StaticMesh* GetStaticMesh(const U32 id);
+
+		/**
 		 * Returns a pointer to the Shader of the given ID
 		 * Will load the asset if it's not yet loaded
 		 */
 		Shader* GetShader(const NIdentifier& id);
+
+		/**
+		 * Returns a pointer to the Shader of the given ID
+		 * Will load the asset if it's not yet loaded
+		 */
+		Shader* GetShader(const U32 id);
+
+		/**
+		 * Returns a pointer to the Material of the given ID
+		 * Will load the asset if it's not yet loaded
+		 */
+		Material* GetMaterial(const NIdentifier& id);
+
+		/**
+		 * Returns a pointer to the Material of the given ID
+		 * Will load the asset if it's not yet loaded
+		 */
+		Material* GetMaterial(const U32 id);
 
 		/**
 		 * Loads the requested asset, if it has not already been

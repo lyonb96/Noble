@@ -51,6 +51,7 @@ namespace Noble
 		StaticMesh* g_TestMesh2;
 
 		Shader* g_TestShader;
+		Material* g_TestMat;
 	}
 
 	int LaunchEngine()
@@ -98,6 +99,7 @@ namespace Noble
 		// Set global engine pointer
 		g_Engine = this;
 		g_World = &m_World;
+		g_AssetManager = &m_AssetManager;
 
 		// Initialize the logger
 		NE_LOG_INFO("Noble Engine %s - %s", NOBLE_VERSION, __DATE__);
@@ -124,7 +126,6 @@ namespace Noble
 		Input::LoadBindings();
 
 		// Testing stuff
-		StaticMeshComponent::TemporaryInit();
 		StaticVertex::Init();
 
 		g_TestObject1 = GetWorld()->SpawnGameObject<TestGameObject>();
@@ -135,6 +136,7 @@ namespace Noble
 		m_AssetManager.RegisterAsset(ID("CubeMesh"), "Content/TestMesh.txt", AssetType::AT_STATIC_MESH);
 		m_AssetManager.RegisterAsset(ID("TriangleMesh"), "Content/TestMesh2.txt", AssetType::AT_STATIC_MESH);
 		m_AssetManager.RegisterAsset(ID("TestShader"), "Content/shaders/test/TestShader.shd", AssetType::AT_SHADER);
+		m_AssetManager.RegisterAsset(ID("TestMaterial"), "Content/TestMat.bin", AssetType::AT_MATERIAL);
 
 		g_TestMesh = m_AssetManager.GetStaticMesh(ID("CubeMesh"));
 		g_TestMesh2 = m_AssetManager.GetStaticMesh(ID("TriangleMesh"));
@@ -142,19 +144,32 @@ namespace Noble
 		// Test shader loading
 		g_TestShader = m_AssetManager.GetShader(ID("TestShader"));
 
+		// Test material loading
+		g_TestMat = m_AssetManager.GetMaterial(ID("TestMaterial"));
+
 		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMesh(g_TestMesh);
-		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetShader(g_TestShader);
+		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMaterial(g_TestMat);
 		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetMesh(g_TestMesh);
-		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetShader(g_TestShader);
+		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetMaterial(g_TestMat);
 		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMesh(g_TestMesh);
-		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetShader(g_TestShader);
+		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMaterial(g_TestMat);
 
 		g_TestObject1->GetSecondMesh()->SetMesh(g_TestMesh2);
-		g_TestObject1->GetSecondMesh()->SetShader(g_TestShader);
+		g_TestObject1->GetSecondMesh()->SetMaterial(g_TestMat);
 		g_TestObject2->GetSecondMesh()->SetMesh(g_TestMesh2);
-		g_TestObject2->GetSecondMesh()->SetShader(g_TestShader);
+		g_TestObject2->GetSecondMesh()->SetMaterial(g_TestMat);
 		g_TestObject3->GetSecondMesh()->SetMesh(g_TestMesh2);
-		g_TestObject3->GetSecondMesh()->SetShader(g_TestShader);
+		g_TestObject3->GetSecondMesh()->SetMaterial(g_TestMat);
+
+		//{
+		//	BitStream mat;
+		//	mat.Write<U32>(HASH("TestShader"));
+		//	mat.Write<U32>(0);
+		//	mat.Write<Vector4f>(Vector4f(1.0F, 0.0F, 0.0F, 1.0F));
+
+		//	File matFile("Content/TestMat.bin", FileMode::FILE_WRITE_REPLACE);
+		//	matFile.Write(mat.GetData(), mat.GetStoredBytes());
+		//}
 
 		return true;
 	}
@@ -221,8 +236,6 @@ namespace Noble
 	{
 		NE_LOG_INFO("Engine shutting down");
 
-		StaticMeshComponent::TemporaryDestroy();
-
 		// Unload assets
 		m_AssetManager.UnloadAllAssets();
 
@@ -271,14 +284,16 @@ namespace Noble
 
 		if (Input::IsJustPressed(Input::KEY_P))
 		{
+			g_TestMat->SetUniform(ID("u_color"), Vector4f(0.0F, 1.0F, 1.0F, 1.0F));
+
 			BENCHMARK(ObjectCreation);
 			// spawn another object
 			auto newObj = GetWorld()->SpawnGameObject<TestGameObject>(Vector3f(0, -5, 0));
 			newObj->SetScale(Vector3f(2.0F));
 			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(g_TestMesh);
-			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetShader(g_TestShader);
+			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMaterial(g_TestMat);
 			newObj->GetSecondMesh()->SetMesh(g_TestMesh2);
-			newObj->GetSecondMesh()->SetShader(g_TestShader);
+			newObj->GetSecondMesh()->SetMaterial(g_TestMat);
 		}
 	}
 }

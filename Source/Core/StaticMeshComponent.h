@@ -2,7 +2,7 @@
 
 #include "SceneComponent.h"
 #include "StaticMesh.h"
-#include "Shader.h"
+#include "Material.h"
 #include "Types.h"
 
 #include <bgfx/bgfx.h>
@@ -27,12 +27,9 @@ namespace Noble
 		void SetMesh(StaticMesh* mesh);
 
 		/**
-		 * TEMP - sets the shader to draw with
+		 * Changes the Material rendered by this Component
 		 */
-		void SetShader(Shader* shader) { m_Shader = shader; }
-
-		static void TemporaryInit();
-		static void TemporaryDestroy();
+		void SetMaterial(Material* material);
 
 	public:
 
@@ -42,13 +39,7 @@ namespace Noble
 
 		// The mesh to draw
 		StaticMesh* m_Mesh;
-
-		// TEMP - shader to draw with
-		Shader* m_Shader;
-
-		// Material class
-		static bgfx::ProgramHandle m_Prog;
-		static bgfx::ShaderHandle m_VS;
-		static bgfx::ShaderHandle m_PS;
+		// The material to draw with
+		Material* m_Material;
 	};
 }

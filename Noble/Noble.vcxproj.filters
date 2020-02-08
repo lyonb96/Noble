@@ -144,6 +144,9 @@
     <ClInclude Include="..\Source\Core\Shader.h">
       <Filter>Header Files\AssetManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Material.h">
+      <Filter>Header Files\AssetManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -210,6 +213,9 @@
       <Filter>Source Files\AssetManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Core\Shader.cpp">
+      <Filter>Source Files\AssetManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Material.cpp">
       <Filter>Source Files\AssetManager</Filter>
     </ClCompile>
   </ItemGroup>

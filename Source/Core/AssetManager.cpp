@@ -2,7 +2,6 @@
 
 #include "FileSystem.h"
 #include "Logger.h"
-#include "StaticMesh.h"
 
 // 8MB blocks
 #define ASSET_BLOCK_SIZE (1 << 23)
@@ -64,6 +63,19 @@ namespace Noble
 		return nullptr;
 	}
 
+	StaticMesh* AssetManager::GetStaticMesh(const U32 id)
+	{
+		for (auto reg : m_Registry)
+		{
+			if (reg.AssetID.GetHash() == id)
+			{
+				return GetStaticMesh(reg.AssetID);
+			}
+		}
+
+		return nullptr;
+	}
+
 	Shader* AssetManager::GetShader(const NIdentifier& id)
 	{
 		if (m_LoadedAssets.ContainsKey(id))
@@ -79,6 +91,53 @@ namespace Noble
 			{
 				CHECK(newLoad->GetType() == AssetType::AT_SHADER);
 				return static_cast<Shader*>(newLoad);
+			}
+		}
+
+		return nullptr;
+	}
+
+	Shader* AssetManager::GetShader(const U32 id)
+	{
+		for (auto reg : m_Registry)
+		{
+			if (reg.AssetID.GetHash() == id)
+			{
+				return GetShader(reg.AssetID);
+			}
+		}
+
+		return nullptr;
+	}
+
+	Material* AssetManager::GetMaterial(const NIdentifier& id)
+	{
+		if (m_LoadedAssets.ContainsKey(id))
+		{
+			Asset* sh = m_LoadedAssets[id];
+			CHECK(sh->GetType() == AssetType::AT_MATERIAL);
+			return static_cast<Material*>(sh);
+		}
+		else
+		{
+			Asset* newLoad = LoadAsset(id);
+			if (newLoad)
+			{
+				CHECK(newLoad->GetType() == AssetType::AT_MATERIAL);
+				return static_cast<Material*>(newLoad);
+			}
+		}
+
+		return nullptr;
+	}
+
+	Material* AssetManager::GetMaterial(const U32 id)
+	{
+		for (auto reg : m_Registry)
+		{
+			if (reg.AssetID.GetHash() == id)
+			{
+				return GetMaterial(reg.AssetID);
 			}
 		}
 
@@ -127,6 +186,9 @@ namespace Noble
 				break;
 			case AssetType::AT_SHADER:
 				result = NE_NEW(m_AssetAlloc, Shader);
+				break;
+			case AssetType::AT_MATERIAL:
+				result = NE_NEW(m_AssetAlloc, Material);
 				break;
 			default:
 				NE_LOG_WARNING("Unknown asset type of ID %u", (U8)reg.Type);

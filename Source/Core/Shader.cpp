@@ -2,6 +2,8 @@
 
 namespace Noble
 {
+	typedef bgfx::UniformType::Enum UniformEnum;
+
 	/**
 	 * Converts a stored type value into the BGFX UniformType
 	 */
@@ -19,6 +21,23 @@ namespace Noble
 				return bgfx::UniformType::Mat4;
 			default:
 				return bgfx::UniformType::End;
+		}
+	}
+
+	const U32 GetUniformTypeSize(const UniformEnum type)
+	{
+		switch (type)
+		{
+			case UniformEnum::Sampler:
+				return sizeof(void*);
+			case UniformEnum::Vec4:
+				return sizeof(F32) * 4;
+			case UniformEnum::Mat3:
+				return sizeof(F32) * 9;
+			case UniformEnum::Mat4:
+				return sizeof(F32) * 16;
+			default:
+				return 0;
 		}
 	}
 
@@ -53,16 +72,19 @@ namespace Noble
 			m_Uniforms.Add(su);
 		}
 
+		// Load VS
 		U32 vsShaderSize = data.Read<U32>();
 		const bgfx::Memory* vsMem = bgfx::alloc(U32(vsShaderSize + 1));
 		data.ReadBytes(vsMem->data, vsShaderSize);
 		vsMem->data[vsMem->size - 1] = '\0';
 
+		// Load FS
 		U32 fsShaderSize = data.Read<U32>();
 		const bgfx::Memory* fsMem = bgfx::alloc(U32(fsShaderSize + 1));
 		data.ReadBytes(fsMem->data, fsShaderSize);
 		fsMem->data[fsMem->size - 1] = '\0';
 
+		// Build shaderse and create shader program
 		bgfx::ShaderHandle vs = bgfx::createShader(vsMem);
 		bgfx::ShaderHandle fs = bgfx::createShader(fsMem);
 		m_Program = bgfx::createProgram(vs, fs, true);
@@ -77,5 +99,50 @@ namespace Noble
 			Memory::Free(const_cast<char*>(uniform.UniformName.GetString()));
 		}
 		bgfx::destroy(m_Program);
+	}
+
+	const U32 Shader::GetUniformBufferSize() const
+	{
+		U32 out = 0;
+		for (auto uniform : m_Uniforms)
+		{
+			out += GetUniformTypeSize(uniform.UniformType);
+		}
+
+		return out;
+	}
+
+	const U32 Shader::GetUniformSize(const U32 index) const
+	{
+		return GetUniformTypeSize(m_Uniforms[index].UniformType) * m_Uniforms[index].UniformCount;
+	}
+
+	const U32 Shader::GetUniformOffset(const U32 index) const
+	{
+		U32 offset = 0;
+		for (U32 i = 0; i < index; ++i)
+		{
+			offset += GetUniformSize(i);
+		}
+
+		return offset;
+	}
+
+	const U32 Shader::GetUniformOffset(const NIdentifier& id) const
+	{
+		for (U32 i = 0; i < m_Uniforms.GetCount(); ++i)
+		{
+			if (m_Uniforms[i].UniformName == id)
+			{
+				return GetUniformOffset(i);
+			}
+		}
+		
+		return std::numeric_limits<U32>::max();
+	}
+
+	const UniformEnum Shader::GetUniformType(const U32 index) const
+	{
+		return m_Uniforms[index].UniformType;
 	}
 }
