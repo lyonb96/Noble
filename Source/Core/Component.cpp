@@ -26,4 +26,22 @@ namespace Noble
 
 		child->m_ParentComponent = this;
 	}
+
+	void Component::Serialize(BitStream& stream)
+	{
+		Super::Serialize(stream);
+
+		stream.Write<Vector3f>(m_Transform.Position);
+		stream.Write<Quaternion>(m_Transform.Rotation);
+		stream.Write<Vector3f>(m_Transform.Scale);
+	}
+
+	void Component::Deserialize(BitStream& stream)
+	{
+		Super::Deserialize(stream);
+
+		m_Transform.Position = stream.Read<Vector3f>();
+		m_Transform.Rotation = stream.Read<Quaternion>();
+		m_Transform.Scale = stream.Read<Vector3f>();
+	}
 }

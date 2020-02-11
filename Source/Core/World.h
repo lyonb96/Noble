@@ -36,24 +36,7 @@ namespace Noble
 		template <class T>
 		T* SpawnGameObject(Vector3f spawnPos = Vector3f(0.0F))
 		{
-			NClass* ncls = T::GetStaticClass();
-			void* data = NE_BUFFER_ALLOC(m_GameMemory, ncls->ObjectSize, ncls->ObjectAlign);
-			T* object = (T*)Object::CreateInstance<T>(data);
-			// If this is the first instance of this Object type created, fill out the fields
-			if (T::ComponentCount == -1)
-			{
-				// Set the number of components used to minimize calls to Realloc in the array
-				T::ComponentCount = m_CreatedComponentCount;
-				m_CreatedComponentCount = 0;
-
-				// Resize, if the GameObject actually has components
-				if (T::ComponentCount > 0)
-				{
-					object->m_Components.Shrink();
-				}
-			}
-
-			m_GameObjects.Add(object);
+			T* object = (T*)BuildGameObject(T::GetStaticClass());
 
 			object->OnSpawn();
 			object->SetPosition(spawnPos);
@@ -62,28 +45,32 @@ namespace Noble
 		}
 
 		/**
+		 * Spawns a new GameObject of the specified type
+		 * Optionally takes a location at which to spawn the GameObject
+		 */
+		GameObject* SpawnGameObject(NClass* type, Vector3f spawnPos = Vector3f(0.0F));
+
+		/**
 		 * Creates a new Component that is part of the given GameObject
 		 */
 		template <class T>
-		T* CreateComponent(GameObject* owner, const NIdentifier& name = "")
+		T* CreateComponent(GameObject* owner, const NIdentifier& name)
 		{
 			CHECK(owner);
 
-			void* data = NE_BUFFER_ALLOC(m_GameMemory, T::GetStaticClass()->ObjectSize, T::GetStaticClass()->ObjectAlign);
-			T* comp = (T*)Object::CreateInstance<T>(data);
+			T* comp = (T*)BuildComponent(T::GetStaticClass());
 			comp->SetOwningObject(owner);
 			comp->SetComponentName(name);
 
-			if (comp->IsA<SceneComponent>())
-			{
-				m_SceneComponents.Add(comp);
-			}
-
 			owner->AddComponent(comp);
-			++m_CreatedComponentCount;
 
 			return comp;
 		}
+
+		/**
+		 * Creates a new Component that is part of the given GameObject
+		 */
+		Component* CreateComponent(NClass* type, GameObject* owner, const NIdentifier& name);
 
 		/**
 		 * Called each frame - runs logic updates on all spawned GameObjects and Components
@@ -97,10 +84,30 @@ namespace Noble
 		 */
 		void FixedUpdate();
 
+		/**
+		 * Stores the current world state in a stream and returns the stream
+		 */
+		BitStream SerializeWorld();
+
+		/**
+		 * Creates the world from the given stream
+		 */
+		void DeserializeWorld(BitStream& stream);
+
 	private:
 
-		// Number of components in the temp array
-		U8 m_CreatedComponentCount;
+		/**
+		 * Internal code to create a game object from an NClass
+		 */
+		GameObject* BuildGameObject(NClass* type);
+
+		/**
+		 * Internal code to create a component from an NClass
+		 */
+		Component* BuildComponent(NClass* type);
+
+	private:
+
 		// Memory Arena for GameObjects + Components
 		GameMemoryArena m_GameMemory;
 		// Array of all currently spawned GameObjects

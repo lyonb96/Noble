@@ -3,6 +3,7 @@
 #include <type_traits>
 
 #include "AreTypesEqual.h"
+#include "BitStream.h"
 #include "Class.h"
 #include "Functional.h"
 #include "Map.h"
@@ -61,7 +62,19 @@ namespace Noble
 		/**
 		 * Here to act as an end-point for iterating through parent classes
 		 */
-		static Noble::NClass* GetStaticClass() { return nullptr; }
+		static NClass* GetStaticClass() { return nullptr; }
+
+	public:
+
+		/**
+		 * Override in subclasses to write custom data to the Stream
+		 */
+		virtual void Serialize(BitStream& stream);
+
+		/**
+		 * Override in subclasses to read custom data from the Stream
+		 */
+		virtual void Deserialize(BitStream& stream);
 
 	private:
 
@@ -70,8 +83,6 @@ namespace Noble
 		// The Unique ID assigned to this Object instance
 		U64 m_UID;
 
-
-
 	public:
 
 		// -----------------------------------------------------------
@@ -79,6 +90,16 @@ namespace Noble
 		// -----------------------------------------------------------
 		
 		friend struct NClass;
+
+		/**
+		 * Returns the NClass that corresponds to the requested ID
+		 */
+		static NClass* GetClassByID(const NIdentifier& id);
+
+		/**
+		 * Returns the NClass that corresponds to the requested ID
+		 */
+		static NClass* GetClassByID(const U32 id);
 
 		/**
 		 * Creates a class instance from a template parameter
@@ -102,14 +123,15 @@ namespace Noble
 
 	private:
 
-		// Map of all object registrations
-		static Map<NIdentifier, NClass> ObjectRegistry;
-
 		/**
 		 * Uses the given NClass instance to create a new Object subclass at the given address
 		 */
 		static Object* CreateInstanceFromClass(NClass* cls, void* ptr);
 
+		// Map of all object registrations
+		static Map<NIdentifier, NClass*> ObjectRegistry;
+
+		// Counter for Objects to assign unique IDs
 		static U64 ObjectCount;
 
 	};
@@ -133,7 +155,7 @@ private:\
  */
 #define OBJECT_DEF(CLASS_NAME)\
 ::Noble::NClass CLASS_NAME::StaticClass = ::Noble::NClass::RegisterNClass<CLASS_NAME>();\
-::Noble::Object* CLASS_NAME::CreateInstance(void* ptr) { return new (ptr) CLASS_NAME; }
+::Noble::Object* CLASS_NAME::CreateInstance(void* ptr) {/* if constexpr (std::is_abstract_v<CLASS_NAME>) { return nullptr; } else { */return new (ptr) CLASS_NAME;/* } */}
 
 /**
  * Defines all required members of an abstract Object subclass

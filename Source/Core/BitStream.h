@@ -161,6 +161,15 @@ namespace Noble
 		}
 
 		/**
+		 * Returns true if there are still bytes to read in the BitStream
+		 * False if the stream has been fully read
+		 */
+		const bool IsReadable() const
+		{
+			return m_ReaderPos < m_StoredBytes;
+		}
+
+		/**
 		 * Writes an arbitrary type to the BitStream
 		 */
 		template <typename T>

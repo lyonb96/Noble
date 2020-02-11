@@ -156,6 +156,15 @@
     <ClInclude Include="..\Source\Core\PrintFormat.h">
       <Filter>Header Files\Templates</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\TestGame.h">
+      <Filter>Header Files\Gameplay\Testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GameInstance.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GameMode.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -229,6 +238,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Texture2D.cpp">
       <Filter>Source Files\AssetManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\TestGame.cpp">
+      <Filter>Source Files\Gameplay\Testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\GameInstance.cpp">
+      <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,13 +6,14 @@
 #include "Time.h"
 #include "Renderer.h"
 #include "World.h"
+#include "GameInstance.h"
 
 namespace Noble
 {
 	/**
 	 * Called by main to begin running the game
 	 */
-	int LaunchEngine();
+	int LaunchEngine(GameInstance* inst);
 
 	/**
 	 * Handles startup and shutdown of engine subsystems, and hosts the main loop
@@ -29,7 +30,7 @@ namespace Noble
 		/**
 		 * Starts up modules and prepares the engine for running
 		 */
-		bool Start();
+		bool Start(GameInstance* inst);
 
 		/**
 		 * Runs the main game loop
@@ -52,10 +53,12 @@ namespace Noble
 		/**
 		 * Runs every render frame
 		 */
-		void Update(float tpf);
+		void Update();
 
 	private:
 
+		// Game Instance
+		GameInstance* m_GameInstance;
 		// Handles drawing the scene
 		Renderer m_Renderer;
 		// Handles the gameplay side of the engine
@@ -63,4 +66,11 @@ namespace Noble
 		// Handles asset loading and unloading
 		AssetManager m_AssetManager;
 	};
+}
+
+#define DEFINE_GAME_INSTANCE(GameClass, GameName) \
+int CALLBACK WinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE hPrevInst, _In_ LPSTR lpCmdLine, _In_ int nCmdShow) \
+{ \
+	GameClass gameInst(GameName); \
+	return Noble::LaunchEngine(&gameInst); \
 }

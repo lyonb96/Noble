@@ -14,6 +14,6 @@ namespace Noble
 	{
 		// Make sure the registry doesn't already contain the key (avoid duplicates or hash collisions)
 		CHECK(!Object::ObjectRegistry.ContainsKey(id));
-		Object::ObjectRegistry.Insert(id, *this);
+		Object::ObjectRegistry.Insert(id, this);
 	}
 }

@@ -174,6 +174,8 @@
     <ClInclude Include="..\Source\Core\Config.h" />
     <ClInclude Include="..\Source\Core\FileSystem.h" />
     <ClInclude Include="..\Source\Core\Freelist.h" />
+    <ClInclude Include="..\Source\Core\GameInstance.h" />
+    <ClInclude Include="..\Source\Core\GameMode.h" />
     <ClInclude Include="..\Source\Core\GameObject.h" />
     <ClInclude Include="..\Source\Core\HelperMacros.h" />
     <ClInclude Include="..\Source\Core\Map.h" />
@@ -186,6 +188,7 @@
     <ClInclude Include="..\Source\Core\Shader.h" />
     <ClInclude Include="..\Source\Core\StaticMesh.h" />
     <ClInclude Include="..\Source\Core\StaticMeshComponent.h" />
+    <ClInclude Include="..\Source\Core\TestGame.h" />
     <ClInclude Include="..\Source\Core\TestGameObject.h" />
     <ClInclude Include="..\Source\Core\Texture2D.h" />
     <ClInclude Include="..\Source\Core\Time.h" />
@@ -206,6 +209,7 @@
     <ClCompile Include="..\Source\Core\Component.cpp" />
     <ClCompile Include="..\Source\Core\Config.cpp" />
     <ClCompile Include="..\Source\Core\FileSystem.cpp" />
+    <ClCompile Include="..\Source\Core\GameInstance.cpp" />
     <ClCompile Include="..\Source\Core\GameObject.cpp" />
     <ClCompile Include="..\Source\Core\HelperMacros.cpp" />
     <ClCompile Include="..\Source\Core\Material.cpp" />
@@ -216,6 +220,7 @@
     <ClCompile Include="..\Source\Core\Shader.cpp" />
     <ClCompile Include="..\Source\Core\StaticMesh.cpp" />
     <ClCompile Include="..\Source\Core\StaticMeshComponent.cpp" />
+    <ClCompile Include="..\Source\Core\TestGame.cpp" />
     <ClCompile Include="..\Source\Core\TestGameObject.cpp" />
     <ClCompile Include="..\Source\Core\Texture2D.cpp" />
     <ClCompile Include="..\Source\Core\Time.cpp" />

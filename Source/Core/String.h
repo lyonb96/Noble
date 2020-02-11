@@ -87,6 +87,17 @@ namespace Noble
 		}
 
 		/**
+		 * Assign to string from literal
+		 */
+		NStringBase& operator=(const char* str)
+		{
+			Reset();
+			AppendString(str, std::strlen(str));
+
+			return *this;
+		}
+
+		/**
 		 * Appends the raw string to this instance
 		 */
 		NStringBase& operator+=(const s_char* val)

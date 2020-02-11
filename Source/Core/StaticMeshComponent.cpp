@@ -1,57 +1,13 @@
 #include "StaticMeshComponent.h"
 
 #include "FileSystem.h"
+#include "Globals.h"
 
 #include <string.h>
 
 namespace Noble
 {
 	OBJECT_DEF(StaticMeshComponent);
-
-	//bgfx::ShaderHandle CreateShader(const char* name)
-	//{
-	//	char filePath[512];
-
-	//	//const char* shaderPath = "???";
-
-	//	//switch (bgfx::getRendererType())
-	//	//{
-	//	//	case bgfx::RendererType::Noop:
-	//	//	case bgfx::RendererType::Direct3D9:  shaderPath = "Content/shaders/dx9/";   break;
-	//	//	case bgfx::RendererType::Direct3D11:
-	//	//	case bgfx::RendererType::Direct3D12: shaderPath = "Content/shaders/dx11/";  break;
-	//	//	case bgfx::RendererType::Gnm:        shaderPath = "Content/shaders/pssl/";  break;
-	//	//	case bgfx::RendererType::Metal:      shaderPath = "Content/shaders/metal/"; break;
-	//	//	case bgfx::RendererType::Nvn:        shaderPath = "Content/shaders/nvn/";   break;
-	//	//	case bgfx::RendererType::OpenGL:     shaderPath = "Content/shaders/glsl/";  break;
-	//	//	case bgfx::RendererType::OpenGLES:   shaderPath = "Content/shaders/essl/";  break;
-	//	//	case bgfx::RendererType::Vulkan:     shaderPath = "Content/shaders/spirv/"; break;
-	//	//}
-
-	//	strcpy_s(filePath, "Content/shaders/test/");
-	//	strcat_s(filePath, name);
-	//	strcat_s(filePath, ".bin");
-
-	//	bool exists = CheckExists(filePath);
-
-	//	if (exists)
-	//	{
-	//		File shaderFile(filePath, FileMode::FILE_READ);
-
-	//		Size fSize = shaderFile.GetFileSize();
-	//		const bgfx::Memory* mem = bgfx::alloc(U32(fSize + 1));
-	//		
-	//		shaderFile.Read(mem->data, fSize);
-	//		mem->data[mem->size - 1] = '\0';
-
-	//		bgfx::ShaderHandle handle = bgfx::createShader(mem);
-	//		bgfx::setName(handle, name);
-
-	//		return handle;
-	//	}
-
-	//	return BGFX_INVALID_HANDLE;
-	//}
 
 	StaticMeshComponent::StaticMeshComponent()
 		: SceneComponent()
@@ -87,6 +43,32 @@ namespace Noble
 			bgfx::setIndexBuffer(m_Mesh->GetIndexBuffer());
 			bgfx::setState(state);
 			bgfx::submit(0, m_Material->GetShader()->GetProgram());
+		}
+	}
+
+	void StaticMeshComponent::Serialize(BitStream& stream)
+	{
+		Super::Serialize(stream);
+		// Write mesh ID
+		stream.Write<U32>(m_Mesh ? m_Mesh->GetAssetID().GetHash() : 0);
+		// Write material ID
+		stream.Write<U32>(m_Material ? m_Material->GetAssetID().GetHash() : 0);
+	}
+
+	void StaticMeshComponent::Deserialize(BitStream& stream)
+	{
+		Super::Deserialize(stream);
+		// Read mesh ID
+		U32 meshId = stream.Read<U32>();
+		if (meshId != 0)
+		{
+			m_Mesh = GetAssetManager()->GetStaticMesh(meshId);
+		}
+		// Read material ID
+		U32 matId = stream.Read<U32>();
+		if (matId != 0)
+		{
+			m_Material = GetAssetManager()->GetMaterial(matId);
 		}
 	}
 }

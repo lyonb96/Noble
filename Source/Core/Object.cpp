@@ -4,7 +4,7 @@
 
 namespace Noble
 {
-	Map<NIdentifier, NClass> Object::ObjectRegistry;
+	Map<NIdentifier, NClass*> Object::ObjectRegistry;
 	U64 Object::ObjectCount = 0;
 
 	Object* Object::CreateInstance(NClass* const type, void* ptr)
@@ -19,7 +19,7 @@ namespace Noble
 		CHECK(ptr);
 		if (ObjectRegistry.ContainsKey(id))
 		{
-			return CreateInstanceFromClass(&ObjectRegistry[id], ptr);
+			return CreateInstanceFromClass(ObjectRegistry[id], ptr);
 		}
 
 		NE_LOG_ERROR("Requested class %s is not registered!", id.GetString());
@@ -43,4 +43,36 @@ namespace Noble
 
 		return inst;
 	}
+
+	NClass* Object::GetClassByID(const NIdentifier& id)
+	{
+		for (auto cls : ObjectRegistry)
+		{
+			if (cls.Key == id)
+			{
+				return cls.Value;
+			}
+		}
+
+		return nullptr;
+	}
+
+	NClass* Object::GetClassByID(const U32 id)
+	{
+		for (auto cls : ObjectRegistry)
+		{
+			if (cls.Key.GetHash() == id)
+			{
+				return cls.Value;
+			}
+		}
+
+		return nullptr;
+	}
+
+	void Object::Serialize(BitStream& stream)
+	{}
+
+	void Object::Deserialize(BitStream& stream)
+	{}
 }

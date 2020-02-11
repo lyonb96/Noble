@@ -61,7 +61,9 @@ namespace Noble
 		GameObject();
 
 		GameObject(const GameObject&) = delete; // Cannot be copied
-		GameObject(const GameObject&&) = delete; // Cannot be moved
+		GameObject(GameObject&&) = delete; // Cannot be moved
+		GameObject& operator=(const GameObject&) = delete;
+		GameObject& operator=(GameObject&&) = delete;
 
 	public:
 
@@ -139,6 +141,16 @@ namespace Noble
 		 * Called once when this GameObject is despawned from a level
 		 */
 		virtual void OnDespawn() {}
+
+		/**
+		 * Serialize the GameObject to the BitStream
+		 */
+		virtual void Serialize(BitStream& stream) override;
+
+		/**
+		 * Deserialize the GameObject from the BitStream
+		 */
+		virtual void Deserialize(BitStream& stream) override;
 
 	public:
 

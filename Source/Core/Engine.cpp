@@ -12,13 +12,9 @@
 #include "WindowsMinimal.h"
 
 // for testing
-#include "StaticMeshComponent.h"
-#include "TestGameObject.h"
 #include "Array.h"
 #include "FileSystem.h"
 #include "BitStream.h"
-#include "StaticMesh.h"
-#include "Shader.h"
 
 #ifndef MAX_FIXED_STEPS_PER_FRAME
 #define MAX_FIXED_STEPS_PER_FRAME 5 // limit fixed steps per frame to avoid spiraling
@@ -41,26 +37,13 @@ namespace Noble
 		extern bool Initialize(HWND hwnd);
 	}
 
-	namespace
-	{
-		TestGameObject* g_TestObject1;
-		TestGameObject* g_TestObject2;
-		TestGameObject* g_TestObject3;
-
-		StaticMesh* g_TestMesh;
-		//StaticMesh* g_TestMesh2;
-
-		Shader* g_TestShader;
-		Material* g_TestMat;
-	}
-
-	int LaunchEngine()
+	int LaunchEngine(GameInstance* inst)
 	{
 		bool result = false;
 		Engine eng;
 
 		// Turn the key...
-		result = eng.Start();
+		result = eng.Start(inst);
 		if (!result)
 		{
 			// If it fails, shut down any modules that did start
@@ -84,9 +67,10 @@ namespace Noble
 	Engine::Engine()
 	{
 		Time::Initialize();
+		m_GameInstance = nullptr;
 	}
 
-	bool Engine::Start()
+	bool Engine::Start(GameInstance* inst)
 	{
 		bool result = false;
 
@@ -95,6 +79,9 @@ namespace Noble
 			// Engine already initialized
 			return false;
 		}
+
+		// Store the game instance pointer
+		m_GameInstance = inst;
 
 		// Set global engine pointer
 		g_Engine = this;
@@ -125,61 +112,11 @@ namespace Noble
 		}
 		Input::LoadBindings();
 
-		// Testing stuff
+		// Init statics
 		StaticVertex::Init();
 
-		g_TestObject1 = GetWorld()->SpawnGameObject<TestGameObject>();
-		g_TestObject2 = GetWorld()->SpawnGameObject<TestGameObject>();
-		g_TestObject3 = GetWorld()->SpawnGameObject<TestGameObject>();
-
-		// Test registration
-		m_AssetManager.RegisterAsset(ID("CubeMesh"), "Content/TestMesh.txt", AssetType::AT_STATIC_MESH);
-		m_AssetManager.RegisterAsset(ID("TriangleMesh"), "Content/TestMesh2.txt", AssetType::AT_STATIC_MESH);
-		m_AssetManager.RegisterAsset(ID("TestShader"), "Content/shaders/simple_light.shd", AssetType::AT_SHADER);
-		m_AssetManager.RegisterAsset(ID("TestMaterial"), "Content/TestMat.bin", AssetType::AT_MATERIAL);
-		m_AssetManager.RegisterAsset(ID("TestTex"), "Content/TestTex.dds", AssetType::AT_TEXTURE2D);
-		m_AssetManager.RegisterAsset(ID("TestMesh3"), "Content/TestMesh3.bin", AssetType::AT_STATIC_MESH);
-
-		g_TestMesh = m_AssetManager.GetStaticMesh(ID("TestMesh3"));
-		//g_TestMesh2 = m_AssetManager.GetStaticMesh(ID("TriangleMesh"));
-
-		// Test shader loading
-		g_TestShader = m_AssetManager.GetShader(ID("TestShader"));
-
-		// Test texture loading
-		Texture2D* tex = GetAssetManager()->GetTexture2D(ID("TestTex"));
-
-		// Test material loading
-		g_TestMat = m_AssetManager.CreateMaterial();
-		g_TestMat->SetShader(g_TestShader);
-		g_TestMat->SetUniform(ID("DiffuseTex"), tex);
-		g_TestMat->SetUniform(ID("NormalTex"), nullptr);
-		//Material* mat2 = GetAssetManager()->CreateMaterial(g_TestMat);
-		//Material* mat3 = GetAssetManager()->CreateMaterial(g_TestMat);
-
-		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMesh(g_TestMesh);
-		((StaticMeshComponent*)g_TestObject1->GetRootComponent())->SetMaterial(g_TestMat);
-		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetMesh(g_TestMesh);
-		((StaticMeshComponent*)g_TestObject2->GetRootComponent())->SetMaterial(g_TestMat);
-		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMesh(g_TestMesh);
-		((StaticMeshComponent*)g_TestObject3->GetRootComponent())->SetMaterial(g_TestMat);
-
-		g_TestObject1->GetSecondMesh()->SetMesh(g_TestMesh);
-		g_TestObject1->GetSecondMesh()->SetMaterial(g_TestMat);
-		g_TestObject2->GetSecondMesh()->SetMesh(g_TestMesh);
-		g_TestObject2->GetSecondMesh()->SetMaterial(g_TestMat);
-		g_TestObject3->GetSecondMesh()->SetMesh(g_TestMesh);
-		g_TestObject3->GetSecondMesh()->SetMaterial(g_TestMat);
-
-		//{
-		//	BitStream mat;
-		//	mat.Write<U32>(HASH("TestShader"));
-		//	mat.Write<U32>(0);
-		//	mat.Write<Vector4f>(Vector4f(1.0F, 0.0F, 0.0F, 1.0F));
-
-		//	File matFile("Content/TestMat.bin", FileMode::FILE_WRITE_REPLACE);
-		//	matFile.Write(mat.GetData(), mat.GetStoredBytes());
-		//}
+		// Run game instance startup code
+		m_GameInstance->OnGameStart();
 
 		return true;
 	}
@@ -233,7 +170,7 @@ namespace Noble
 					accumulator -= FIXED_STEP_RATE;
 				}
 
-				Update(Time::GetDeltaTime());
+				Update();
 
 				// finish = Game::ShouldGameQuit();
 
@@ -244,6 +181,10 @@ namespace Noble
 
 	bool Engine::Stop()
 	{
+		// Notify game instance
+		m_GameInstance->OnGameEnd();
+
+		// Log shutdown
 		NE_LOG_INFO("Engine shutting down");
 
 		// Unload assets
@@ -263,52 +204,17 @@ namespace Noble
 
 	void Engine::FixedUpdate()
 	{
+		// Call the game instance fixed update function
+		m_GameInstance->FixedUpdate();
+		// Then perform world fixed updates
 		m_World.FixedUpdate();
 	}
 
-	void Engine::Update(float tpf)
+	void Engine::Update()
 	{
+		// Call the Game Instance update function
+		m_GameInstance->Update();
+		// Then perform world updates
 		m_World.Update();
-
-		Sleep(1); // short sleep to keep the loop from running super fast during testing
-
-		static float test = 0.0F;
-		test += tpf;
-
-		float x = glm::sin(test);
-		float y = glm::cos(test);
-		//float x = 1.0F, y = 1.0F;
-		float sinTest = glm::sin(test);
-
-		{
-			Matrix4x4f view = glm::lookAt(Vector3f(x * 15.0F, 15, y * 15.0F), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
-			Matrix4x4f proj = glm::perspectiveFov(70.0F, 1280.0F, 720.0F, 0.1F, 100.0F);
-
-			bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
-		}
-
-		g_TestObject1->SetPosition(Vector3f(5, 5, 5));
-		g_TestObject2->SetScale(Vector3f(2, 2, 2));
-		g_TestObject3->SetRotation(glm::angleAxis(x, Vector3f(1, 0, 0)));
-		g_TestObject3->SetPosition(Vector3f(5, y * 5.0F, 0));
-
-		if (Input::IsJustPressed(Input::KEY_P))
-		{
-			//Material* newMat = GetAssetManager()->CreateMaterial(g_TestMat);
-
-			BENCHMARK(ObjectCreation);
-			// spawn another object
-			auto newObj = GetWorld()->SpawnGameObject<TestGameObject>(Vector3f(0, -5, 0));
-			newObj->SetScale(Vector3f(2.0F));
-			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(g_TestMesh);
-			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMaterial(g_TestMat);
-			newObj->GetSecondMesh()->SetMesh(g_TestMesh);
-			newObj->GetSecondMesh()->SetMaterial(g_TestMat);
-		}
 	}
-}
-
-int CALLBACK WinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE hPrevInst, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
-{
-	return Noble::LaunchEngine();
 }

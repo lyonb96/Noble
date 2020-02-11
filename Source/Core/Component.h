@@ -98,6 +98,16 @@ namespace Noble
 		 */
 		void AttachChildComponent(Component* child);
 
+		/**
+		 * Overridden from Object - Serialize data for this Component
+		 */
+		virtual void Serialize(BitStream& stream) override;
+
+		/**
+		 * Overridden from Object - Deserialize data for this Component
+		 */
+		virtual void Deserialize(BitStream& stream) override;
+
 	private:
 
 		/**
@@ -109,6 +119,10 @@ namespace Noble
 		 * Changes the Component's name
 		 */
 		void SetComponentName(const NIdentifier& name) { m_ComponentName = name; }
+
+		/**
+		 * Changes the Component's name
+		 */
 		void SetComponentName(NIdentifier&& name) { m_ComponentName = std::move(name); }
 
 	protected:

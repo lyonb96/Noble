@@ -16,7 +16,7 @@ namespace Noble
 	 */
 	class StaticMeshComponent : public SceneComponent
 	{
-		OBJECT_DECL(StaticMeshComponent, SceneComponent);
+		OBJECT_DECL(StaticMeshComponent, SceneComponent)
 	public:
 
 		StaticMeshComponent();
@@ -33,7 +33,20 @@ namespace Noble
 
 	public:
 
+		/**
+		 * Handles submitting this StaticMesh for drawing
+		 */
 		virtual void Draw() override;
+
+		/**
+		 * Writes the data for this StaticMeshComponent to the stream
+		 */
+		virtual void Serialize(BitStream& stream) override;
+
+		/**
+		 * Reads data from the stream to reconstruct this StaticMeshComponent
+		 */
+		virtual void Deserialize(BitStream& stream) override;
 
 	private:
 
