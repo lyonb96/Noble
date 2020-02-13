@@ -1,5 +1,6 @@
 #include "StaticMeshComponent.h"
 
+#include "AssetManager.h"
 #include "FileSystem.h"
 #include "Globals.h"
 

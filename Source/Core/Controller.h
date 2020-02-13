@@ -43,6 +43,16 @@ namespace Noble
 		 */
 		virtual void FixedUpdate() = 0;
 
+		/**
+		 * Causes this Controller to possess the requested GameObject, if it is possible
+		 */
+		virtual void Possess(GameObject* obj);
+
+		/**
+		 * Causes this Controller to unpossess the GameObject it is controlling, if any
+		 */
+		virtual void Unpossess();
+
 	protected:
 
 		// The possessed object

@@ -6,8 +6,6 @@
 
 namespace Noble
 {
-	World* GameObject::m_World = nullptr;
-
 	OBJECT_DEF(GameObject);
 
 	GameObject::GameObject()
@@ -67,6 +65,11 @@ namespace Noble
 	void GameObject::AddComponent(Component* comp)
 	{
 		m_Components.Add(comp);
+	}
+
+	void GameObject::SetController(Controller* cont)
+	{
+		m_Controller = cont;
 	}
 
 	void GameObject::Serialize(BitStream& stream)

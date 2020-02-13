@@ -5,9 +5,7 @@
 namespace Noble
 {
 	World::World()
-	{
-		GameObject::m_World = this;
-	}
+	{}
 
 	GameObject* World::SpawnGameObject(NClass* type, Vector3f spawnPos)
 	{

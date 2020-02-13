@@ -6,6 +6,7 @@
 #include "Array.h"
 #include "String.h"
 #include "Logger.h"
+#include "Globals.h"
 
 namespace Noble
 {
@@ -32,6 +33,8 @@ namespace Noble
 
 		// Allow the World class to access private members
 		friend class World;
+		// Allow Controllers to access the fun stuff
+		friend class Controller;
 
 		/**
 		 * Default constructor that handles back-end setup
@@ -126,6 +129,16 @@ namespace Noble
 		virtual void OnDespawn() {}
 
 		/**
+		 * Called when this GameObject is possessed by a new Controller
+		 */
+		virtual void OnPossess() {}
+
+		/**
+		 * Called when this GameObject is no longer possessed by a Controller
+		 */
+		virtual void OnUnpossess() {}
+
+		/**
 		 * Serialize the GameObject to the BitStream
 		 */
 		virtual void Serialize(BitStream& stream) override;
@@ -167,8 +180,7 @@ namespace Noble
 		{
 			for (Component* comp : m_Components)
 			{
-				T* reqComp = comp->IsA<T>();
-				if (reqComp)
+				if (T* reqComp = comp->IsA<T>())
 				{
 					return reqComp;
 				}
@@ -183,11 +195,6 @@ namespace Noble
 		 * Called by the constructor and forwarded to the overridden class
 		 */
 		virtual void ConstructorCallForward() {};
-
-		/**
-		 * Returns a pointer to the World instance
-		 */
-		World* GetWorld() { return m_World; }
 
 		/**
 		 * Creates a child component and adds it to the list of members
@@ -207,10 +214,12 @@ namespace Noble
 		 */
 		void AddComponent(Component* comp);
 
-	protected:
+		/**
+		 * Changes the Controller of this GameObject
+		 */
+		void SetController(Controller* cont);
 
-		// A pointer to the game's World instance
-		static World* m_World;
+	protected:
 
 		// If true, the object's Update function will be called each frame
 		bool m_TickEachFrame;

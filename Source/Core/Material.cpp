@@ -1,6 +1,8 @@
 #include "Material.h"
 
+#include "AssetManager.h"
 #include "Globals.h"
+#include "Logger.h"
 
 namespace Noble
 {

@@ -1,5 +1,9 @@
 #include "Globals.h"
 
+#include "Engine.h"
+#include "World.h"
+#include "AssetManager.h"
+
 namespace Noble
 {
 	Engine* g_Engine = nullptr;
