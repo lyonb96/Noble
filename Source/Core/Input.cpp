@@ -8,141 +8,141 @@
 
 namespace Noble
 {
-	const char* ActionStrings[] =
+	const NIdentifier ActionStrings[] =
 	{
-		"KEY_A",
-		"KEY_B",
-		"KEY_C",
-		"KEY_D",
-		"KEY_E",
-		"KEY_F",
-		"KEY_G",
-		"KEY_H",
-		"KEY_I",
-		"KEY_J",
-		"KEY_K",
-		"KEY_L",
-		"KEY_M",
-		"KEY_N",
-		"KEY_O",
-		"KEY_P",
-		"KEY_Q",
-		"KEY_R",
-		"KEY_S",
-		"KEY_T",
-		"KEY_U",
-		"KEY_V",
-		"KEY_W",
-		"KEY_X",
-		"KEY_Y",
-		"KEY_Z",
-		"KEY_SPACE",
-		"KEY_TILDE",
-		"KEY_1",
-		"KEY_2",
-		"KEY_3",
-		"KEY_4",
-		"KEY_5",
-		"KEY_6",
-		"KEY_7",
-		"KEY_8",
-		"KEY_9",
-		"KEY_0",
-		"KEY_MINUS",
-		"KEY_EQUALS",
-		"KEY_BACKSPACE",
-		"KEY_TAB",
-		"KEY_LBRACKET",
-		"KEY_RBRACKET",
-		"KEY_BACKSLASH",
-		"KEY_SEMICOLON",
-		"KEY_APOSTROPHE",
-		"KEY_COMMA",
-		"KEY_PERIOD",
-		"KEY_SLASH",
-		"KEY_NUMPAD_0",
-		"KEY_NUMPAD_1",
-		"KEY_NUMPAD_2",
-		"KEY_NUMPAD_3",
-		"KEY_NUMPAD_4",
-		"KEY_NUMPAD_5",
-		"KEY_NUMPAD_6",
-		"KEY_NUMPAD_7",
-		"KEY_NUMPAD_8",
-		"KEY_NUMPAD_9",
-		"KEY_NUMPAD_ENTER",
-		"KEY_NUMPAD_PLUS",
-		"KEY_NUMPAD_MINUS",
-		"KEY_NUMPAD_DIV",
-		"KEY_NUMPAD_MULT",
-		"KEY_NUMPAD_DEC",
-		"KEY_UP",
-		"KEY_DOWN",
-		"KEY_LEFT",
-		"KEY_RIGHT",
-		"KEY_ESC",
-		"KEY_F1",
-		"KEY_F2",
-		"KEY_F3",
-		"KEY_F4",
-		"KEY_F5",
-		"KEY_F6",
-		"KEY_F7",
-		"KEY_F8",
-		"KEY_F9",
-		"KEY_F10",
-		"KEY_F11",
-		"KEY_F12",
-		"KEY_CAPSLOCK",
-		"KEY_LSHIFT",
-		"KEY_RETURN",
-		"KEY_RSHIFT",
-		"KEY_LCTRL",
-		"KEY_LALT",
-		"KEY_RALT",
-		"KEY_RCTRL",
-		"KEY_INSERT",
-		"KEY_DELETE",
-		"KEY_HOME",
-		"KEY_END",
-		"KEY_PAGEUP",
-		"KEY_PAGEDOWN",
-		"MOUSE_LEFT_BUTTON",
-		"MOUSE_RIGHT_BUTTON",
-		"MOUSE_MIDDLE_BUTTON",
-		"GAMEPAD_A",
-		"GAMEPAD_B",
-		"GAMEPAD_Y",
-		"GAMEPAD_X",
-		"GAMEPAD_DPAD_UP",
-		"GAMEPAD_DPAD_DOWN",
-		"GAMEPAD_DPAD_LEFT",
-		"GAMEPAD_DPAD_RIGHT",
-		"GAMEPAD_LEFT_STICK_BUTTON",
-		"GAMEPAD_RIGHT_STICK_BUTTON",
-		"GAMEPAD_START",
-		"GAMEPAD_LEFT_BUMPER",
-		"GAMEPAD_RIGHT_BUMPER",
-		"ACTION_UNKNOWN",
-		"ACTION_UNASSIGNED",
-		"ACTION_COUNT"
+		ID("KEY_A"),
+		ID("KEY_B"),
+		ID("KEY_C"),
+		ID("KEY_D"),
+		ID("KEY_E"),
+		ID("KEY_F"),
+		ID("KEY_G"),
+		ID("KEY_H"),
+		ID("KEY_I"),
+		ID("KEY_J"),
+		ID("KEY_K"),
+		ID("KEY_L"),
+		ID("KEY_M"),
+		ID("KEY_N"),
+		ID("KEY_O"),
+		ID("KEY_P"),
+		ID("KEY_Q"),
+		ID("KEY_R"),
+		ID("KEY_S"),
+		ID("KEY_T"),
+		ID("KEY_U"),
+		ID("KEY_V"),
+		ID("KEY_W"),
+		ID("KEY_X"),
+		ID("KEY_Y"),
+		ID("KEY_Z"),
+		ID("KEY_SPACE"),
+		ID("KEY_TILDE"),
+		ID("KEY_1"),
+		ID("KEY_2"),
+		ID("KEY_3"),
+		ID("KEY_4"),
+		ID("KEY_5"),
+		ID("KEY_6"),
+		ID("KEY_7"),
+		ID("KEY_8"),
+		ID("KEY_9"),
+		ID("KEY_0"),
+		ID("KEY_MINUS"),
+		ID("KEY_EQUALS"),
+		ID("KEY_BACKSPACE"),
+		ID("KEY_TAB"),
+		ID("KEY_LBRACKET"),
+		ID("KEY_RBRACKET"),
+		ID("KEY_BACKSLASH"),
+		ID("KEY_SEMICOLON"),
+		ID("KEY_APOSTROPHE"),
+		ID("KEY_COMMA"),
+		ID("KEY_PERIOD"),
+		ID("KEY_SLASH"),
+		ID("KEY_NUMPAD_0"),
+		ID("KEY_NUMPAD_1"),
+		ID("KEY_NUMPAD_2"),
+		ID("KEY_NUMPAD_3"),
+		ID("KEY_NUMPAD_4"),
+		ID("KEY_NUMPAD_5"),
+		ID("KEY_NUMPAD_6"),
+		ID("KEY_NUMPAD_7"),
+		ID("KEY_NUMPAD_8"),
+		ID("KEY_NUMPAD_9"),
+		ID("KEY_NUMPAD_ENTER"),
+		ID("KEY_NUMPAD_PLUS"),
+		ID("KEY_NUMPAD_MINUS"),
+		ID("KEY_NUMPAD_DIV"),
+		ID("KEY_NUMPAD_MULT"),
+		ID("KEY_NUMPAD_DEC"),
+		ID("KEY_UP"),
+		ID("KEY_DOWN"),
+		ID("KEY_LEFT"),
+		ID("KEY_RIGHT"),
+		ID("KEY_ESC"),
+		ID("KEY_F1"),
+		ID("KEY_F2"),
+		ID("KEY_F3"),
+		ID("KEY_F4"),
+		ID("KEY_F5"),
+		ID("KEY_F6"),
+		ID("KEY_F7"),
+		ID("KEY_F8"),
+		ID("KEY_F9"),
+		ID("KEY_F10"),
+		ID("KEY_F11"),
+		ID("KEY_F12"),
+		ID("KEY_CAPSLOCK"),
+		ID("KEY_LSHIFT"),
+		ID("KEY_RETURN"),
+		ID("KEY_RSHIFT"),
+		ID("KEY_LCTRL"),
+		ID("KEY_LALT"),
+		ID("KEY_RALT"),
+		ID("KEY_RCTRL"),
+		ID("KEY_INSERT"),
+		ID("KEY_DELETE"),
+		ID("KEY_HOME"),
+		ID("KEY_END"),
+		ID("KEY_PAGEUP"),
+		ID("KEY_PAGEDOWN"),
+		ID("MOUSE_LEFT_BUTTON"),
+		ID("MOUSE_RIGHT_BUTTON"),
+		ID("MOUSE_MIDDLE_BUTTON"),
+		ID("GAMEPAD_A"),
+		ID("GAMEPAD_B"),
+		ID("GAMEPAD_Y"),
+		ID("GAMEPAD_X"),
+		ID("GAMEPAD_DPAD_UP"),
+		ID("GAMEPAD_DPAD_DOWN"),
+		ID("GAMEPAD_DPAD_LEFT"),
+		ID("GAMEPAD_DPAD_RIGHT"),
+		ID("GAMEPAD_LEFT_STICK_BUTTON"),
+		ID("GAMEPAD_RIGHT_STICK_BUTTON"),
+		ID("GAMEPAD_START"),
+		ID("GAMEPAD_LEFT_BUMPER"),
+		ID("GAMEPAD_RIGHT_BUMPER"),
+		ID("ACTION_UNKNOWN"),
+		ID("ACTION_UNASSIGNED"),
+		ID("ACTION_COUNT")
 	};
 
-	const char* AxisStrings[] =
+	const NIdentifier AxisStrings[] =
 	{
-		"MOUSE_AXIS_X",
-		"MOUSE_AXIS_Y",
-		"MOUSE_AXIS_WHEEL",
-
-		"GAMEPAD_LEFT_STICK_AXIS_X",
-		"GAMEPAD_LEFT_STICK_AXIS_Y",
-		"GAMEPAD_RIGHT_STICK_AXIS_X",
-		"GAMEPAD_RIGHT_STICK_AXIS_Y",
-		"GAMEPAD_LEFT_TRIGGER",
-		"GAMEPAD_RIGHT_TRIGGER",
-		"AXIS_UNKNOWN",
-		"AXIS_UNASSIGNED",
-		"AXIS_COUNT"
+		ID("MOUSE_AXIS_X"),
+		ID("MOUSE_AXIS_Y"),
+		ID("MOUSE_AXIS_WHEEL"),
+		
+		ID("GAMEPAD_LEFT_STICK_AXIS_X"),
+		ID("GAMEPAD_LEFT_STICK_AXIS_Y"),
+		ID("GAMEPAD_RIGHT_STICK_AXIS_X"),
+		ID("GAMEPAD_RIGHT_STICK_AXIS_Y"),
+		ID("GAMEPAD_LEFT_TRIGGER"),
+		ID("GAMEPAD_RIGHT_TRIGGER"),
+		ID("AXIS_UNKNOWN"),
+		ID("AXIS_UNASSIGNED"),
+		ID("AXIS_COUNT")
 	};
 
 	namespace Input
@@ -157,12 +157,12 @@ namespace Noble
 			bool g_ActionBuffer[Action::ACTION_COUNT];
 		}
 
-		Action GetAction(const char* str)
+		Action GetAction(const NIdentifier& id)
 		{
 			U16 ind = 0;
 			while (ind < Action::ACTION_COUNT)
 			{
-				if (strcmp(str, ActionStrings[ind]))
+				if (ActionStrings[ind] == id)
 				{
 					return (Action) ind;
 				}
@@ -172,13 +172,28 @@ namespace Noble
 			return Action::ACTION_UNKNOWN;
 		}
 
-		Axis GetAxis(const char* str)
+		Action GetAction(const U32 id)
+		{
+			U16 ind = 0;
+			while (ind < Action::ACTION_COUNT)
+			{
+				if (ActionStrings[ind].GetHash() == id)
+				{
+					return (Action)ind;
+				}
+				++ind;
+			}
+
+			return Action::ACTION_UNKNOWN;
+		}
+
+		Axis GetAxis(const NIdentifier& id)
 		{
 			U16 ind = 0;
 			while (ind < Axis::AXIS_COUNT)
 			{
 				
-				if (strcmp(str, AxisStrings[ind]))
+				if (AxisStrings[ind] == id)
 				{
 					return (Axis) ind;
 				}
@@ -188,12 +203,28 @@ namespace Noble
 			return Axis::AXIS_UNKNOWN;
 		}
 
-		const char* GetActionString(Action val)
+		Axis GetAxis(const U32 id)
+		{
+			U16 ind = 0;
+			while (ind < Axis::AXIS_COUNT)
+			{
+
+				if (AxisStrings[ind].GetHash() == id)
+				{
+					return (Axis)ind;
+				}
+				++ind;
+			}
+
+			return Axis::AXIS_UNKNOWN;
+		}
+
+		const NIdentifier& GetActionString(Action val)
 		{
 			return ActionStrings[(U16)val];
 		}
 
-		const char* GetAxisString(Axis val)
+		const NIdentifier& GetAxisString(Axis val)
 		{
 			return AxisStrings[(U16)val];
 		}

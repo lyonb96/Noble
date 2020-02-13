@@ -172,6 +172,7 @@
     <ClInclude Include="..\Source\Core\Class.h" />
     <ClInclude Include="..\Source\Core\Component.h" />
     <ClInclude Include="..\Source\Core\Config.h" />
+    <ClInclude Include="..\Source\Core\Controller.h" />
     <ClInclude Include="..\Source\Core\FileSystem.h" />
     <ClInclude Include="..\Source\Core\Freelist.h" />
     <ClInclude Include="..\Source\Core\GameInstance.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="..\Source\Core\Material.h" />
     <ClInclude Include="..\Source\Core\Memory.h" />
     <ClInclude Include="..\Source\Core\Object.h" />
+    <ClInclude Include="..\Source\Core\PlayerController.h" />
     <ClInclude Include="..\Source\Core\PrintFormat.h" />
     <ClInclude Include="..\Source\Core\Renderer.h" />
     <ClInclude Include="..\Source\Core\SceneComponent.h" />
@@ -208,6 +210,7 @@
     <ClCompile Include="..\Source\Core\Class.cpp" />
     <ClCompile Include="..\Source\Core\Component.cpp" />
     <ClCompile Include="..\Source\Core\Config.cpp" />
+    <ClCompile Include="..\Source\Core\Controller.cpp" />
     <ClCompile Include="..\Source\Core\FileSystem.cpp" />
     <ClCompile Include="..\Source\Core\GameInstance.cpp" />
     <ClCompile Include="..\Source\Core\GameObject.cpp" />
@@ -215,6 +218,7 @@
     <ClCompile Include="..\Source\Core\Material.cpp" />
     <ClCompile Include="..\Source\Core\Memory.cpp" />
     <ClCompile Include="..\Source\Core\Object.cpp" />
+    <ClCompile Include="..\Source\Core\PlayerController.cpp" />
     <ClCompile Include="..\Source\Core\Renderer.cpp" />
     <ClCompile Include="..\Source\Core\SceneComponent.cpp" />
     <ClCompile Include="..\Source\Core\Shader.cpp" />

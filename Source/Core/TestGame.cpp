@@ -2,7 +2,7 @@
 
 #include "Engine.h"
 #include "Globals.h"
-#include "Input.h"
+#include "GameInput.h"
 
 namespace Noble
 {
@@ -21,7 +21,6 @@ namespace Noble
 		m_TestObject3 = GetWorld()->SpawnGameObject<TestGameObject>();
 
 		m_TestMesh = GetAssetManager()->GetStaticMesh(ID("TestMesh3"));
-		//g_TestMesh2 = m_AssetManager.GetStaticMesh(ID("TriangleMesh"));
 
 		// Test shader loading
 		m_TestShader = GetAssetManager()->GetShader(ID("TestShader"));
@@ -34,8 +33,6 @@ namespace Noble
 		m_TestMat->SetShader(m_TestShader);
 		m_TestMat->SetUniform(ID("DiffuseTex"), tex);
 		m_TestMat->SetUniform(ID("NormalTex"), nullptr);
-		//Material* mat2 = GetAssetManager()->CreateMaterial(g_TestMat);
-		//Material* mat3 = GetAssetManager()->CreateMaterial(g_TestMat);
 
 		((StaticMeshComponent*)m_TestObject1->GetRootComponent())->SetMesh(m_TestMesh);
 		((StaticMeshComponent*)m_TestObject1->GetRootComponent())->SetMaterial(m_TestMat);
@@ -80,7 +77,7 @@ namespace Noble
 		m_TestObject3->SetRotation(glm::angleAxis(x, Vector3f(1, 0, 0)));
 		m_TestObject3->SetPosition(Vector3f(5, y * 5.0F, 0));
 
-		if (Input::IsJustPressed(Input::KEY_P))
+		if (Input::GetActionBinding(HASH("Fire"))->IsJustPressed())
 		{
 			BENCHMARK(ObjectCreation);
 			// spawn another object

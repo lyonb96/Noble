@@ -14,8 +14,7 @@ namespace Noble
 	{
 		m_TickEachFrame = false;
 		m_RootComponent = nullptr;
-
-		ConstructorCallForward();
+		m_Controller = nullptr;
 	}
 
 	void GameObject::SetPosition(const Vector3f& newPos) const
@@ -58,6 +57,11 @@ namespace Noble
 		CHECK(m_RootComponent != nullptr);
 
 		return m_RootComponent->GetScale();
+	}
+
+	Controller* GameObject::GetController() const
+	{
+		return m_Controller;
 	}
 
 	void GameObject::AddComponent(Component* comp)

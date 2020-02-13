@@ -12,7 +12,6 @@
 
 namespace Noble
 {
-	class Object;
 	// Provides some real-time class information
 	struct NClass;
 
@@ -135,6 +134,24 @@ namespace Noble
 		static U64 ObjectCount;
 
 	};
+
+	/**
+	 * Uses templates to create a unique function definition for each Object subclass
+	 */
+	template <typename T>
+	Object* FactoryFunc(void* ptr)
+	{
+		if constexpr (std::is_abstract_v<T>)
+		{
+			// abstract classes can't be constructed
+			return nullptr;
+		}
+		else
+		{
+			// Otherwise, placement-new the type
+			return new (ptr) T;
+		}
+	}
 }
 
 /**
@@ -147,20 +164,10 @@ public:\
 	static constexpr ::Noble::NIdentifier ClassName = ID(#CLASS_NAME);\
 	static ::Noble::NClass* GetStaticClass() { return &StaticClass; }\
 private:\
-	static ::Noble::Object* CreateInstance(void* ptr);\
 	static ::Noble::NClass StaticClass;
 
 /**
  * Defines all required members of an Object subclass
  */
 #define OBJECT_DEF(CLASS_NAME)\
-::Noble::NClass CLASS_NAME::StaticClass = ::Noble::NClass::RegisterNClass<CLASS_NAME>();\
-::Noble::Object* CLASS_NAME::CreateInstance(void* ptr) {/* if constexpr (std::is_abstract_v<CLASS_NAME>) { return nullptr; } else { */return new (ptr) CLASS_NAME;/* } */}
-
-/**
- * Defines all required members of an abstract Object subclass
- * Abstract classes cannot be created via CreateInstance!
- */
-#define OBJECT_DEF_ABSTRACT(CLASS_NAME)\
-::Noble::NClass CLASS_NAME::StaticClass = ::Noble::NClass::RegisterNClass<CLASS_NAME>();\
-::Noble::Object* CLASS_NAME::CreateInstance(void* ptr) { return nullptr; }
+::Noble::NClass CLASS_NAME::StaticClass = ::Noble::NClass::RegisterNClass<CLASS_NAME>();

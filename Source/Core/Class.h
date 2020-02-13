@@ -52,7 +52,7 @@ namespace Noble
 			// Constructor also stores it to the Object registry
 			NClass reg(
 				T::ClassName,
-				&T::CreateInstance,
+				FactoryFunc<T>,
 				sizeof(T),
 				alignof(T),
 				std::is_abstract_v<T>);

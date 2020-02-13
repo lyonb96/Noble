@@ -3,7 +3,7 @@
 namespace Noble
 {
 
-	GAME_OBJECT_DEF(TestGameObject);
+	OBJECT_DEF(TestGameObject);
 
 	TestGameObject::TestGameObject()
 		: Super()
@@ -20,14 +20,6 @@ namespace Noble
 		m_SecondMesh->SetScale(Vector3f(0.5F));
 
 		StaticMeshComponent* test = CreateChildComponent<StaticMeshComponent>();
-		/*
-		MeshHandle mesh = ResourceHandler::GetMeshHandle("barrel"); // or whatever this will look like
-
-		CameraComponent* cam = CreateChildComponent<CameraComponent>();
-		m_RootComponent->AttachChild(cam);
-		cam->SetPosition(0.0F, 5.0F, -5.0F);
-
-		*/
 	}
 
 	void TestGameObject::OnSpawn()

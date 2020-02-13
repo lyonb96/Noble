@@ -13,10 +13,12 @@ namespace Noble
 	{
 		namespace
 		{
-			ActionBinding g_ActionBindings[64];
+			/*ActionBinding g_ActionBindings[64];
 			U32 g_ActionCount = 0;
 			AxisBinding g_AxisBindings[32];
-			U32 g_AxisCount = 0;
+			U32 g_AxisCount = 0;*/
+			Array<ActionBinding> g_ActionBindings;
+			Array<AxisBinding> g_AxisBindings;
 		}
 
 		ActionBinding::ActionBinding()
@@ -245,50 +247,53 @@ namespace Noble
 
 		U32 GetActionIndex(const U32 id)
 		{
-			for (U32 i = 0; i < g_ActionCount; i++)
+			for (U32 i = 0; i < g_ActionBindings.GetCount(); i++)
 			{
 				if (g_ActionBindings[i].GetIdentifierHash() == id)
 				{
 					return i;
 				}
 			}
-			return g_ActionCount + 1;
+			return U32(g_ActionBindings.GetCount()) + 1;
 		}
 
 		U32 GetAxisIndex(const U32 id)
 		{
-			for (U32 i = 0; i < g_AxisCount; i++)
+			for (U32 i = 0; i < g_AxisBindings.GetCount(); i++)
 			{
 				if (g_AxisBindings[i].GetIdentifierHash() == id)
 				{
 					return i;
 				}
 			}
-			return g_AxisCount + 1;
+			return U32(g_AxisBindings.GetCount()) + 1;
 		}
 
 		void RegisterActionBinding(const char* id, Action defaultAction)
 		{
-			g_ActionBindings[g_ActionCount] = ActionBinding(id);
-			g_ActionBindings[g_ActionCount++].SetTrigger(0, defaultAction);
+			ActionBinding binding(id);
+			binding.SetTrigger(0, defaultAction);
+			g_ActionBindings.Add(std::move(binding));
 		}
 
 		void RegisterAxisBinding(const char* id, Axis defaultAxis, F32 scale)
 		{
-			g_AxisBindings[g_AxisCount] = AxisBinding(id);
-			g_AxisBindings[g_AxisCount++].SetTrigger(0, defaultAxis, scale);
+			AxisBinding binding(id);
+			binding.SetTrigger(0, defaultAxis, scale);
+			g_AxisBindings.Add(std::move(binding));
 		}
 
 		void RegisterAxisBinding(const char* id, Action defaultAction, F32 value)
 		{
-			g_AxisBindings[g_AxisCount] = AxisBinding(id);
-			g_AxisBindings[g_AxisCount++].SetTrigger(0, defaultAction, value);
+			AxisBinding binding(id);
+			binding.SetTrigger(0, defaultAction, value);
+			g_AxisBindings.Add(std::move(binding));
 		}
 
 		void SetActionBinding(const U32 id, const U32 index, Action action)
 		{
 			const U32 aIndex = GetActionIndex(id);
-			if (aIndex > g_ActionCount)
+			if (aIndex > g_ActionBindings.GetCount())
 			{
 				NE_LOG_WARNING("No matching Action ID!");
 				return;
@@ -300,7 +305,7 @@ namespace Noble
 		void SetAxisBinding(const U32 id, const U32 index, Axis axis, float scale)
 		{
 			const U32 aIndex = GetAxisIndex(id);
-			if (aIndex > g_AxisCount)
+			if (aIndex > g_AxisBindings.GetCount())
 			{
 				NE_LOG_WARNING("No matching Axis ID!");
 				return;
@@ -312,9 +317,9 @@ namespace Noble
 		void SetAxisBinding(const U32 id, const U32 index, Action action, float value)
 		{
 			const U32 aIndex = GetAxisIndex(id);
-			if (aIndex > g_AxisCount)
+			if (aIndex > g_AxisBindings.GetCount())
 			{
-				NE_LOG_WARNING("No matching Axis ID! Index: %u. Count: %u", index, g_AxisCount);
+				NE_LOG_WARNING("No matching Axis ID! Index: %u. Count: %u", index, g_AxisBindings.GetCount());
 				return;
 			}
 			g_AxisBindings[aIndex].SetTrigger(index, action, value);
@@ -323,7 +328,7 @@ namespace Noble
 		ActionBinding* const GetActionBinding(const U32 id)
 		{
 			const U32 index = GetActionIndex(id);
-			if (index > g_AxisCount)
+			if (index > g_AxisBindings.GetCount())
 			{
 				NE_LOG_WARNING("No matching Action ID!");
 				return nullptr;
@@ -335,13 +340,23 @@ namespace Noble
 		AxisBinding* const GetAxisBinding(const U32 id)
 		{
 			const U32 index = GetAxisIndex(id);
-			if (index > g_AxisCount)
+			if (index > g_AxisBindings.GetCount())
 			{
 				NE_LOG_WARNING("No matching Axis ID!");
 				return nullptr;
 			}
 
 			return &g_AxisBindings[index];
+		}
+
+		Array<ActionBinding>& GetActionBindings()
+		{
+			return g_ActionBindings;
+		}
+
+		Array<AxisBinding>& GetAxisBindings()
+		{
+			return g_AxisBindings;
 		}
 
 		void LoadBindings()
@@ -354,8 +369,11 @@ namespace Noble
 			}
 
 			// Read in the number of bindings
-			g_ActionCount = inputCfg["ActionCount"];
-			g_AxisCount = inputCfg["AxisCount"];
+			U32 actionCount = inputCfg["ActionCount"];
+			U32 axisCount = inputCfg["AxisCount"];
+
+			g_ActionBindings.Resize(actionCount);
+			g_AxisBindings.Resize(axisCount);
 
 			// Parse action bindings
 			for (json::iterator it = inputCfg["Action"].begin(); it != inputCfg["Action"].end(); ++it) // for each action binding
@@ -366,9 +384,12 @@ namespace Noble
 				U32 bindingIndex = 0;
 				for (json::iterator binding = (*it)[0].begin(); binding != (*it)[0].end(); ++binding) // for each trigger
 				{
+					const U32 trigHash = HASH(binding->get<std::string>().c_str());
 					// Read in the bound action and set it to the corresponding index
-					SetActionBinding(bindingHash, bindingIndex++, 
-						Input::GetAction(binding->get<std::string>().c_str())
+					SetActionBinding(
+						bindingHash, 
+						bindingIndex++, 
+						Input::GetAction(trigHash)
 					);
 				}
 			}
@@ -393,9 +414,9 @@ namespace Noble
 					if (isAction)
 					{
 						// Extract the trigger from the JSON config
-						Action act = Input::GetAction(
-							inputCfg["Axis"][bindingName][bindingIndex]["Binding"].get<std::string>().c_str()
-						);
+						const U32 trigHash = HASH(inputCfg["Axis"][bindingName][bindingIndex]["Binding"].get<std::string>().c_str());
+						Action act = Input::GetAction(trigHash);
+
 						// Extract the scale
 						float scale = inputCfg["Axis"][bindingName][bindingIndex]["Scale"];
 
@@ -405,9 +426,9 @@ namespace Noble
 					else
 					{
 						// Extract the trigger from the JSON config
-						Axis ax = Input::GetAxis(
-							inputCfg["Axis"][bindingName][bindingIndex]["Binding"].get<std::string>().c_str()
-						);
+						const U32 trigHash = HASH(inputCfg["Axis"][bindingName][bindingIndex]["Binding"].get<std::string>().c_str());
+						Axis ax = Input::GetAxis(trigHash);
+
 						// Extract the scale
 						float scale = inputCfg["Axis"][bindingName][bindingIndex]["Scale"];
 
@@ -426,11 +447,11 @@ namespace Noble
 			inputCfg.clear();
 
 			// Write the number of action and axis bindings
-			inputCfg["ActionCount"] = g_ActionCount;
-			inputCfg["AxisCount"] = g_AxisCount;
+			inputCfg["ActionCount"] = g_ActionBindings.GetCount();
+			inputCfg["AxisCount"] = g_AxisBindings.GetCount();
 
 			U32 ind = 0;
-			for (; ind < g_ActionCount; ind++) // for each action binding
+			for (; ind < g_ActionBindings.GetCount(); ind++) // for each action binding
 			{
 				for (U32 binding = 0; binding < 3; binding++) // for each trigger on the binding
 				{
@@ -439,12 +460,12 @@ namespace Noble
 						// Store the trigger in the following format
 						// Config -> Input -> Action -> [Binding Name] -> [Binding Index]
 						inputCfg["Action"][g_ActionBindings[ind].GetIdentifier()][binding] =
-							Input::GetActionString(g_ActionBindings[ind].GetTrigger(binding));
+							Input::GetActionString(g_ActionBindings[ind].GetTrigger(binding)).GetString();
 					}
 				}
 			}
 
-			for (ind = 0; ind < g_AxisCount; ind++) // for each axis binding
+			for (ind = 0; ind < g_AxisBindings.GetCount(); ind++) // for each axis binding
 			{
 				for (U32 binding = 0; binding < 3; binding++) // for each trigger on the binding
 				{
@@ -460,7 +481,7 @@ namespace Noble
 						
 						// store the trigger name
 						inputCfg["Axis"][g_AxisBindings[ind].GetIdentifier()][binding]["Binding"] =
-							Input::GetActionString((Action)g_AxisBindings[ind].GetTrigger(binding));
+							Input::GetActionString((Action)g_AxisBindings[ind].GetTrigger(binding)).GetString();
 						// store the scale
 						inputCfg["Axis"][g_AxisBindings[ind].GetIdentifier()][binding]["Scale"] =
 							g_AxisBindings[ind].GetTriggerValue(binding);
@@ -477,7 +498,7 @@ namespace Noble
 
 						// store the trigger name
 						inputCfg["Axis"][g_AxisBindings[ind].GetIdentifier()][binding]["Binding"] =
-							Input::GetAxisString((Axis)g_AxisBindings[ind].GetTrigger(binding));
+							Input::GetAxisString((Axis)g_AxisBindings[ind].GetTrigger(binding)).GetString();
 						// store the scale
 						inputCfg["Axis"][g_AxisBindings[ind].GetIdentifier()][binding]["Scale"] =
 							g_AxisBindings[ind].GetTriggerValue(binding);

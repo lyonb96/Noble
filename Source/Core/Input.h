@@ -1,5 +1,6 @@
 #pragma once
 
+#include "String.h"
 #include "Types.h"
 
 namespace Noble
@@ -173,27 +174,32 @@ namespace Noble
 		/**
 		 * Returns the action that corresponds to the given string, or UNKNOWN if none
 		 */
-		Action GetAction(const char* str);
+		Action GetAction(const NIdentifier& id);
+
+		/**
+		 * Returns the action that corresponds to the given string, or UNKNOWN if none
+		 */
+		Action GetAction(const U32 id);
 
 		/**
 		 * Returns the axis that corresponds to the given string, or UNKNOWN if none
 		 */
-		Axis GetAxis(const char* str);
+		Axis GetAxis(const NIdentifier& id);
+
+		/**
+		 * Returns the axis that corresponds to the given string, or UNKNOWN if none
+		 */
+		Axis GetAxis(const U32 id);
 
 		/**
 		 * Returns a string representation of the given Action
 		 */
-		const char* GetActionString(Action val);
+		const NIdentifier& GetActionString(Action val);
 
 		/**
 		 * Returns a string representation of the given Axis
 		 */
-		const char* GetAxisString(Axis val);
-
-		/**
-		 * Initializes raw input code and prepares buffers
-		 */
-		//bool Initialize();
+		const NIdentifier& GetAxisString(Axis val);
 
 		/**
 		 * Called at the start of the frame automatically, clears buffers and prepares input for the frame

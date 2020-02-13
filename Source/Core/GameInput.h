@@ -194,9 +194,14 @@ namespace Noble
 		AxisBinding* const GetAxisBinding(const U32 id);
 
 		/**
-		 * Used by the Config Manager to load in settings from the config file
+		 * Returns the array of registered action bindings
 		 */
-		void ParseConfigBinding(char line[128]);
+		Array<ActionBinding>& GetActionBindings();
+
+		/**
+		 * Returns the array of registered axis bindings
+		 */
+		Array<AxisBinding>& GetAxisBindings();
 
 		/**
 		 * Loads the bindings from the config file

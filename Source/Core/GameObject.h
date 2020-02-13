@@ -7,31 +7,6 @@
 #include "String.h"
 #include "Logger.h"
 
-/**
- * This macro automatically declares special functions that are required in child GameObjects
- */
-#define GAME_OBJECT_BODY(CLASS_NAME, PARENT_NAME) \
-OBJECT_DECL(CLASS_NAME, PARENT_NAME)\
-public: \
-\
-	static ::Noble::I16 ComponentCount; \
-\
-protected:\
-\
-	virtual void ConstructorCallForward() override;\
-\
-private:
-// --------------------------------------------------------------------------------------------
-
-/**
- * This macro takes care of defining necessary functions and members for child GameObjects
- */
-#define GAME_OBJECT_DEF(CLASS_NAME) \
-OBJECT_DEF(CLASS_NAME); \
-::Noble::I16 CLASS_NAME::ComponentCount = -1; \
-\
-void CLASS_NAME::ConstructorCallForward() { if (ComponentCount > 0) { m_Components.Resize(ComponentCount); } } \
-
 namespace Noble
 {
 	// Class prototype for the Game World
@@ -39,6 +14,9 @@ namespace Noble
 
 	// Class prototype for Component
 	class Component;
+
+	// Class prototype for Controller
+	class Controller;
 
 	/**
 	 * GameObjects encompass any game world spawnable entity.
@@ -107,6 +85,11 @@ namespace Noble
 		 * Returns the scale of the Root Component
 		 */
 		Vector3f GetScale() const;
+
+		/**
+		 * Returns the current Controller of this GameObject, if any
+		 */
+		Controller* GetController() const;
 
 	public:
 
@@ -233,6 +216,8 @@ namespace Noble
 		bool m_TickEachFrame;
 		// Root Component
 		Component* m_RootComponent;
+		// Current controller, if any
+		Controller* m_Controller;
 		// Array of all components
 		Array<Component*> m_Components;
 
