@@ -417,6 +417,25 @@ namespace Noble
 	using NStringFixed = NStringBase<FixedContainerAllocator<s_char, N>>;
 
 	/**
+	 * Returns a pointer to a permanent place in memory for the NString's contents
+	 */
+	template <class Alloc>
+	const char* MakeStringPermanent(const NStringBase<Alloc>& str)
+	{
+		// Since the strings need to be permanent, the buffer is just a static var in the function
+		// Technically this leaves memory unfreed, but it will be freed once the engine shuts down
+		// and the strings may be required up until that point anyway
+		static MemoryArena<BlockAllocator, DefaultTracking> PermStringBuffer;
+		
+		// Alloc buffer for the new string (+ 1 is required for null term since GetLength() doesn't include it)
+		char* permStr = static_cast<char*>(NE_BUFFER_ALLOC(PermStringBuffer, (str.GetLength() + 1) * CHAR_SIZE, NOBLE_DEFAULT_ALIGN));
+		// Copy the contents into the buffer
+		Memory::Memcpy(permStr, str.GetCharArray(), str.GetLength() + 1);
+
+		return permStr;
+	}
+
+	/**
 	 * FNV1a C++11 Compile Time Hash Function by UnderscoreDiscovery on Github
 	 * https://gist.github.com/underscorediscovery/81308642d0325fd386237cfa3b44785c
 	 *

@@ -71,28 +71,4 @@ namespace Noble
 	{
 		m_Controller = cont;
 	}
-
-	void GameObject::Serialize(BitStream& stream)
-	{
-		// Write the most-derived type's ID
-		stream.Write<U32>(GetClass()->ObjectID.GetHash());
-
-		// Every Component can be recreated from just calling the constructor of the obj
-		// Therefore we can skip writing the Component class IDs and simply serialize them directly
-
-		for (Component* comp : m_Components)
-		{
-			comp->Serialize(stream);
-		}
-	}
-
-	void GameObject::Deserialize(BitStream& stream)
-	{
-		// The type ID was read to create this instance so we don't need to read it
-		// Allow each Component to deserialize itself
-		for (Component* comp : m_Components)
-		{
-			comp->Deserialize(stream);
-		}
-	}
 }

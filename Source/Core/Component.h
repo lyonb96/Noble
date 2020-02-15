@@ -98,16 +98,6 @@ namespace Noble
 		 */
 		void AttachChildComponent(Component* child);
 
-		/**
-		 * Overridden from Object - Serialize data for this Component
-		 */
-		virtual void Serialize(BitStream& stream) override;
-
-		/**
-		 * Overridden from Object - Deserialize data for this Component
-		 */
-		virtual void Deserialize(BitStream& stream) override;
-
 	private:
 
 		/**

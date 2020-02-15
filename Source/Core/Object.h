@@ -63,18 +63,6 @@ namespace Noble
 		 */
 		static NClass* GetStaticClass() { return nullptr; }
 
-	public:
-
-		/**
-		 * Override in subclasses to write custom data to the Stream
-		 */
-		virtual void Serialize(BitStream& stream);
-
-		/**
-		 * Override in subclasses to read custom data from the Stream
-		 */
-		virtual void Deserialize(BitStream& stream);
-
 	private:
 
 		// Class that this Object instance is based on

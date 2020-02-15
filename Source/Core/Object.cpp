@@ -69,10 +69,4 @@ namespace Noble
 
 		return nullptr;
 	}
-
-	void Object::Serialize(BitStream& stream)
-	{}
-
-	void Object::Deserialize(BitStream& stream)
-	{}
 }

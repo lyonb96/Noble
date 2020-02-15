@@ -46,30 +46,4 @@ namespace Noble
 			bgfx::submit(0, m_Material->GetShader()->GetProgram());
 		}
 	}
-
-	void StaticMeshComponent::Serialize(BitStream& stream)
-	{
-		Super::Serialize(stream);
-		// Write mesh ID
-		stream.Write<U32>(m_Mesh ? m_Mesh->GetAssetID().GetHash() : 0);
-		// Write material ID
-		stream.Write<U32>(m_Material ? m_Material->GetAssetID().GetHash() : 0);
-	}
-
-	void StaticMeshComponent::Deserialize(BitStream& stream)
-	{
-		Super::Deserialize(stream);
-		// Read mesh ID
-		U32 meshId = stream.Read<U32>();
-		if (meshId != 0)
-		{
-			m_Mesh = GetAssetManager()->GetStaticMesh(meshId);
-		}
-		// Read material ID
-		U32 matId = stream.Read<U32>();
-		if (matId != 0)
-		{
-			m_Material = GetAssetManager()->GetMaterial(matId);
-		}
-	}
 }

@@ -38,16 +38,6 @@ namespace Noble
 		 */
 		virtual void Draw() override;
 
-		/**
-		 * Writes the data for this StaticMeshComponent to the stream
-		 */
-		virtual void Serialize(BitStream& stream) override;
-
-		/**
-		 * Reads data from the stream to reconstruct this StaticMeshComponent
-		 */
-		virtual void Deserialize(BitStream& stream) override;
-
 	private:
 
 		// The mesh to draw

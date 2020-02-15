@@ -1,6 +1,7 @@
 #include "World.h"
 
 #include "Time.h"
+#include "Controller.h"
 
 namespace Noble
 {
@@ -33,6 +34,20 @@ namespace Noble
 		return comp;
 	}
 
+	Controller* World::CreateController(NClass* type, GameObject* possess)
+	{
+		CHECK(type);
+
+		Controller* cntrl = BuildController(type);
+
+		if (possess)
+		{
+			cntrl->Possess(possess);
+		}
+
+		return cntrl;
+	}
+
 	void World::Update()
 	{
 		for (GameObject* obj : m_GameObjects)
@@ -57,39 +72,10 @@ namespace Noble
 		}
 	}
 
-	BitStream World::SerializeWorld()
-	{
-		BitStream stream;
-
-		// Write every GameObject to the stream
-		// GameObjects serialize their own Components
-		for (GameObject* obj : m_GameObjects)
-		{
-			obj->Serialize(stream);
-		}
-
-		return stream;
-	}
-
-	void World::DeserializeWorld(BitStream& stream)
-	{
-		while (stream.IsReadable())
-		{
-			// Grab ID of the GameObject
-			U32 id = stream.Read<U32>();
-			// Find the NClass for the given ID
-			NClass* objectClass = Object::GetClassByID(id);
-			// Verify that the class is valid in debug builds
-			CHECK(objectClass);
-			// Spawn the object
-			GameObject* obj = SpawnGameObject(objectClass);
-			// Let the object handle its own deserialization
-			obj->Deserialize(stream);
-		}
-	}
-
 	GameObject* World::BuildGameObject(NClass* type)
 	{
+		CHECK(type->IsA<GameObject>());
+
 		// Allocate memory for the new object
 		void* data = NE_BUFFER_ALLOC(m_GameMemory, type->ObjectSize, type->ObjectAlign);
 		// Initialize the new object
@@ -102,6 +88,8 @@ namespace Noble
 
 	Component* World::BuildComponent(NClass* type)
 	{
+		CHECK(type->IsA<Component>());
+
 		void* data = NE_BUFFER_ALLOC(m_GameMemory, type->ObjectSize, type->ObjectAlign);
 		Component* comp = (Component*)Object::CreateInstance(type, data);
 
@@ -111,5 +99,17 @@ namespace Noble
 		}
 
 		return comp;
+	}
+
+	Controller* World::BuildController(NClass* type)
+	{
+		CHECK(type->IsA<Controller>());
+
+		void* data = NE_BUFFER_ALLOC(m_GameMemory, type->ObjectSize, type->ObjectAlign);
+		Controller* cntrl = (Controller*)Object::CreateInstance(type, data);
+
+		m_Controllers.Add(cntrl);
+
+		return cntrl;
 	}
 }

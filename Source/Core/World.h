@@ -15,6 +15,8 @@ namespace Noble
 	typedef MemoryArena<BlockAllocator, NoTrackingPolicy> GameMemoryArena;
 #endif
 
+	class Controller;
+
 	/**
 	 * The World class encompasses a "map" or area of play.
 	 * Worlds hold all of the currently spawned GameObjects.
@@ -73,6 +75,29 @@ namespace Noble
 		Component* CreateComponent(NClass* type, GameObject* owner, const NIdentifier& name);
 
 		/**
+		 * Creates a new Controller of the requested type
+		 * Can optionally possess a GameObject upon creation
+		 */
+		template <class T>
+		T* CreateController(GameObject* possess = nullptr)
+		{
+			T* controller = (T*)BuildController(T::GetStaticClass());
+
+			if (possess)
+			{
+				controller->Possess(possess);
+			}
+
+			return controller;
+		}
+
+		/**
+		 * Creates a new Controller of the requested type
+		 * Can optionally possess a GameObject upon creation
+		 */
+		Controller* CreateController(NClass* type, GameObject* possess = nullptr);
+
+		/**
 		 * Called each frame - runs logic updates on all spawned GameObjects and Components
 		 * The ordering is to call update on a GameObject, then on all of its Components immediately after
 		 */
@@ -83,16 +108,6 @@ namespace Noble
 		 * The ordering is to call update on a GameObject, then on all of its Components immediately after
 		 */
 		void FixedUpdate();
-
-		/**
-		 * Stores the current world state in a stream and returns the stream
-		 */
-		BitStream SerializeWorld();
-
-		/**
-		 * Creates the world from the given stream
-		 */
-		void DeserializeWorld(BitStream& stream);
 
 	private:
 
@@ -106,6 +121,11 @@ namespace Noble
 		 */
 		Component* BuildComponent(NClass* type);
 
+		/**
+		 * Internal code to create a controller from an NClass
+		 */
+		Controller* BuildController(NClass* type);
+
 	private:
 
 		// Memory Arena for GameObjects + Components
@@ -114,6 +134,7 @@ namespace Noble
 		Array<GameObject*> m_GameObjects;
 		// Array of all renderable Components in the game
 		Array<SceneComponent*> m_SceneComponents;
-
+		// Array of Controllers
+		Array<Controller*> m_Controllers;
 	};
 }

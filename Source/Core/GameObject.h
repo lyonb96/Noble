@@ -138,16 +138,6 @@ namespace Noble
 		 */
 		virtual void OnUnpossess() {}
 
-		/**
-		 * Serialize the GameObject to the BitStream
-		 */
-		virtual void Serialize(BitStream& stream) override;
-
-		/**
-		 * Deserialize the GameObject from the BitStream
-		 */
-		virtual void Deserialize(BitStream& stream) override;
-
 	public:
 
 		/**

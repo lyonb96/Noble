@@ -63,6 +63,27 @@ namespace Noble
 		}
 
 		/**
+		 * Returns true if this NClass can be safely casted to the requested type
+		 */
+		template <typename T>
+		bool IsA()
+		{
+			NClass* Tclass = T::GetStaticClass();
+			NClass* myCls = this;
+			while (myCls)
+			{
+				if (myCls == Tclass)
+				{
+					return true;
+				}
+
+				myCls = myCls->Parent;
+			}
+
+			return false;
+		}
+
+		/**
 		 * Comparison operator uses only the ID since it should be unique for every class and is a quick integer compare
 		 */
 		FORCEINLINE friend bool operator==(const NClass& rhs, const NClass& lhs) { return rhs.ObjectID == lhs.ObjectID; }

@@ -192,8 +192,9 @@ namespace Noble
 
 		NString uid = "Material";
 		uid += newMat;
+		const char* out = MakeStringPermanent(uid);
 
-		NIdentifier id(uid.GetCharArray(), uid.GetLength(), HASH(uid.GetCharArray()));
+		NIdentifier id(out, uid.GetLength(), HASH(out));
 		m_LoadedAssets.Insert(id, newMat);
 
 		return newMat;
