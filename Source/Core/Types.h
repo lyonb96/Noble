@@ -86,9 +86,47 @@ namespace Noble
 			Vector3f AsVector;
 		};
 
+		FORCEINLINE Rotator()
+			: Yaw(0.0F), Pitch(0.0F), Roll(0.0F)
+		{}
+
 		FORCEINLINE Rotator(F32 yaw, F32 pitch, F32 roll)
 			: Yaw(yaw), Pitch(pitch), Roll(roll)
 		{}
+
+		FORCEINLINE Rotator(const Rotator& other)
+			: Yaw(other.Yaw), Pitch(other.Pitch), Roll(other.Roll)
+		{}
+
+		FORCEINLINE Rotator(Rotator&& other) noexcept
+			: Yaw(other.Yaw), Pitch(other.Pitch), Roll(other.Roll)
+		{
+			other.Yaw = 0.0F;
+			other.Pitch = 0.0F;
+			other.Roll = 0.0F;
+		}
+
+		FORCEINLINE Rotator& operator=(const Rotator& other)
+		{
+			Yaw = other.Yaw;
+			Pitch = other.Pitch;
+			Roll = other.Roll;
+
+			return *this;
+		}
+
+		FORCEINLINE Rotator& operator=(Rotator&& other) noexcept
+		{
+			Yaw = other.Yaw;
+			Pitch = other.Pitch;
+			Roll = other.Roll;
+
+			other.Yaw = 0.0F;
+			other.Pitch = 0.0F;
+			other.Roll = 0.0F;
+
+			return *this;
+		}
 
 		/**
 		 * Returns a Quaternion representation of this Rotator
@@ -122,16 +160,16 @@ namespace Noble
 	struct Transform
 	{
 		Vector3f Position;
-		Quaternion Rotation;
+		Rotator Rotation;
 		Vector3f Scale;
 
 		Transform()
 			: Position(0, 0, 0),
-			Rotation(glm::identity<Quaternion>()),
+			Rotation(),
 			Scale(1, 1, 1)
 		{}
 
-		Transform(const Vector3f& pos, const Quaternion& rot, const Vector3f& scale)
+		Transform(const Vector3f& pos, const Rotator& rot, const Vector3f& scale)
 			: Position(pos), Rotation(rot), Scale(scale)
 		{}
 
@@ -140,7 +178,7 @@ namespace Noble
 		 */
 		Matrix4x4f GetMatrix4x4() const
 		{
-			return glm::translate(Position) * (Matrix4x4f)Rotation * glm::scale(Scale);
+			return glm::translate(Position) * Rotation.GetMatrix4x4() * glm::scale(Scale);
 		}
 	};
 

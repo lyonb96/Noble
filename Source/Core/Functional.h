@@ -6,11 +6,11 @@
 
 namespace Noble
 {
-	template <class>
+	template <typename>
 	class Function;
 
 	// A brain-dead simple function pointer wrapper
-	template <class ReturnType, typename... FunctionArgs>
+	template <typename ReturnType, typename... FunctionArgs>
 	class Function<ReturnType(FunctionArgs...)>
 	{
 	public:
@@ -35,13 +35,13 @@ namespace Noble
 	};
 
 
-	template<class Obj, class>
+	template<typename Obj, typename>
 	class MemberFunction;
 
 	/**
 	 * TODO: Add assignment operator and copy constructor
 	 */
-	template<class Obj, class ReturnType, class... FunctionArgs>
+	template<typename Obj, typename ReturnType, typename... FunctionArgs>
 	class MemberFunction<Obj, ReturnType(FunctionArgs...)>
 	{
 	public:
@@ -69,10 +69,10 @@ namespace Noble
 	 * Fat function pointers actually carry the parameters for the function call
 	 */
 
-	template <class>
+	template <typename>
 	class FatFunction;
 
-	template <class ReturnType, class... FunctionArgs>
+	template <typename ReturnType, typename... FunctionArgs>
 	class FatFunction<ReturnType(FunctionArgs...)>
 	{
 	public:
@@ -111,10 +111,10 @@ namespace Noble
 	 * Fat member function pointers too
 	 */
 
-	template <class Obj, class>
+	template <typename Obj, typename>
 	class FatMemberFunction;
 
-	template <class Obj, class ReturnType, class... FunctionArgs>
+	template <typename Obj, typename ReturnType, typename... FunctionArgs>
 	class FatMemberFunction<Obj, ReturnType(FunctionArgs...)>
 	{
 

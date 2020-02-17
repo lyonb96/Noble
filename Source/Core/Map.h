@@ -8,7 +8,7 @@ namespace Noble
 	/**
 	 * Wraps key/value pairs for Maps and MapIterators
 	 */
-	template <class KeyType, class ValueType >
+	template <typename KeyType, typename ValueType >
 	struct KeyValuePair
 	{
 		/**
@@ -54,10 +54,10 @@ namespace Noble
 	 * A container that stores data that is retrieved using the key it was stored with
 	 * It does not allow multiple objects of the same key to be stored
 	 */
-	template <class KeyType, class ValueType, class Allocator>
+	template <typename KeyType, typename ValueType, typename Allocator>
 	class MapBase
 	{
-		template <class OtherKey, class OtherValue, class OtherAllocator>
+		template <typename OtherKey, typename OtherValue, typename OtherAllocator>
 		friend class MapBase;
 
 	public:

@@ -1,4 +1,4 @@
-[Noble] INFO: Noble Engine Early Dev - Feb 15 2020
+[Noble] INFO: Noble Engine Early Dev - Feb 17 2020
 [Noble] INFO: Loading configuration from file
 [Noble] INFO: Read 1937 bytes from file, which is different from requested 1938 bytes
 [Noble] DEBUG: Creating game window

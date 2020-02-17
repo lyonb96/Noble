@@ -9,11 +9,7 @@
 
 namespace Noble
 {
-#ifdef NOBLE_DEBUG
-	typedef MemoryArena<BlockAllocator, SimpleTrackingPolicy> GameMemoryArena;
-#else
-	typedef MemoryArena<BlockAllocator, NoTrackingPolicy> GameMemoryArena;
-#endif
+	typedef MemoryArena<BlockAllocator, DefaultTracking> GameMemoryArena;
 
 	class Controller;
 
@@ -35,7 +31,7 @@ namespace Noble
 		 * Spawns a new GameObject of the specified type
 		 * Optionally takes a location at which to spawn the GameObject
 		 */
-		template <class T>
+		template <typename T>
 		T* SpawnGameObject(Vector3f spawnPos = Vector3f(0.0F))
 		{
 			T* object = (T*)BuildGameObject(T::GetStaticClass());
@@ -55,7 +51,7 @@ namespace Noble
 		/**
 		 * Creates a new Component that is part of the given GameObject
 		 */
-		template <class T>
+		template <typename T>
 		T* CreateComponent(GameObject* owner, const NIdentifier& name)
 		{
 			CHECK(owner);
@@ -78,7 +74,7 @@ namespace Noble
 		 * Creates a new Controller of the requested type
 		 * Can optionally possess a GameObject upon creation
 		 */
-		template <class T>
+		template <typename T>
 		T* CreateController(GameObject* possess = nullptr)
 		{
 			T* controller = (T*)BuildController(T::GetStaticClass());

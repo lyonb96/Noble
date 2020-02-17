@@ -169,6 +169,7 @@
     <ClInclude Include="..\Source\Core\Asset.h" />
     <ClInclude Include="..\Source\Core\AssetManager.h" />
     <ClInclude Include="..\Source\Core\BitStream.h" />
+    <ClInclude Include="..\Source\Core\Camera.h" />
     <ClInclude Include="..\Source\Core\Class.h" />
     <ClInclude Include="..\Source\Core\Component.h" />
     <ClInclude Include="..\Source\Core\Config.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="..\Source\Core\StaticMeshComponent.h" />
     <ClInclude Include="..\Source\Core\TestGame.h" />
     <ClInclude Include="..\Source\Core\TestGameObject.h" />
+    <ClInclude Include="..\Source\Core\TestPlayer.h" />
     <ClInclude Include="..\Source\Core\Texture2D.h" />
     <ClInclude Include="..\Source\Core\Time.h" />
     <ClInclude Include="..\Source\Core\Engine.h" />
@@ -207,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\AssetManager.cpp" />
+    <ClCompile Include="..\Source\Core\Camera.cpp" />
     <ClCompile Include="..\Source\Core\Class.cpp" />
     <ClCompile Include="..\Source\Core\Component.cpp" />
     <ClCompile Include="..\Source\Core\Config.cpp" />
@@ -226,6 +229,7 @@
     <ClCompile Include="..\Source\Core\StaticMeshComponent.cpp" />
     <ClCompile Include="..\Source\Core\TestGame.cpp" />
     <ClCompile Include="..\Source\Core\TestGameObject.cpp" />
+    <ClCompile Include="..\Source\Core\TestPlayer.cpp" />
     <ClCompile Include="..\Source\Core\Texture2D.cpp" />
     <ClCompile Include="..\Source\Core\Time.cpp" />
     <ClCompile Include="..\Source\Core\Engine.cpp" />

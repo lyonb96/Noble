@@ -14,7 +14,7 @@ namespace Noble
 	 * and CheckIndex().
 	 * Based on Epic's TIndexedContainerIterator from UE4
 	 */
-	template <class Container, class ElementType>
+	template <typename Container, typename ElementType>
 	class IndexedContainerIterator
 	{
 	public:
@@ -174,10 +174,10 @@ namespace Noble
 	 * Elements are required to have a copy constructor, and users should
 	 * not hold pointers to elements in the array, as they may be moved.
 	 */
-	template <class ElementType, class Allocator>
+	template <typename ElementType, typename Allocator>
 	class ArrayBase
 	{
-		template <class OtherElemType, class OtherAlloc>
+		template <typename OtherElemType, typename OtherAlloc>
 		friend class ArrayBase;
 
 	public:

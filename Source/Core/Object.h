@@ -12,8 +12,11 @@
 
 namespace Noble
 {
-	// Provides some real-time class information
+	// Provides some runtime class information
 	struct NClass;
+
+	// Constant to represent invalid Object IDs
+	constexpr const U64 InvalidObjectID = std::numeric_limits<U64>::max();
 
 	/**
 	 * The Object class provides facilities for runtime creation by ID,
@@ -30,7 +33,7 @@ namespace Noble
 		 *
 		 * Template argument must be a registered subclass of Object
 		 */
-		template <class T>
+		template <typename T>
 		T* IsA()
 		{
 			NClass* Tclass = T::GetStaticClass();
@@ -92,7 +95,7 @@ namespace Noble
 		 * Creates a class instance from a template parameter
 		 * Template parameter must be a registered Object subclass
 		 */
-		template <class T>
+		template <typename T>
 		static Object* CreateInstance(void* ptr)
 		{
 			return CreateInstance(T::GetStaticClass(), ptr);

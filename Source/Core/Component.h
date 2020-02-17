@@ -71,7 +71,7 @@ namespace Noble
 		/**
 		 * Sets this component's local rotation
 		 */
-		FORCEINLINE void SetRotation(const Quaternion& newRot) { m_Transform.Rotation = newRot; }
+		FORCEINLINE void SetRotation(const Rotator& newRot) { m_Transform.Rotation = newRot; }
 
 		/**
 		 * Sets this component's local scale
@@ -86,7 +86,7 @@ namespace Noble
 		/**
 		 * Returns this component's rotation - note that it returns a reference
 		 */
-		Quaternion& GetRotation() { return m_Transform.Rotation; }
+		Rotator& GetRotation() { return m_Transform.Rotation; }
 
 		/**
 		 * Returns this component's scale - note that it returns a reference

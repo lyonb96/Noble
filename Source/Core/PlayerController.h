@@ -19,6 +19,11 @@ namespace Noble
 		PlayerController(bool local = false);
 
 		/**
+		 * Overrides possession to handle camera selection
+		 */
+		virtual void Possess(GameObject* obj) override;
+
+		/**
 		 * Called each frame to check bindings and forward changes to the possessed object
 		 */
 		virtual void Update() override;

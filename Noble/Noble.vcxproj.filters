@@ -177,6 +177,12 @@
     <ClInclude Include="..\Source\Core\Input.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\TestPlayer.h">
+      <Filter>Header Files\Gameplay\Testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Camera.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -262,6 +268,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Input.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\TestPlayer.cpp">
+      <Filter>Source Files\Gameplay\Testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Camera.cpp">
+      <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

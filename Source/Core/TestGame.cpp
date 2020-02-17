@@ -74,7 +74,7 @@ namespace Noble
 
 		m_TestObject1->SetPosition(Vector3f(5, 5, 5));
 		m_TestObject2->SetScale(Vector3f(2, 2, 2));
-		m_TestObject3->SetRotation(glm::angleAxis(x, Vector3f(1, 0, 0)));
+		m_TestObject3->SetRotation({x, 0.0F, 0.0F});
 		m_TestObject3->SetPosition(Vector3f(5, y * 5.0F, 0));
 
 		if (Input::GetActionBinding(HASH("Fire"))->IsJustPressed())

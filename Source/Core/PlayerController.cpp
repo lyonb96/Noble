@@ -9,6 +9,20 @@ namespace Noble
 		: m_IsLocal(local)
 	{}
 
+	void PlayerController::Possess(GameObject* obj)
+	{
+		Super::Possess(obj);
+
+		if (m_Object)
+		{
+			//CameraComponent* cam = obj->GetComponent<CameraComponent>();
+			//if (cam)
+			//{
+			//	m_Camera = cam->GetCamera();
+			//}
+		}
+	}
+
 	void PlayerController::Update()
 	{
 		if (!m_IsLocal)

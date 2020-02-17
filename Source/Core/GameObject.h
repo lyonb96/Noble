@@ -67,7 +67,7 @@ namespace Noble
 		/**
 		 * Sets the rotation of the Root Component
 		 */
-		void SetRotation(const Quaternion& newRot) const;
+		void SetRotation(const Rotator& newRot) const;
 
 		/**
 		 * Sets the scale of the Root Component
@@ -82,7 +82,7 @@ namespace Noble
 		/**
 		 * Returns the rotation of the Root Component
 		 */
-		Quaternion GetRotation() const;
+		Rotator GetRotation() const;
 
 		/**
 		 * Returns the scale of the Root Component
@@ -93,6 +93,11 @@ namespace Noble
 		 * Returns the current Controller of this GameObject, if any
 		 */
 		Controller* GetController() const;
+
+		/**
+		 * Returns the array of components for this GameObject
+		 */
+		const Array<Component*>& GetComponents() const;
 
 	public:
 
@@ -144,7 +149,7 @@ namespace Noble
 		 * Returns a pointer to the first component of the specified type
 		 * whose name matches the given parameter
 		 */
-		template <class T>
+		template <typename T>
 		T* GetComponent(const NIdentifier& name)
 		{
 			for (Component* comp : m_Components)
@@ -165,7 +170,7 @@ namespace Noble
 		/**
 		 * Returns a pointer to the first component of the specified type
 		 */
-		template <class T>
+		template <typename T>
 		T* GetComponent()
 		{
 			for (Component* comp : m_Components)
@@ -190,7 +195,7 @@ namespace Noble
 		 * Creates a child component and adds it to the list of members
 		 * This function can only be called from the constructor!
 		 */
-		template <class T>
+		template <typename T>
 		T* CreateChildComponent(const NIdentifier& name = ID(""))
 		{
 			return GetWorld()->CreateComponent<T>(this, name);

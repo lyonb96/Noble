@@ -46,7 +46,7 @@ namespace Noble
 		/**
 		 * Creates a registration based on the given Object subclass and automatically registers it
 		 */
-		template <class T>
+		template <typename T>
 		static NClass RegisterNClass()
 		{
 			// Constructor also stores it to the Object registry

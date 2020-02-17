@@ -7,7 +7,7 @@ namespace Noble
 	Map<NIdentifier, NClass*> Object::ObjectRegistry;
 	U64 Object::ObjectCount = 0;
 
-	Object* Object::CreateInstance(NClass* const type, void* ptr)
+	Object* Object::CreateInstance(NClass* type, void* ptr)
 	{
 		CHECK(type && ptr);
 

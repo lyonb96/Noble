@@ -14,7 +14,7 @@ namespace Noble
 	 */
 	class Controller : public Object
 	{
-		OBJECT_DECL(Controller, Object);
+		OBJECT_DECL(Controller, Object)
 	public:
 
 		/**

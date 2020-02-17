@@ -43,7 +43,7 @@ namespace Noble
 		/**
 		 * Sets the uniform to a new value
 		 */
-		template <class T>
+		template <typename T>
 		void SetUniform(const NIdentifier& id, const T& newVal)
 		{
 			CHECK(m_Shader);
@@ -83,7 +83,7 @@ namespace Noble
 		/**
 		 * Sets the data at the offset to a new value
 		 */
-		template <class T>
+		template <typename T>
 		void SetUniformData(U32 offset, const T& newValue)
 		{
 			*((T*)(m_UniformBuffer + offset)) = newValue;

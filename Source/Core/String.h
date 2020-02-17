@@ -11,12 +11,12 @@ namespace Noble
 {
 	// String character typedef, in case I want to jump up to 16-bit chars eventually
 	typedef char s_char;
-	static const size_t CHAR_SIZE = sizeof(s_char);
+	constexpr const size_t CHAR_SIZE = sizeof(s_char);
 
 	/**
 	 * Primary string class for the engine, uses any Container allocator
 	 */
-	template <class Allocator>
+	template <typename Allocator>
 	class NStringBase
 	{
 	public:
@@ -89,7 +89,7 @@ namespace Noble
 		/**
 		 * Assign to string from literal
 		 */
-		NStringBase& operator=(const char* str)
+		NStringBase& operator=(const s_char* str)
 		{
 			Reset();
 			AppendString(str, std::strlen(str));
@@ -417,22 +417,33 @@ namespace Noble
 	using NStringFixed = NStringBase<FixedContainerAllocator<s_char, N>>;
 
 	/**
-	 * Returns a pointer to a permanent place in memory for the NString's contents
+	 * Returns a pointer to a permanent copy of the given string
 	 */
-	template <class Alloc>
-	const char* MakeStringPermanent(const NStringBase<Alloc>& str)
+	FORCEINLINE const s_char* MakeStringPermanent(const s_char* in, Size len = 0)
 	{
 		// Since the strings need to be permanent, the buffer is just a static var in the function
 		// Technically this leaves memory unfreed, but it will be freed once the engine shuts down
 		// and the strings may be required up until that point anyway
 		static MemoryArena<BlockAllocator, DefaultTracking> PermStringBuffer;
-		
+
+		len = (len == 0 ? std::strlen(in) : len);
+
 		// Alloc buffer for the new string (+ 1 is required for null term since GetLength() doesn't include it)
-		char* permStr = static_cast<char*>(NE_BUFFER_ALLOC(PermStringBuffer, (str.GetLength() + 1) * CHAR_SIZE, NOBLE_DEFAULT_ALIGN));
+		s_char* permStr = static_cast<s_char*>(NE_BUFFER_ALLOC(PermStringBuffer, (len + 1) * CHAR_SIZE, NOBLE_DEFAULT_ALIGN));
 		// Copy the contents into the buffer
-		Memory::Memcpy(permStr, str.GetCharArray(), str.GetLength() + 1);
+		Memory::Memcpy(permStr, in, len + 1);
 
 		return permStr;
+
+	}
+
+	/**
+	 * Returns a pointer to a permanent place in memory for the NString's contents
+	 */
+	template <typename Alloc>
+	const s_char* MakeStringPermanent(const NStringBase<Alloc>& str)
+	{
+		return MakeStringPermanent(str.GetCharArray(), str.GetLength());
 	}
 
 	/**

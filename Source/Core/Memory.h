@@ -12,7 +12,7 @@ namespace Noble
 	namespace MemHelper
 	{
 
-		template <class T>
+		template <typename T>
 		struct IsPOD
 		{
 			static const bool Value = std::is_pod<T>::value;
@@ -766,7 +766,7 @@ namespace Noble
 	 * Unlike previous implementations, the Allocator instance is what handles
 	 * actual OS calls to allocate memory.
 	 */
-	template <class Allocator, class Tracker>
+	template <typename Allocator, typename Tracker>
 	class MemoryArena
 	{
 	public:
@@ -826,7 +826,7 @@ namespace Noble
 	/**
 	 * Allocates space for an array and calls placement new on its members
 	 */
-	template <class Type, class Arena>
+	template <typename Type, typename Arena>
 	Type* NewArray(Arena& arena, Size count, const SourceInfo& sourceInfo)
 	{
 		Size sizeOfObj = sizeof(Type);
@@ -866,7 +866,7 @@ namespace Noble
 	 * Delete function, just provides a clean place for calls to NE_DELETE to redirect
 	 * Also determines if destructor needs to be called
 	 */
-	template <class Arena, class Type>
+	template <typename Arena, typename Type>
 	void Delete(Arena& arena, Type* ptr)
 	{
 		Delete(arena, ptr, POD_CHECK(Type));
@@ -875,7 +875,7 @@ namespace Noble
 	/**
 	 * POD delete function. POD types don't need their destructors to be called on delete
 	 */
-	template <class Arena, class Type>
+	template <typename Arena, typename Type>
 	void Delete(Arena& arena, Type* ptr, MemHelper::PODType)
 	{
 		arena.Free(ptr);
@@ -884,7 +884,7 @@ namespace Noble
 	/**
 	 * Non-POD delete function, calls destructor before calling Free
 	 */
-	template <class Arena, class Type>
+	template <typename Arena, typename Type>
 	void Delete(Arena& arena, Type* ptr, MemHelper::NonPODType)
 	{
 		ptr->~Type();
@@ -894,7 +894,7 @@ namespace Noble
 	/**
 	 * Specialty function for deleting arrays, first delegates it to POD or non-POD
 	 */
-	template <class Arena, class Type>
+	template <typename Arena, typename Type>
 	void DeleteArray(Type* ptr, Arena& arena)
 	{
 		DeleteArray(ptr, arena, POD_CHECK(Type));
@@ -903,7 +903,7 @@ namespace Noble
 	/**
 	 * POD types don't need their destructor called, so find the original address and free it
 	 */
-	template <class Arena, class Type>
+	template <typename Arena, typename Type>
 	void DeleteArray(Type* ptr, Arena& arena, MemHelper::PODType)
 	{
 		union
@@ -922,7 +922,7 @@ namespace Noble
 	/**
 	 * Non-POD types need their destructor called in reverse order
 	 */
-	template <class Arena, class Type>
+	template <typename Arena, typename Type>
 	void DeleteArray(Type* ptr, Arena& arena, MemHelper::NonPODType)
 	{
 		union
@@ -954,7 +954,7 @@ namespace Noble
 	/**
 	 * Allocates a buffer of the given size in the arena
 	 */
-	template <class Arena>
+	template <typename Arena>
 	void* AllocBuffer(Arena& arena, Size size, Size align, const SourceInfo& si)
 	{
 		return arena.Allocate(size, align, si);
@@ -963,7 +963,7 @@ namespace Noble
 	/**
 	 * Frees a buffer that was allocated from the given arena
 	 */
-	template <class Arena>
+	template <typename Arena>
 	void FreeBuffer(Arena& arena, void* buf)
 	{
 		arena.Free(buf);
@@ -973,14 +973,14 @@ namespace Noble
 /**
  * Overloaded new operator to support MemoryArena allocs
  */
-template <class Arena>
+template <typename Arena>
 void* operator new(Noble::Size size, Noble::Size align, Arena& arena, const ::Noble::SourceInfo& sourceInfo)
 {
 	return arena.Allocate(size, align, sourceInfo);
 }
 
 // Have to have a matching delete operator in case the overloaded new fails
-template <class Arena>
+template <typename Arena>
 void operator delete(void* ptr, Noble::Size align, Arena& arena, const ::Noble::SourceInfo& sourceInfo)
 {
 	Noble::Delete(arena, ptr);

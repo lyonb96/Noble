@@ -22,7 +22,7 @@ namespace Noble
 		m_RootComponent->SetPosition(newPos);
 	}
 
-	void GameObject::SetRotation(const Quaternion& newRot) const
+	void GameObject::SetRotation(const Rotator& newRot) const
 	{
 		CHECK(m_RootComponent != nullptr);
 
@@ -43,7 +43,7 @@ namespace Noble
 		return m_RootComponent->GetPosition();
 	}
 
-	Quaternion GameObject::GetRotation() const
+	Rotator GameObject::GetRotation() const
 	{
 		CHECK(m_RootComponent != nullptr);
 
@@ -60,6 +60,11 @@ namespace Noble
 	Controller* GameObject::GetController() const
 	{
 		return m_Controller;
+	}
+
+	const Array<Component*>& GameObject::GetComponents() const
+	{
+		return m_Components;
 	}
 
 	void GameObject::AddComponent(Component* comp)
