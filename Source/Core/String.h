@@ -596,6 +596,14 @@ namespace Noble
 		// Hash of the string
 		U32 m_Hash;
 	};
+
+	/**
+	 * Creates an NIdentifier from a string literal at compile-time
+	 */
+	constexpr NIdentifier operator "" _ID(const char* in, Size len)
+	{
+		return NIdentifier(in, len, HashString(in));
+	}
 }
 
 /**

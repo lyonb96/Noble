@@ -72,26 +72,20 @@ namespace Noble
 
 		/**
 		 * Creates a new Controller of the requested type
-		 * Can optionally possess a GameObject upon creation
+		 * 
 		 */
 		template <typename T>
-		T* CreateController(GameObject* possess = nullptr)
+		T* CreateController()
 		{
 			T* controller = (T*)BuildController(T::GetStaticClass());
-
-			if (possess)
-			{
-				controller->Possess(possess);
-			}
 
 			return controller;
 		}
 
 		/**
 		 * Creates a new Controller of the requested type
-		 * Can optionally possess a GameObject upon creation
 		 */
-		Controller* CreateController(NClass* type, GameObject* possess = nullptr);
+		Controller* CreateController(NClass* type);
 
 		/**
 		 * Called each frame - runs logic updates on all spawned GameObjects and Components

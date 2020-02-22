@@ -12,6 +12,8 @@ namespace Noble
 
 		TestPlayer();
 
+		virtual void Update(float tpf) override;
+
 		virtual void OnActionInput(const U32 bindingId, bool state) override;
 
 		virtual void OnAnalogInput(const U32 bindingId, float state) override;

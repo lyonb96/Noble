@@ -177,7 +177,6 @@
     <ClInclude Include="..\Source\Core\FileSystem.h" />
     <ClInclude Include="..\Source\Core\Freelist.h" />
     <ClInclude Include="..\Source\Core\GameInstance.h" />
-    <ClInclude Include="..\Source\Core\GameMode.h" />
     <ClInclude Include="..\Source\Core\GameObject.h" />
     <ClInclude Include="..\Source\Core\HelperMacros.h" />
     <ClInclude Include="..\Source\Core\Map.h" />

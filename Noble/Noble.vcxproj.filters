@@ -165,9 +165,6 @@
     <ClInclude Include="..\Source\Core\GameInstance.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\GameMode.h">
-      <Filter>Header Files\Gameplay</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Controller.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>

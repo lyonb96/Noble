@@ -188,21 +188,32 @@ namespace Noble
 		DWORD dwShare = 0;
 		DWORD dwCreation = 0;
 
+		bool exists = fs::exists(path);
+
 		switch (mode)
 		{
 			case FileMode::FILE_READ:
+				// Only read
 				dwAccess = GENERIC_READ;
+				// Allow shared reading
 				dwShare = FILE_SHARE_READ;
+				// Open existing only
 				dwCreation = OPEN_EXISTING;
 				break;
 			case FileMode::FILE_WRITE_REPLACE:
+				// Only write
 				dwAccess = GENERIC_WRITE;
+				// No share
 				dwShare = 0;
-				dwCreation = TRUNCATE_EXISTING;
+				// Truncate existing, or create if requested (and file doesn't exist)
+				dwCreation = create && !exists ? CREATE_NEW : TRUNCATE_EXISTING;
 				break;
 			case FileMode::FILE_WRITE_APPEND:
+				// Only write
 				dwAccess = GENERIC_WRITE;
+				// No share
 				dwShare = 0;
+				// Create file if it needs to be, or open existin if not
 				dwCreation = create ? OPEN_ALWAYS : OPEN_EXISTING;
 				break;
 		}

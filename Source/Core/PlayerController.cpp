@@ -5,6 +5,8 @@
 
 namespace Noble
 {
+	OBJECT_DEF(PlayerController);
+
 	PlayerController::PlayerController(bool local)
 		: m_IsLocal(local)
 	{}
@@ -26,7 +28,7 @@ namespace Noble
 	void PlayerController::Update()
 	{
 		if (!m_IsLocal)
-			return;
+			//return;
 
 		if (m_Object)
 		{

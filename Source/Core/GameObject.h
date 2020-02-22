@@ -13,9 +13,6 @@ namespace Noble
 	// Class prototype for the Game World
 	class World;
 
-	// Class prototype for Component
-	class Component;
-
 	// Class prototype for Controller
 	class Controller;
 
@@ -187,13 +184,8 @@ namespace Noble
 	protected:
 
 		/**
-		 * Called by the constructor and forwarded to the overridden class
-		 */
-		virtual void ConstructorCallForward() {};
-
-		/**
 		 * Creates a child component and adds it to the list of members
-		 * This function can only be called from the constructor!
+		 * This function should only be called from the constructor!
 		 */
 		template <typename T>
 		T* CreateChildComponent(const NIdentifier& name = ID(""))

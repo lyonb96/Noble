@@ -49,7 +49,9 @@ namespace Noble
 		GameObject* GetOwningObject() const { return m_Owner; }
 
 		/**
-		 * Returns the component's local transform (transform is relative to parent)
+		 * Returns the component's local transform
+		 * This transform is local to this Component's parent Component
+		 * If the Component has no parent, it is relative to the world origin.
 		 */
 		Transform& GetLocalTransform() { return m_Transform; }
 
@@ -79,6 +81,11 @@ namespace Noble
 		FORCEINLINE void SetScale(const Vector3f& newScale) { m_Transform.Scale = newScale; }
 
 		/**
+		 * Enables or disables the Component
+		 */
+		FORCEINLINE void SetEnabled(const bool enabled) { m_Enabled = enabled; }
+
+		/**
 		 * Returns this component's position - note that it returns a reference
 		 */
 		Vector3f& GetPosition() { return m_Transform.Position; }
@@ -92,6 +99,11 @@ namespace Noble
 		 * Returns this component's scale - note that it returns a reference
 		 */
 		Vector3f& GetScale() { return m_Transform.Scale; }
+
+		/**
+		 * Returns true if this Component is enabled, false if it is disabled
+		 */
+		bool IsEnabled() const { return m_Enabled; }
 
 		/**
 		 * Attaches the given component to this one as a child
@@ -125,6 +137,7 @@ namespace Noble
 		GameObject* m_Owner;
 		// This component's parent (may be nullptr)
 		Component* m_ParentComponent;
-
+		// Enable state - component does not tick or contribute to scene if disabled
+		bool m_Enabled;
 	};
 }

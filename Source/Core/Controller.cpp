@@ -12,7 +12,11 @@ namespace Noble
 
 	void Controller::Possess(GameObject* obj)
 	{
-		CHECK(obj);
+		if (!obj)
+		{
+			NE_LOG_WARNING("Cannot possess null object");
+			return;
+		}
 
 		if (obj->GetController() != nullptr)
 		{

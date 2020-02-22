@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include "Globals.h"
 #include "GameInput.h"
+#include "TestPlayer.h"
+#include "PlayerController.h"
 
 namespace Noble
 {
@@ -76,17 +78,19 @@ namespace Noble
 		m_TestObject2->SetScale(Vector3f(2, 2, 2));
 		m_TestObject3->SetRotation({x, 0.0F, 0.0F});
 		m_TestObject3->SetPosition(Vector3f(5, y * 5.0F, 0));
-
-		if (Input::GetActionBinding(HASH("Fire"))->IsJustPressed())
+		
+		static bool created = false;
+		if (Input::GetActionBinding(HASH("Fire"))->IsJustPressed() && !created)
 		{
+			created = true;
+
 			BENCHMARK(ObjectCreation);
 			// spawn another object
-			auto newObj = GetWorld()->SpawnGameObject<TestGameObject>(Vector3f(0, -5, 0));
-			newObj->SetScale(Vector3f(2.0F));
+			auto newObj = GetWorld()->SpawnGameObject<TestPlayer>(Vector3f(0, -5, 0));
 			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(m_TestMesh);
 			newObj->GetRootComponent()->IsA<StaticMeshComponent>()->SetMaterial(m_TestMat);
-			newObj->GetSecondMesh()->SetMesh(m_TestMesh);
-			newObj->GetSecondMesh()->SetMaterial(m_TestMat);
+			auto newPC = GetWorld()->CreateController<PlayerController>();
+			newPC->Possess(newObj);
 		}
 	}
 }

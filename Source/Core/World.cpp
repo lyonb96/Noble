@@ -34,40 +34,51 @@ namespace Noble
 		return comp;
 	}
 
-	Controller* World::CreateController(NClass* type, GameObject* possess)
+	Controller* World::CreateController(NClass* type)
 	{
 		CHECK(type);
 
 		Controller* cntrl = BuildController(type);
-
-		if (possess)
-		{
-			cntrl->Possess(possess);
-		}
 
 		return cntrl;
 	}
 
 	void World::Update()
 	{
+		for (Controller* control : m_Controllers)
+		{
+			control->Update();
+		}
+
 		for (GameObject* obj : m_GameObjects)
 		{
 			obj->Update(Time::GetDeltaTime());
 			for (Component* comp : obj->m_Components)
 			{
-				comp->Update(Time::GetDeltaTime());
+				if (comp->IsEnabled())
+				{
+					comp->Update(Time::GetDeltaTime());
+				}
 			}
 		}
 	}
 
 	void World::FixedUpdate()
 	{
+		for (Controller* control : m_Controllers)
+		{
+			control->FixedUpdate();
+		}
+
 		for (GameObject* obj : m_GameObjects)
 		{
 			obj->FixedUpdate();
 			for (Component* comp : obj->m_Components)
 			{
-				comp->FixedUpdate();
+				if (comp->IsEnabled())
+				{
+					comp->FixedUpdate();
+				}
 			}
 		}
 	}

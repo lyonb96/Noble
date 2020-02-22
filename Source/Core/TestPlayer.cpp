@@ -1,12 +1,26 @@
 #include "TestPlayer.h"
 
+#include "Time.h"
+#include "StaticMeshComponent.h"
+#include "World.h"
+
 namespace Noble
 {
 	OBJECT_DEF(TestPlayer)
 
 	TestPlayer::TestPlayer()
-		: m_MoveDir(0)
-	{}
+		: Super(), m_MoveDir(0)
+	{
+		StaticMeshComponent* smc = CreateChildComponent<StaticMeshComponent>(ID("PlayerMesh"));
+		m_RootComponent = smc;
+
+		// Build a camera component
+	}
+
+	void TestPlayer::Update(float tpf)
+	{
+		GetRootComponent()->SetPosition(GetRootComponent()->GetPosition() + (m_MoveDir * Time::GetDeltaTime() * 4.0F));
+	}
 
 	void TestPlayer::OnActionInput(const U32 bindingId, bool state)
 	{
@@ -20,7 +34,7 @@ namespace Noble
 				m_MoveDir.z = state;
 				break;
 			case HASH("MoveRight"):
-				m_MoveDir.x = state;
+				m_MoveDir.x = -state;
 				break;
 			case HASH("LookUp"):
 				break;
