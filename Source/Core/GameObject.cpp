@@ -23,7 +23,7 @@ namespace Noble
 			return;
 		}
 
-		m_RootComponent->SetPosition(newPos);
+		m_RootComponent->SetLocalPosition(newPos);
 	}
 
 	void GameObject::SetRotation(const Rotator& newRot) const
@@ -34,7 +34,7 @@ namespace Noble
 			return;
 		}
 
-		m_RootComponent->SetRotation(newRot);
+		m_RootComponent->SetLocalRotation(newRot);
 	}
 
 	void GameObject::SetScale(const Vector3f& newScale) const
@@ -45,7 +45,7 @@ namespace Noble
 			return;
 		}
 
-		m_RootComponent->SetScale(newScale);
+		m_RootComponent->SetLocalScale(newScale);
 	}
 
 	Vector3f GameObject::GetPosition() const
@@ -56,7 +56,7 @@ namespace Noble
 			return Vector3f(0.0F);
 		}
 
-		return m_RootComponent->GetPosition();
+		return m_RootComponent->GetLocalPosition();
 	}
 
 	Rotator GameObject::GetRotation() const
@@ -67,7 +67,7 @@ namespace Noble
 			return Rotator(0.0F, 0.0F, 0.0F);
 		}
 
-		return m_RootComponent->GetRotation();
+		return m_RootComponent->GetLocalRotation();
 	}
 
 	Vector3f GameObject::GetScale() const
@@ -78,7 +78,7 @@ namespace Noble
 			return Vector3f(1.0F);
 		}
 
-		return m_RootComponent->GetScale();
+		return m_RootComponent->GetLocalScale();
 	}
 
 	Controller* GameObject::GetController() const

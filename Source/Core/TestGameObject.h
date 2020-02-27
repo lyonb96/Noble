@@ -23,6 +23,6 @@ namespace Noble
 
 		virtual void OnSpawn() override;
 
-		virtual void Update(float tpf) override;
+		virtual void Update() override;
 	};
 }

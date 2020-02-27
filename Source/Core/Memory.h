@@ -4,21 +4,14 @@
 #include <type_traits>
 
 // Macro to shorten the POD type evaluation
-#define POD_CHECK(TYPE) ::Noble::MemHelper::BoolToType<MemHelper::IsPOD<TYPE>::Value>()
+#define POD_CHECK(TYPE) ::Noble::MemHelper::BoolToType<std::is_pod_v<TYPE>>()
 
 namespace Noble
 {
 
 	namespace MemHelper
 	{
-
-		template <typename T>
-		struct IsPOD
-		{
-			static const bool Value = std::is_pod<T>::value;
-		};
-
-		template<bool val>
+		template<bool>
 		struct BoolToType
 		{};
 

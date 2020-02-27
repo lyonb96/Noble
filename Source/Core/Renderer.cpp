@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 #include "Config.h"
+#include "Engine.h"
 #include "Globals.h"
 #include "Input.h" // Needed to pass input messages
 #include "Logger.h"
@@ -90,7 +91,7 @@ namespace Noble
 		m_WindowY = (displaySize.bottom - m_WindowHeight) / 2;
 	}
 
-	bool Renderer::CreateGameWindow()
+	bool Renderer::CreateGameWindow(const char* windowName)
 	{
 		bool result = false;
 		HINSTANCE hInst = GetModuleHandle(NULL);
@@ -107,7 +108,7 @@ namespace Noble
 		AdjustAndCenterWindow();
 
 		m_WindowHandle = CreateWindow(
-			m_WindowClass, "Noble Engine",
+			m_WindowClass, windowName,
 			m_CurrentStyle,
 			m_WindowX, m_WindowY,
 			m_WindowWidth, m_WindowHeight,
@@ -119,11 +120,14 @@ namespace Noble
 		return true;
 	}
 
-	bool Renderer::Initialize()
+	bool Renderer::Initialize(const char* windowName)
 	{
 		NE_LOG_DEBUG("Creating game window");
 
 		bool result = true;
+
+		// Grab pointer to camera manager
+		m_CamMgr = g_Engine->GetCameraManager();
 
 		// Retrieve resolution settings from config
 		json& graphics = Config::GetSubConfig("Graphics");
@@ -141,7 +145,7 @@ namespace Noble
 		}
 
 		// Create window
-		result = CreateGameWindow();
+		result = CreateGameWindow(windowName);
 		if (!result)
 		{
 			return false;
@@ -166,16 +170,28 @@ namespace Noble
 		bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x222222FF);
 		bgfx::setViewRect(0, 0, 0, initData.resolution.width, initData.resolution.height);
 
+		// TODO: Fix the constant near-far plane settings
+		m_CamMgr->UpdateRenderData(m_RenderWidth, m_RenderHeight, 0.1F, 200.0F);
+
 		return true;
 	}
 
 	void Renderer::Frame()
 	{
+		// Grab the most up-to-date camera position data
+		Matrix4x4f view = m_CamMgr->GetViewMatrix();
+		Matrix4x4f proj = m_CamMgr->GetProjectionMatrix();
+
+		// Set the cam position on the pipeline
+		bgfx::setViewTransform(0, &view, &proj);
+
+		// Draw scene components (this is very much subject to change)
 		for (SceneComponent* sc : GetWorld()->m_SceneComponents)
 		{
 			sc->Draw();
 		}
 
+		// Do the render thing
 		bgfx::touch(0);
 		bgfx::frame();
 	}

@@ -180,6 +180,12 @@
     <ClInclude Include="..\Source\Core\Camera.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\CameraComponent.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\CameraManager.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -270,6 +276,12 @@
       <Filter>Source Files\Gameplay\Testing</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Core\Camera.cpp">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\CameraManager.cpp">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\CameraComponent.cpp">
       <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>

@@ -95,7 +95,7 @@ namespace Noble
 		Config::LoadConfig();
 
 		// Create the game window and start the renderer
-		result = m_Renderer.Initialize();
+		result = m_Renderer.Initialize(inst->GetGameName());
 		if (!result)
 		{
 			NE_LOG_FATAL("Renderer failed to initialize");
@@ -216,5 +216,7 @@ namespace Noble
 		m_GameInstance->Update();
 		// Then perform world updates
 		m_World.Update();
+		// Last, update camera after everything else is done
+		m_CamManager.Update();
 	}
 }

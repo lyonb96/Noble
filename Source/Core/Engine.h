@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include "World.h"
 #include "GameInstance.h"
+#include "CameraManager.h"
 
 namespace Noble
 {
@@ -43,6 +44,11 @@ namespace Noble
 		 */
 		bool Stop();
 
+		/**
+		 * Returns a pointer to the game's Camera Manager
+		 */
+		CameraManager* GetCameraManager() { return &m_CamManager; };
+
 	protected:
 
 		/**
@@ -65,6 +71,9 @@ namespace Noble
 		World m_World;
 		// Handles asset loading and unloading
 		AssetManager m_AssetManager;
+		// Camera manager instance
+		CameraManager m_CamManager;
+
 	};
 }
 

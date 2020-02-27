@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CameraManager.h"
 #include "Types.h"
 #include "WindowsMinimal.h"
 
@@ -25,7 +26,7 @@ namespace Noble
 		/**
 		 * Creates the game window and initializes the renderer
 		 */
-		bool Initialize();
+		bool Initialize(const char* windowName);
 
 		/**
 		 * Shuts down the renderer and destroys the game window
@@ -49,7 +50,7 @@ namespace Noble
 		/**
 		 * Creates the game's window with the stored width and height
 		 */
-		bool CreateGameWindow();
+		bool CreateGameWindow(const char* windowName);
 
 		/**
 		 * Adjusts the window's size and centers it
@@ -77,5 +78,8 @@ namespace Noble
 		I32 m_WindowX;
 		// Window Y position
 		I32 m_WindowY;
+		// Handles camera positioning for the main game scene
+		CameraManager* m_CamMgr;
+
 	};
 }

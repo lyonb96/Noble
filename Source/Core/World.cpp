@@ -38,9 +38,7 @@ namespace Noble
 	{
 		CHECK(type);
 
-		Controller* cntrl = BuildController(type);
-
-		return cntrl;
+		return BuildController(type);
 	}
 
 	void World::Update()
@@ -52,12 +50,12 @@ namespace Noble
 
 		for (GameObject* obj : m_GameObjects)
 		{
-			obj->Update(Time::GetDeltaTime());
+			obj->Update();
 			for (Component* comp : obj->m_Components)
 			{
 				if (comp->IsEnabled())
 				{
-					comp->Update(Time::GetDeltaTime());
+					comp->Update();
 				}
 			}
 		}

@@ -64,15 +64,7 @@ namespace Noble
 
 		float x = glm::sin(test);
 		float y = glm::cos(test);
-		//float x = 1.0F, y = 1.0F;
 		float sinTest = glm::sin(test);
-
-		{
-			Matrix4x4f view = glm::lookAt(Vector3f(x * 15.0F, 15, y * 15.0F), Vector3f(0, 0, 0), Vector3f(0, 1, 0));
-			Matrix4x4f proj = glm::perspectiveFov(70.0F, 1280.0F, 720.0F, 0.1F, 100.0F);
-
-			bgfx::setViewTransform(0, &view[0][0], &proj[0][0]);
-		}
 
 		m_TestObject1->SetPosition(Vector3f(5, 5, 5));
 		m_TestObject2->SetScale(Vector3f(2, 2, 2));
@@ -95,4 +87,4 @@ namespace Noble
 	}
 }
 
-DEFINE_GAME_INSTANCE(Noble::TestGame, "Test Game");
+DEFINE_GAME_INSTANCE(Noble::TestGame, "Noble Engine Test");

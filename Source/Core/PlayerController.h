@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Controller.h"
+#include "CameraComponent.h"
 
 namespace Noble
 {
@@ -16,12 +17,7 @@ namespace Noble
 		/**
 		 * Default constructor
 		 */
-		PlayerController(bool local = false);
-
-		/**
-		 * Overrides possession to handle camera selection
-		 */
-		virtual void Possess(GameObject* obj) override;
+		PlayerController();
 
 		/**
 		 * Called each frame to check bindings and forward changes to the possessed object
@@ -33,9 +29,12 @@ namespace Noble
 		 */
 		virtual void FixedUpdate() override;
 
+		/**
+		 * Overridden to handle camera selection
+		 */
+		virtual void Possess(GameObject* obj) override;
+
 	private:
 
-		// True if this PlayerController is the local player, not a networked player
-		bool m_IsLocal;
 	};
 }

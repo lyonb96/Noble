@@ -109,9 +109,13 @@ namespace Noble
 	void Logger::ClearLog()
 	{
 		// Fill out the log name and print to the file
-		char logname[24];
-		sprintf_s(&logname[0], 24, "LogFile%i.txt", ++m_LogWrites);
-		PrintLogInternal(logname);
+		NString str;
+		str.Reserve(24);
+		str += "LogFile";
+		str.Append<U8>("%u", (++m_LogWrites));
+		str += ".txt";
+
+		PrintLogInternal(str.GetCharArray());
 
 		// Clear the buffer
 		memset(m_LogBuffer, 0, LOG_BUFFER_SIZE);

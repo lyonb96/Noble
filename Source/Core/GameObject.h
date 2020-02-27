@@ -113,7 +113,7 @@ namespace Noble
 		/**
 		 * Called once each frame for every GameObject to complete frame-by-frame logic
 		 */
-		virtual void Update(float tpf) {}
+		virtual void Update() {}
 
 		/**
 		 * Called at a fixed rate, regardless of framerate

@@ -2,34 +2,29 @@
 
 #include "GameInput.h"
 #include "GameObject.h"
+#include "Globals.h"
+#include "Engine.h"
 
 namespace Noble
 {
 	OBJECT_DEF(PlayerController);
 
-	PlayerController::PlayerController(bool local)
-		: m_IsLocal(local)
+	PlayerController::PlayerController()
 	{}
 
 	void PlayerController::Possess(GameObject* obj)
 	{
 		Super::Possess(obj);
 
-		if (m_Object)
+		CameraComponent* cam = obj->GetComponent<CameraComponent>();
+		if (cam)
 		{
-			//CameraComponent* cam = obj->GetComponent<CameraComponent>();
-			//if (cam)
-			//{
-			//	m_Camera = cam->GetCamera();
-			//}
+			g_Engine->GetCameraManager()->SetActiveCamera(cam);
 		}
 	}
 
 	void PlayerController::Update()
 	{
-		if (!m_IsLocal)
-			//return;
-
 		if (m_Object)
 		{
 			// Forward action inputs to possessed object

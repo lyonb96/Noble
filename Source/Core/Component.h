@@ -28,7 +28,7 @@ namespace Noble
 		/**
 		 * Called each frame to update logic
 		 */
-		virtual void Update(float tpf) {}
+		virtual void Update() {}
 
 		/**
 		 * Called at a fixed interval (default 60/sec) for fixed-step logic
@@ -68,17 +68,17 @@ namespace Noble
 		/**
 		 * Sets this component's local position
 		 */
-		FORCEINLINE void SetPosition(const Vector3f& newPos) { m_Transform.Position = newPos; }
+		FORCEINLINE void SetLocalPosition(const Vector3f& newPos) { m_Transform.Position = newPos; }
 
 		/**
 		 * Sets this component's local rotation
 		 */
-		FORCEINLINE void SetRotation(const Rotator& newRot) { m_Transform.Rotation = newRot; }
+		FORCEINLINE void SetLocalRotation(const Rotator& newRot) { m_Transform.Rotation = newRot; }
 
 		/**
 		 * Sets this component's local scale
 		 */
-		FORCEINLINE void SetScale(const Vector3f& newScale) { m_Transform.Scale = newScale; }
+		FORCEINLINE void SetLocalScale(const Vector3f& newScale) { m_Transform.Scale = newScale; }
 
 		/**
 		 * Enables or disables the Component
@@ -88,17 +88,17 @@ namespace Noble
 		/**
 		 * Returns this component's position - note that it returns a reference
 		 */
-		Vector3f& GetPosition() { return m_Transform.Position; }
+		Vector3f& GetLocalPosition() { return m_Transform.Position; }
 
 		/**
 		 * Returns this component's rotation - note that it returns a reference
 		 */
-		Rotator& GetRotation() { return m_Transform.Rotation; }
+		Rotator& GetLocalRotation() { return m_Transform.Rotation; }
 
 		/**
 		 * Returns this component's scale - note that it returns a reference
 		 */
-		Vector3f& GetScale() { return m_Transform.Scale; }
+		Vector3f& GetLocalScale() { return m_Transform.Scale; }
 
 		/**
 		 * Returns true if this Component is enabled, false if it is disabled
