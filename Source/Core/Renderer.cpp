@@ -173,6 +173,11 @@ namespace Noble
 		// TODO: Fix the constant near-far plane settings
 		m_CamMgr->UpdateRenderData(m_RenderWidth, m_RenderHeight, 0.1F, 200.0F);
 
+#ifdef NOBLE_DEBUG
+		// enable bgfx debug text in debug mode
+		bgfx::setDebug(BGFX_DEBUG_TEXT);
+#endif
+
 		return true;
 	}
 

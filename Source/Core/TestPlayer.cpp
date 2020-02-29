@@ -6,6 +6,8 @@
 #include "StaticMeshComponent.h"
 #include "World.h"
 
+#include "GameInput.h"
+
 namespace Noble
 {
 	OBJECT_DEF(TestPlayer)
@@ -25,7 +27,9 @@ namespace Noble
 
 	void TestPlayer::Update()
 	{
-		GetRootComponent()->SetLocalPosition(GetRootComponent()->GetLocalPosition() + (m_MoveDir * Time::GetDeltaTime() * 4.0F));
+		Vector3f posAdd = m_MoveDir * Time::GetDeltaTime() * 16.0F;
+		posAdd = (GetRootComponent()->GetLocalRotation().GetMatrix3x3() * posAdd);
+		GetRootComponent()->SetLocalPosition(GetRootComponent()->GetLocalPosition() + posAdd);
 	}
 
 	void TestPlayer::OnActionInput(const U32 bindingId, bool state)
@@ -38,7 +42,7 @@ namespace Noble
 		}
 	}
 
-	void TestPlayer::OnAnalogInput(const U32 bindingId, float state)
+	void TestPlayer::OnAnalogInput(const U32 bindingId, F32 state)
 	{
 		switch (bindingId)
 		{
@@ -49,21 +53,13 @@ namespace Noble
 				m_MoveDir.x = -state;
 				break;
 			case HASH("LookUp"):
-				break;
-			case HASH("LookRight"):
-				break;
-		}
-	}
-
-	void TestPlayer::OnPossess()
-	{
-		if (m_Controller)
-		{
-			PlayerController* pc = m_Controller->IsA<PlayerController>();
-			if (pc)
 			{
-				//pc->SetCamera(m_Cam, CS_INSTANT);
+				m_RootComponent->GetLocalRotation().Yaw += state * 0.002F;
+				break;
 			}
+			case HASH("LookRight"):
+				m_RootComponent->GetLocalRotation().Roll += state * -0.002F;
+				break;
 		}
 	}
 }

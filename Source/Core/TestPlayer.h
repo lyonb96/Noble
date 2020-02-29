@@ -18,9 +18,7 @@ namespace Noble
 
 		virtual void OnActionInput(const U32 bindingId, bool state) override;
 
-		virtual void OnAnalogInput(const U32 bindingId, float state) override;
-
-		virtual void OnPossess() override;
+		virtual void OnAnalogInput(const U32 bindingId, F32 state) override;
 
 	private:
 

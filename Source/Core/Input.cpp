@@ -586,13 +586,16 @@ namespace Noble
 			return g_LastTextKey;
 		}
 
-		void PrepFrame()
+		void PreFrame()
 		{
 			// Copy the last frame's input buffer into the second buffer
 			memcpy(g_ActionStates[1], g_ActionStates[0], sizeof(g_ActionStates[0]));
 			// Fill the first buffer with updated values
 			memcpy(g_ActionStates[0], g_ActionBuffer, sizeof(g_ActionStates[0]));
+		}
 
+		void PostFrame()
+		{
 			// Clear axis deltas
 			memset(g_AxisStates, 0, sizeof(g_AxisStates));
 

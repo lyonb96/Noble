@@ -158,7 +158,7 @@ namespace Noble
 			finish = HandleWindowsMessages(msg);
 			if (!finish)
 			{
-				Input::PrepFrame();
+				Input::PreFrame();
 
 				// Count fixed steps to circumvent spiraling from hard freezes
 				U8 fixedSteps = 0;
@@ -173,6 +173,8 @@ namespace Noble
 				Update();
 
 				// finish = Game::ShouldGameQuit();
+
+				Input::PostFrame();
 
 				m_Renderer.Frame();
 			}

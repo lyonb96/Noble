@@ -1,8 +1,8 @@
-[Noble] INFO: Noble Engine Early Dev - Feb 26 2020
+[Noble] INFO: Noble Engine Early Dev - Feb 29 2020
 [Noble] INFO: Loading configuration from file
 [Noble] INFO: Read 1937 bytes from file, which is different from requested 1938 bytes
 [Noble] DEBUG: Creating game window
 [Noble] DEBUG: After adjustment, size: 1296 x 759
-[Noble] DEBUG: Benchmark Helper: ObjectCreation - 23u
+[Noble] DEBUG: Benchmark Helper: ObjectCreation - 20u
 [Noble] INFO: Engine shutting down
 [Noble] INFO: Saving config to file

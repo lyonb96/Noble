@@ -204,7 +204,12 @@ namespace Noble
 		/**
 		 * Called at the start of the frame automatically, clears buffers and prepares input for the frame
 		 */
-		void PrepFrame();
+		void PreFrame();
+
+		/**
+		 * Called after the end of a frame to clear axis deltas
+		 */
+		void PostFrame();
 
 		/**
 		 * Returns true if the given action is currently pressed/true

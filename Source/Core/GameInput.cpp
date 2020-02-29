@@ -165,7 +165,7 @@ namespace Noble
 				if (m_Triggers[i].IsAction)
 				{
 					// Handle axis as action
-					if (IsPressed(m_Triggers[i].ActionIn))
+					if (m_Triggers[i].ActionIn != ACTION_UNASSIGNED && IsPressed(m_Triggers[i].ActionIn))
 					{
 						if (glm::abs(m_Triggers[i].Value) > outValAbs)
 						{
@@ -175,6 +175,10 @@ namespace Noble
 				}
 				else
 				{
+					if (m_Triggers[i].AxisIn == AXIS_UNASSIGNED)
+					{
+						continue;
+					}
 					F32 state = GetAxisState(m_Triggers[i].AxisIn) * m_Triggers[i].Scale;
 					if (glm::abs(state) > outValAbs)
 					{
