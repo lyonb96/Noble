@@ -2,6 +2,10 @@
 
 #include "Types.h"
 
+#ifndef FIXED_STEP_RATE
+#define FIXED_STEP_RATE (1.0F / 60.0F)
+#endif
+
 namespace Noble
 {
 	/**
@@ -64,6 +68,11 @@ namespace Noble
 		 * Returns the delta time in microseconds as a U64
 		 */
 		static U64 GetDeltaTimeMicro();
+
+		/**
+		 * Returns the fixed delta time in seconds as a float
+		 */
+		static F32 GetFixedDeltaTime();
 
 		/**
 		 * Converts a Timestamp into a duration in seconds

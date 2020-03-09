@@ -64,6 +64,11 @@ namespace Noble
 		return LoopMicroseconds;
 	}
 
+	F32 Time::GetFixedDeltaTime()
+	{
+		return FIXED_STEP_RATE;
+	}
+
 	F32 Time::GetDuration(const Timestamp& time)
 	{
 		return GetDurationMicro(time) / 1000000.0F;

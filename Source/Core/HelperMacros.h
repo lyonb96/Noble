@@ -32,6 +32,30 @@
 #define NOBLE_DEFAULT_ALIGN 16
 #endif
 
+#ifndef SAFE_RELEASE
+#define SAFE_RELEASE(x) if ((x)) { (x)->Release(); (x) = nullptr; }
+#endif
+
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(x) if ((x)) { delete (x); }
+#endif
+
+#ifndef SAFE_DELETE_ARRAY
+#define SAFE_DELETE_ARRAY(x) if ((x)) { delete[] (x); }
+#endif
+
+#define NO_COPY(CLASS) \
+CLASS(const CLASS&) = delete;\
+CLASS& operator= (const CLASS&) = delete;
+
+#define NO_MOVE(CLASS) \
+CLASS(CLASS&&) = delete;\
+CLASS& operator=(CLASS&&) = delete;
+
+#define NO_COPY_NO_MOVE(CLASS)\
+NO_COPY(CLASS)\
+NO_MOVE(CLASS)
+
 // -------------------
 // Sanity checks
 // -------------------

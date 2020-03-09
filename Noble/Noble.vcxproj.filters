@@ -55,6 +55,12 @@
     <Filter Include="Source Files\Input">
       <UniqueIdentifier>{4af43eba-5731-40e1-a319-f9e07efdc274}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Physics">
+      <UniqueIdentifier>{bd1f882a-91fe-4c85-ac91-b00f72a88362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{86b09f53-8353-4744-85a0-99e94e422b70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Engine.h">
@@ -186,6 +192,12 @@
     <ClInclude Include="..\Source\Core\CameraManager.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\PhysicsEngine.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\BulletForward.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -283,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\CameraComponent.cpp">
       <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\PhysicsEngine.cpp">
+      <Filter>Source Files\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

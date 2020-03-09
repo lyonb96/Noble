@@ -20,10 +20,6 @@
 #define MAX_FIXED_STEPS_PER_FRAME 5 // limit fixed steps per frame to avoid spiraling
 #endif
 
-#ifndef FIXED_STEP_RATE
-#define FIXED_STEP_RATE (1.0F / 60.0F)
-#endif
-
 namespace Noble
 {
 	using json = nlohmann::json;
@@ -65,6 +61,7 @@ namespace Noble
 	}
 
 	Engine::Engine()
+		: m_Physics()
 	{
 		Time::Initialize();
 		m_GameInstance = nullptr;
@@ -99,7 +96,14 @@ namespace Noble
 		if (!result)
 		{
 			NE_LOG_FATAL("Renderer failed to initialize");
-			m_Renderer.Shutdown();
+			return false;
+		}
+
+		// Initialize physics engine
+		result = m_Physics.Initialize();
+		if (!result)
+		{
+			NE_LOG_FATAL("Physics engine failed to initialize");
 			return false;
 		}
 
@@ -194,6 +198,9 @@ namespace Noble
 
 		// Save config changes
 		Config::SaveConfig();
+		
+		// Shut down the physics engine
+		m_Physics.Shutdown();
 
 		// Close the window down
 		m_Renderer.Shutdown();
@@ -206,6 +213,7 @@ namespace Noble
 
 	void Engine::FixedUpdate()
 	{
+		m_Physics.FixedUpdate();
 		// Call the game instance fixed update function
 		m_GameInstance->FixedUpdate();
 		// Then perform world fixed updates

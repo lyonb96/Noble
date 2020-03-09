@@ -13,10 +13,6 @@ namespace Noble
 	{
 		namespace
 		{
-			/*ActionBinding g_ActionBindings[64];
-			U32 g_ActionCount = 0;
-			AxisBinding g_AxisBindings[32];
-			U32 g_AxisCount = 0;*/
 			Array<ActionBinding> g_ActionBindings;
 			Array<AxisBinding> g_AxisBindings;
 		}

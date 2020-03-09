@@ -33,6 +33,7 @@ namespace Noble
 
 		// Allocate vertex array
 		m_Vertices = new StaticVertex[m_VertexCount];
+		CHECK(m_Vertices);
 
 		// Read in vertices
 		for (U32 i = 0; i < m_VertexCount; ++i)
@@ -49,6 +50,7 @@ namespace Noble
 
 		// Allocate index array
 		m_Indices = new Index[m_IndexCount];
+		CHECK(m_Indices);
 
 		// Read in indices
 		for (U32 i = 0; i < m_IndexCount; ++i)

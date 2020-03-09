@@ -117,6 +117,8 @@ namespace Noble
 
 		ShowWindow(m_WindowHandle, SW_SHOW);
 
+		ShowCursor(FALSE);
+
 		return true;
 	}
 
@@ -171,7 +173,7 @@ namespace Noble
 		bgfx::setViewRect(0, 0, 0, initData.resolution.width, initData.resolution.height);
 
 		// TODO: Fix the constant near-far plane settings
-		m_CamMgr->UpdateRenderData(m_RenderWidth, m_RenderHeight, 0.1F, 200.0F);
+		m_CamMgr->UpdateRenderData(F32(m_RenderWidth), F32(m_RenderHeight), 0.1F, 200.0F);
 
 #ifdef NOBLE_DEBUG
 		// enable bgfx debug text in debug mode

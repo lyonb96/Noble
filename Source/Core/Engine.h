@@ -8,6 +8,7 @@
 #include "World.h"
 #include "GameInstance.h"
 #include "CameraManager.h"
+#include "PhysicsEngine.h"
 
 namespace Noble
 {
@@ -73,6 +74,8 @@ namespace Noble
 		AssetManager m_AssetManager;
 		// Camera manager instance
 		CameraManager m_CamManager;
+		// Physics handler
+		PhysicsEngine m_Physics;
 
 	};
 }

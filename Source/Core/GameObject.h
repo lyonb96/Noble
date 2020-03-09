@@ -32,6 +32,7 @@ namespace Noble
 		friend class World;
 		// Allow Controllers to access the fun stuff
 		friend class Controller;
+		friend class PlayerController;
 
 		/**
 		 * Default constructor that handles back-end setup
@@ -205,6 +206,11 @@ namespace Noble
 		 * Changes the Controller of this GameObject
 		 */
 		void SetController(Controller* cont);
+
+		/**
+		 * Private, non-const getter for array of Components
+		 */
+		Array<Component*>& GetComponents() { return m_Components; }
 
 	protected:
 

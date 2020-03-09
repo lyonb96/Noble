@@ -698,6 +698,110 @@ namespace Noble
 	};
 
 	/**
+	 * Only allows allocations of a set size, but generally returns said allocations very fast
+	 */
+	template <Size N>
+	class FixedSizeAllocator
+	{
+	public:
+
+		/**
+		 * Allows the user to set a custom number of allocs to be able to hand out
+		 * default is 1024
+		 */
+		FixedSizeAllocator(Size count = 1024)
+			: m_Data(nullptr), m_Count(count), m_Free(nullptr), m_Tail(nullptr)
+		{}
+
+		/**
+		 * Makes sure the alloc is of the correct size, and returns a piece of memory to use
+		 */
+		void* Allocate(Size allocSize, Size align, Size offset = 0)
+		{
+			// Size and alignment both have to be N
+			CHECK(allocSize <= N && align == alignof(Entry));
+
+			if (m_Free)
+			{
+				Entry* ret = m_Free;
+				m_Free = m_Free->Next;
+				return &(ret->Data[0]);
+			}
+			else
+			{
+				return nullptr;
+			}
+		}
+
+		/**
+		 * Frees an N-sized block to be reused
+		 */
+		void Free(void* ptr)
+		{
+			Entry* entry = (Entry*)ptr;
+			m_Tail->Next = entry;
+			m_Tail = entry;
+		}
+
+		/**
+		 * Returns total amount of memory allocated by this allocator
+		 */
+		Size GetAllocatedSize() const { return N * m_Count; }
+
+		/**
+		 * Returns true if this allocator has made any heap allocs
+		 * Always true for this type of Allocator
+		 */
+		bool HasAllocated() const { return true; }
+
+		/**
+		 * Frees the memory held by this allocator
+		 */
+		~FixedSizeAllocator()
+		{
+			SAFE_DELETE(m_Data);
+		}
+
+	private:
+
+		void BuildList()
+		{
+			m_Data = Memory::Malloc(sizeof(Entry) * m_Count, N);
+
+			Entry* last = nullptr;
+			for (auto i = 0; i < N; ++i)
+			{
+				Entry* now = ((Entry*)m_Data)[i];
+				if (last)
+				{
+					last->Next = now;
+				}
+				last = now;
+			}
+			last->Next = nullptr;
+
+			m_Free = (Entry*)m_Data;
+			m_Tail = last;
+		}
+
+	private:
+
+		struct Entry
+		{
+			Byte Data[N];
+			Entry* Next;
+		};
+
+		// Raw memory to split up
+		void* m_Data;
+		// Number of N-sized allocs it holds
+		Size m_Count;
+
+		Entry* m_Free;
+		Entry* m_Tail;
+	};
+
+	/**
 	 * No tracking policy
 	 */
 	class NoTrackingPolicy
@@ -713,6 +817,8 @@ namespace Noble
 		// Does something!
 		// Just kidding.
 		FORCEINLINE const bool HasAllocs() const { return false; }
+
+		FORCEINLINE const U32 GetAllocCount() const { return 0; }
 	};
 
 	/**

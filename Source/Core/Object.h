@@ -34,6 +34,31 @@ namespace Noble
 		 * Template argument must be a registered subclass of Object
 		 */
 		template <typename T>
+		const T* IsA() const
+		{
+			NClass* Tclass = T::GetStaticClass();
+			NClass* myClass = GetClass();
+
+			while (myClass)
+			{
+				if (*myClass == *Tclass)
+				{
+					return static_cast<const T*>(this);
+				}
+				myClass = myClass->Parent;
+			}
+
+			return nullptr;
+		}
+
+		/**
+		 * Checks if this Object is an instance of the given type
+		 * Returns the Object casted to the given type if true,
+		 * or nullptr if false
+		 *
+		 * Template argument must be a registered subclass of Object
+		 */
+		template <typename T>
 		T* IsA()
 		{
 			NClass* Tclass = T::GetStaticClass();

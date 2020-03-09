@@ -50,13 +50,17 @@ namespace Noble
 		m_TestObject3->GetSecondMesh()->SetMesh(m_TestMesh);
 		m_TestObject3->GetSecondMesh()->SetMaterial(m_TestMat);
 
-		TestPlayer* tgo = GetWorld()->SpawnGameObject<TestPlayer>(Vector3f(0, -5.0F, 0));
+		TestPlayer* tgo = GetWorld()->SpawnGameObject<TestPlayer>(Vector3f(0, -50.0F, 0));
 		tgo->SetScale(Vector3f(100.0F, 0.5F, 100.0F));
 		tgo->GetRootComponent()->IsA<StaticMeshComponent>()->SetMesh(m_TestMesh);
 		tgo->GetRootComponent()->IsA<StaticMeshComponent>()->SetMaterial(m_TestMat);
 	}
 
 	void TestGame::OnGameEnd()
+	{
+	}
+
+	void TestGame::FixedUpdate()
 	{
 	}
 

@@ -108,7 +108,7 @@ namespace Noble
 		/**
 		 * Allows conversion to bool for quick checking if the iterator is valid
 		 */
-		FORCEINLINE operator bool() const
+		operator bool() const
 		{
 			return m_Container.CheckIndex(m_Index);
 		}

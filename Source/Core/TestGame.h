@@ -22,6 +22,8 @@ namespace Noble
 
 		virtual void Update() override;
 
+		virtual void FixedUpdate() override;
+
 	private:
 
 		TestGameObject* m_TestObject1;
